@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum OptionType {
+  CE
+  PE
+}
+
+enum SignalStatus {
+  OPEN
+  TARGET_HIT
+  SL_HIT
+  CLOSED_MANUAL
+}
+
+enum SubscriberPlan {
+  PREMIUM
+}
+
+model Signal {
+  id            String       @id @default(uuid())
+  strike        Int
+  optionType    OptionType
+  entryPrice    Float
+  stopLoss      Float
+  targets       Float[]
+  priceAtSignal Float
+  sellPrice     Float?
+  status        SignalStatus @default(OPEN)
+  pnlPercent    Float?
+  signalTime    DateTime     @default(now())
+  closedTime    DateTime?
+  rawMessage    String
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@index([signalTime])
+  @@index([status])
+}
+
+model Subscriber {
+  id        String         @id @default(uuid())
+  name      String
+  phone     String
+  email     String?
+  plan      SubscriberPlan @default(PREMIUM)
+  createdAt DateTime       @default(now())
+}
