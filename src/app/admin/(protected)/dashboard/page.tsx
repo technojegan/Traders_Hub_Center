@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { computeDashboardMetrics } from "@/lib/signal-metrics";
 import { KpiCard } from "@/components/admin/kpi-card";
+import { RadialGauge } from "@/components/admin/radial-gauge";
+import { RecentSignalsList } from "@/components/admin/recent-signals-list";
 import {
   BestWorstBarChart,
   CePeDonutChart,
@@ -24,6 +26,10 @@ export default async function AdminDashboardPage() {
       pnlPercent: Math.round((s.pnlPercent ?? 0) * 100) / 100,
     }));
 
+  const recentSignals = [...signals]
+    .sort((a, b) => b.signalTime.getTime() - a.signalTime.getTime())
+    .slice(0, 6);
+
   const pct = (n: number) => `${n.toFixed(1)}%`;
 
   return (
@@ -35,27 +41,41 @@ export default async function AdminDashboardPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-        <KpiCard label="Total Signals" value={String(metrics.totalSignals)} delayMs={0} />
-        <KpiCard label="Win Rate" value={pct(metrics.winRate)} accent="win" delayMs={40} />
-        <KpiCard
-          label="Total Capture %"
-          value={pct(metrics.totalCapturePercent)}
-          accent={metrics.totalCapturePercent >= 0 ? "win" : "loss"}
-          delayMs={80}
+      <div className="thc-glass thc-gold-border flex flex-col items-center gap-8 rounded-2xl p-6 sm:flex-row sm:justify-around">
+        <RadialGauge
+          value={metrics.winRate}
+          displayValue={pct(metrics.winRate)}
+          label="Win Rate"
+          accent="win"
         />
-        <KpiCard label="Avg % / Trade" value={pct(metrics.avgPercentPerTrade)} delayMs={120} />
+        <RadialGauge
+          value={Math.min(Math.abs(metrics.totalCapturePercent), 100)}
+          displayValue={pct(metrics.totalCapturePercent)}
+          label="Total Capture %"
+          accent={metrics.totalCapturePercent >= 0 ? "win" : "loss"}
+        />
+        <RadialGauge
+          value={metrics.ceCount + metrics.peCount > 0 ? (metrics.ceCount / (metrics.ceCount + metrics.peCount)) * 100 : 0}
+          displayValue={`${metrics.ceCount}/${metrics.peCount}`}
+          label="CE / PE Split"
+          accent="gold"
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <KpiCard label="Total Signals" value={String(metrics.totalSignals)} delayMs={0} />
+        <KpiCard label="Avg % / Trade" value={pct(metrics.avgPercentPerTrade)} delayMs={40} />
         <KpiCard
           label="Best Trade"
           value={metrics.bestTradePercent != null ? pct(metrics.bestTradePercent) : "—"}
           accent="win"
-          delayMs={160}
+          delayMs={80}
         />
         <KpiCard
           label="Worst Trade"
           value={metrics.worstTradePercent != null ? pct(metrics.worstTradePercent) : "—"}
           accent="loss"
-          delayMs={200}
+          delayMs={120}
         />
       </div>
 
@@ -81,6 +101,10 @@ export default async function AdminDashboardPage() {
         <div className="thc-glass rounded-xl border border-white/5 p-4 lg:col-span-2">
           <h2 className="mb-2 font-heading text-sm font-semibold">Monthly Performance</h2>
           <MonthlyPerformanceChart data={metrics.monthlyPerformance} />
+        </div>
+        <div className="thc-glass rounded-xl border border-white/5 p-4 lg:col-span-2">
+          <h2 className="mb-2 font-heading text-sm font-semibold">Recent Signals</h2>
+          <RecentSignalsList signals={recentSignals} />
         </div>
       </div>
     </div>

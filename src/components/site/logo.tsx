@@ -8,12 +8,12 @@ export function Logo({ className }: { className?: string }) {
       <Image
         src="/thc-logo.jpg"
         alt="Traders Hub Center"
-        width={36}
-        height={36}
-        className="h-9 w-9 rounded-full shadow-[0_2px_16px_-4px_var(--thc-gold-start)] transition-transform group-hover:scale-105"
+        width={56}
+        height={56}
+        className="h-12 w-12 rounded-full shadow-[0_2px_16px_-4px_var(--thc-gold-start)] transition-transform group-hover:scale-105 sm:h-14 sm:w-14"
         priority
       />
-      <span className="font-heading text-lg font-bold tracking-tight text-foreground">
+      <span className="font-heading text-lg font-bold tracking-tight text-foreground sm:text-xl">
         Traders Hub Center
       </span>
     </Link>

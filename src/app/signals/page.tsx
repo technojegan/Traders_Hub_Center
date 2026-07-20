@@ -1,14 +1,21 @@
 import { Navbar } from "@/components/site/navbar";
 import { Footer } from "@/components/site/footer";
 import { SignalsExplorer } from "@/components/signals/signals-explorer";
+import { SignalsInsights } from "@/components/signals/signals-insights";
 import { prisma } from "@/lib/prisma";
+import { computeDashboardMetrics } from "@/lib/signal-metrics";
 import type { SignalRow } from "@/components/signals/signals-explorer";
 
 export const revalidate = 60;
 
-async function getSignals(): Promise<SignalRow[]> {
-  const signals = await prisma.signal.findMany({ orderBy: { signalTime: "desc" } });
-  return signals.map((s) => ({
+async function getSignals() {
+  return prisma.signal.findMany({ orderBy: { signalTime: "desc" } });
+}
+
+export default async function SignalsPage() {
+  const signals = await getSignals();
+  const metrics = computeDashboardMetrics(signals);
+  const rows: SignalRow[] = signals.map((s) => ({
     id: s.id,
     strike: s.strike,
     optionType: s.optionType,
@@ -20,10 +27,6 @@ async function getSignals(): Promise<SignalRow[]> {
     status: s.status,
     signalTime: s.signalTime.toISOString(),
   }));
-}
-
-export default async function SignalsPage() {
-  const signals = await getSignals();
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -38,7 +41,8 @@ export default async function SignalsPage() {
             track record.
           </p>
         </div>
-        <SignalsExplorer signals={signals} />
+        <SignalsInsights metrics={metrics} />
+        <SignalsExplorer signals={rows} />
       </main>
       <Footer />
     </div>

@@ -57,6 +57,7 @@ export function CumulativeLineChart({
           fill="url(#cumulativeFill)"
           dot={false}
           name="Cumulative %"
+          isAnimationActive={false}
         />
       </AreaChart>
     </ResponsiveContainer>
@@ -86,8 +87,20 @@ export function WinLossBarChart({
         <YAxis allowDecimals={false} tick={axisTick} />
         <Tooltip contentStyle={chartTooltipStyle} />
         <Legend formatter={legendText} />
-        <Bar dataKey="wins" fill="url(#winFill)" name="Wins" radius={[3, 3, 0, 0]} />
-        <Bar dataKey="losses" fill="url(#lossFill)" name="Losses" radius={[3, 3, 0, 0]} />
+        <Bar
+          dataKey="wins"
+          fill="url(#winFill)"
+          name="Wins"
+          radius={[3, 3, 0, 0]}
+          isAnimationActive={false}
+        />
+        <Bar
+          dataKey="losses"
+          fill="url(#lossFill)"
+          name="Losses"
+          radius={[3, 3, 0, 0]}
+          isAnimationActive={false}
+        />
       </BarChart>
     </ResponsiveContainer>
   );
@@ -131,6 +144,7 @@ export function CePeDonutChart({
             total > 0 ? `${name} ${Math.round(((value ?? 0) / total) * 100)}%` : name
           }
           labelLine={{ stroke: "var(--muted-foreground)", strokeWidth: 1 }}
+          isAnimationActive={false}
         >
           {data.map((entry, index) => (
             <Cell key={entry.name} fill={fills[index % fills.length]} />
@@ -165,7 +179,7 @@ export function BestWorstBarChart({
         <XAxis dataKey="label" tick={axisTick} />
         <YAxis tick={axisTick} />
         <Tooltip contentStyle={chartTooltipStyle} />
-        <Bar dataKey="pnlPercent" name="P&L %" radius={[3, 3, 0, 0]}>
+        <Bar dataKey="pnlPercent" name="P&L %" radius={[3, 3, 0, 0]} isAnimationActive={false}>
           {data.map((entry) => (
             <Cell
               key={entry.label}
@@ -200,7 +214,12 @@ export function MonthlyPerformanceChart({
         <XAxis dataKey="month" tick={axisTick} />
         <YAxis tick={axisTick} />
         <Tooltip contentStyle={chartTooltipStyle} />
-        <Bar dataKey="totalPercent" name="Total Capture %" radius={[3, 3, 0, 0]}>
+        <Bar
+          dataKey="totalPercent"
+          name="Total Capture %"
+          radius={[3, 3, 0, 0]}
+          isAnimationActive={false}
+        >
           {data.map((entry) => (
             <Cell
               key={entry.month}
