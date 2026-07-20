@@ -43,12 +43,22 @@ export function Footer() {
           </div>
         </div>
 
-        <p className="text-xs text-muted-foreground/70">
-          Disclaimer: All content on this site is for educational purposes only and does
-          not constitute investment advice. Trading in options involves substantial risk of
-          loss and is not suitable for every investor. Past performance is not indicative
-          of future results.
-        </p>
+        <div className="flex flex-col gap-1 text-xs text-muted-foreground/70">
+          <p className="font-medium text-muted-foreground">SEBI Disclaimer</p>
+          <p>
+            This service is conducted strictly for educational and learning purposes. We are
+            not a SEBI-registered Research Analyst or Investment Adviser. No stock, index,
+            option, or derivative discussed here should be considered a buy or sell
+            recommendation.
+          </p>
+          <p>
+            Never borrow money or trade with funds you cannot afford to lose. Each
+            participant is solely responsible for their own trading decisions, profits, and
+            losses. Trade only after understanding the strategy and always follow proper risk
+            management. Capital protection first, profits come next. Past performance is not
+            indicative of future results.
+          </p>
+        </div>
       </div>
     </footer>
   );

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { WhatsAppIcon } from "@/components/site/icons";
-import { WHATSAPP_URL } from "@/lib/constants";
+import { BATCH_INFO, PAYMENT_INFO, WHATSAPP_URL } from "@/lib/constants";
 import { registerSubscriber } from "@/app/register/actions";
 
 export function RegisterForm() {
@@ -35,10 +35,35 @@ export function RegisterForm() {
       <div className="flex flex-col items-center gap-5 py-6 text-center">
         <h2 className="font-heading text-2xl font-bold thc-gold-text">You&apos;re in!</h2>
         <p className="text-sm text-muted-foreground">
-          Thanks, {name.split(" ")[0]} — we&apos;ve saved your details. Join our WhatsApp
-          group below to start receiving live signals.
+          {`Thanks, ${name.split(" ")[0]} — we've saved your details. Complete payment below, then join WhatsApp so we can add you to the group.`}
         </p>
-        <Button asChild className="thc-glow">
+
+        <div className="w-full rounded-xl border border-white/10 bg-black/20 p-4 text-left text-sm">
+          <p className="font-heading font-semibold">
+            Pay ₹{BATCH_INFO.priceInr.toLocaleString("en-IN")} via UPI
+          </p>
+          <ul className="mt-2 flex flex-col gap-1 text-muted-foreground">
+            {PAYMENT_INFO.upiIds.map((upi) => (
+              <li key={upi.vpa}>
+                <span className="font-medium text-foreground">{upi.vpa}</span> ({upi.name})
+              </li>
+            ))}
+          </ul>
+          <p className="mt-3 font-heading font-semibold">Questions? Contact</p>
+          <ul className="mt-1 flex flex-col gap-1 text-muted-foreground">
+            {PAYMENT_INFO.managers.map((manager) => (
+              <li key={manager.phone}>
+                {manager.name} —{" "}
+                <a href={`tel:${manager.phone}`} className="text-primary">
+                  {manager.phone}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-3 text-xs text-muted-foreground/70">{BATCH_INFO.refundPolicy}</p>
+        </div>
+
+        <Button asChild className="thc-glow thc-btn-gradient w-full">
           <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
             <WhatsAppIcon className="h-4 w-4" />
             Join WhatsApp Group

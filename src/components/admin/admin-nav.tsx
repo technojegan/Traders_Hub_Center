@@ -9,6 +9,7 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 const links = [
   { href: "/admin/dashboard", label: "Dashboard" },
   { href: "/admin/signals/new", label: "Add Signal" },
+  { href: "/admin/signals", label: "Manage Signals" },
 ];
 
 export function AdminNav() {

@@ -4,6 +4,11 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { calcPnlPercent, deriveStatus } from "@/lib/signal-metrics";
+import {
+  formatNewSignalMessage,
+  formatSignalUpdateMessage,
+  sendTelegramMessage,
+} from "@/lib/telegram";
 
 export interface SignalInput {
   strike: number;
@@ -59,6 +64,23 @@ export async function createSignals(inputs: SignalInput[]) {
   await prisma.signal.createMany({
     data: inputs.map(toSignalCreateData),
   });
+
+  for (const input of inputs) {
+    if (input.sellPrice != null) {
+      const pnlPercent = calcPnlPercent(input.entryPrice, input.sellPrice);
+      const status = deriveStatus({
+        entryPrice: input.entryPrice,
+        stopLoss: input.stopLoss,
+        targets: input.targets,
+        sellPrice: input.sellPrice,
+      });
+      await sendTelegramMessage(
+        formatSignalUpdateMessage({ ...input, sellPrice: input.sellPrice, pnlPercent, status }),
+      );
+    } else {
+      await sendTelegramMessage(formatNewSignalMessage(input));
+    }
+  }
 
   revalidatePath("/signals");
   revalidatePath("/admin/dashboard");
