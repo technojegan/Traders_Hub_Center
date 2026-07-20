@@ -33,27 +33,33 @@ export interface InstagramThumbnail {
   label: string;
 }
 
-// Placeholder entries — swap thumbnailUrl/videoUrl/label with real Instagram
-// reels once they're supplied. Add or remove entries freely.
+// thumbnailUrl is still a placeholder graphic — swap for a real screenshot
+// (drop a file in public/instagram/ and point to it here) whenever one's
+// supplied. videoUrl below points at the real highlights already given.
 export const INSTAGRAM_THUMBNAILS: InstagramThumbnail[] = [
   {
     thumbnailUrl: "/instagram/placeholder-1.svg",
-    videoUrl: INSTAGRAM_URL,
+    videoUrl: "https://www.instagram.com/stories/highlights/17892270870592994/",
     label: "How we call intraday CE/PE entries",
   },
   {
     thumbnailUrl: "/instagram/placeholder-2.svg",
-    videoUrl: INSTAGRAM_URL,
+    videoUrl: "https://www.instagram.com/stories/highlights/18119944411893165/",
     label: "Reading SL & target levels",
   },
   {
     thumbnailUrl: "/instagram/placeholder-3.svg",
-    videoUrl: INSTAGRAM_URL,
+    videoUrl: "https://www.instagram.com/stories/highlights/18101528660276766/",
     label: "Inside a winning trade, start to finish",
   },
   {
     thumbnailUrl: "/instagram/placeholder-4.svg",
-    videoUrl: INSTAGRAM_URL,
+    videoUrl: "https://www.instagram.com/stories/highlights/17911968051401087/",
     label: "Risk management on options buying",
+  },
+  {
+    thumbnailUrl: "/instagram/placeholder-5.svg",
+    videoUrl: "https://www.instagram.com/stories/highlights/17962075925922683/",
+    label: "More from Traders Hub Center",
   },
 ];
