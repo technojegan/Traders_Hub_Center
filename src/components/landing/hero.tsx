@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { WhatsAppIcon, InstagramIcon } from "@/components/site/icons";
+import { CandlestickAnimation } from "@/components/landing/candlestick-animation";
+import { CountUp } from "@/components/landing/count-up";
 import { INSTAGRAM_URL, WHATSAPP_URL } from "@/lib/constants";
 
 export interface HeroStats {
@@ -14,20 +16,21 @@ export interface HeroStats {
 
 export function Hero({ stats }: { stats: HeroStats }) {
   const statItems = [
-    { label: "Win Rate", value: `${stats.winRate.toFixed(0)}%` },
-    { label: "Signals Given", value: `${stats.totalSignals}` },
-    { label: "Total Capture", value: `${stats.totalCapturePercent.toFixed(0)}%` },
+    { label: "Win Rate", value: stats.winRate, decimals: 0, suffix: "%" },
+    { label: "Signals Given", value: stats.totalSignals, decimals: 0, suffix: "" },
+    { label: "Total Capture", value: stats.totalCapturePercent, decimals: 0, suffix: "%" },
   ];
 
   return (
     <section className="relative overflow-hidden px-4 pt-20 pb-16 sm:px-6 sm:pt-28 lg:px-8">
       <div
-        className="pointer-events-none absolute inset-0 -z-10"
+        className="pointer-events-none absolute inset-0 -z-20"
         style={{
           background:
             "radial-gradient(60% 50% at 50% 0%, color-mix(in oklab, var(--thc-gold-start) 22%, transparent), transparent 70%), radial-gradient(40% 35% at 85% 15%, color-mix(in oklab, var(--thc-pe) 14%, transparent), transparent 70%), radial-gradient(40% 35% at 12% 30%, color-mix(in oklab, var(--thc-ce) 12%, transparent), transparent 70%)",
         }}
       />
+      <CandlestickAnimation className="pointer-events-none absolute inset-x-0 bottom-4 -z-10 mx-auto h-[130px] w-full max-w-xl opacity-20 sm:h-[170px] sm:opacity-30" />
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
@@ -80,7 +83,7 @@ export function Hero({ stats }: { stats: HeroStats }) {
               style={{ backgroundImage: "var(--thc-gold-gradient)" }}
             />
             <p className="font-heading text-2xl font-bold thc-gold-text sm:text-3xl">
-              {stat.value}
+              <CountUp value={stat.value} decimals={stat.decimals} suffix={stat.suffix} />
             </p>
             <p className="mt-1 text-xs text-muted-foreground">{stat.label}</p>
           </div>
