@@ -38,7 +38,7 @@ export function Footer() {
               Register Premium
             </Link>
             <Link href="/signals" className="hover:text-primary">
-              Past Signals
+              Signals Overview
             </Link>
           </div>
         </div>

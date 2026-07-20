@@ -45,8 +45,19 @@ export interface DashboardMetrics {
   ceWinRate: number;
   peWinRate: number;
   cumulativeSeries: { date: string; cumulativePercent: number }[];
-  winLossByDay: { date: string; wins: number; losses: number }[];
+  winLossByDay: {
+    date: string;
+    wins: number;
+    losses: number;
+    winPercent: number;
+    lossPercent: number;
+  }[];
   monthlyPerformance: { month: string; totalPercent: number }[];
+  tpSlComparison: { date: string; tpHitPercent: number; slHitPercent: number }[];
+  targetHitCount: number;
+  slHitCount: number;
+  winCount: number;
+  lossCount: number;
 }
 
 function winRateOf(signals: SignalForMetrics[]): number {
@@ -67,6 +78,8 @@ export function computeDashboardMetrics(signals: SignalForMetrics[]): DashboardM
   const percents = closed.map((s) => s.pnlPercent ?? 0);
   const bestTradePercent = percents.length > 0 ? Math.max(...percents) : null;
   const worstTradePercent = percents.length > 0 ? Math.min(...percents) : null;
+  const winCount = closed.filter((s) => (s.pnlPercent ?? 0) > 0).length;
+  const lossCount = closed.length - winCount;
 
   const sortedClosed = [...closed].sort(
     (a, b) => new Date(a.signalTime).getTime() - new Date(b.signalTime).getTime(),
@@ -91,7 +104,15 @@ export function computeDashboardMetrics(signals: SignalForMetrics[]): DashboardM
   }
   const winLossByDay = Array.from(byDay.entries())
     .sort(([a], [b]) => a.localeCompare(b))
-    .map(([date, v]) => ({ date, ...v }));
+    .map(([date, v]) => {
+      const total = v.wins + v.losses;
+      return {
+        date,
+        ...v,
+        winPercent: total > 0 ? Math.round((v.wins / total) * 10000) / 100 : 0,
+        lossPercent: total > 0 ? Math.round((v.losses / total) * 10000) / 100 : 0,
+      };
+    });
 
   const byMonth = new Map<string, number>();
   for (const s of sortedClosed) {
@@ -101,6 +122,19 @@ export function computeDashboardMetrics(signals: SignalForMetrics[]): DashboardM
   const monthlyPerformance = Array.from(byMonth.entries())
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([month, totalPercent]) => ({ month, totalPercent: Math.round(totalPercent * 100) / 100 }));
+
+  let tpCount = 0;
+  let slCount = 0;
+  const tpSlComparison = sortedClosed.map((s, i) => {
+    if (s.status === "TARGET_HIT") tpCount += 1;
+    else if (s.status === "SL_HIT") slCount += 1;
+    const n = i + 1;
+    return {
+      date: new Date(s.signalTime).toISOString().slice(0, 10),
+      tpHitPercent: Math.round((tpCount / n) * 10000) / 100,
+      slHitPercent: Math.round((slCount / n) * 10000) / 100,
+    };
+  });
 
   return {
     totalSignals: signals.length,
@@ -117,5 +151,10 @@ export function computeDashboardMetrics(signals: SignalForMetrics[]): DashboardM
     cumulativeSeries,
     winLossByDay,
     monthlyPerformance,
+    tpSlComparison,
+    targetHitCount: tpCount,
+    slHitCount: slCount,
+    winCount,
+    lossCount,
   };
 }

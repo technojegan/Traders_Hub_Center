@@ -8,6 +8,8 @@ import {
   CartesianGrid,
   Cell,
   Legend,
+  Line,
+  LineChart,
   Pie,
   PieChart,
   ResponsiveContainer,
@@ -67,7 +69,7 @@ export function CumulativeLineChart({
 export function WinLossBarChart({
   data,
 }: {
-  data: { date: string; wins: number; losses: number }[];
+  data: { date: string; winPercent: number; lossPercent: number }[];
 }) {
   return (
     <ResponsiveContainer width="100%" height={280}>
@@ -84,20 +86,21 @@ export function WinLossBarChart({
         </defs>
         {grid}
         <XAxis dataKey="date" tick={axisTick} />
-        <YAxis allowDecimals={false} tick={axisTick} />
+        <YAxis domain={[0, 100]} unit="%" tick={axisTick} />
         <Tooltip contentStyle={chartTooltipStyle} />
         <Legend formatter={legendText} />
         <Bar
-          dataKey="wins"
+          dataKey="winPercent"
+          stackId="winloss"
           fill="url(#winFill)"
-          name="Wins"
-          radius={[3, 3, 0, 0]}
+          name="Win %"
           isAnimationActive={false}
         />
         <Bar
-          dataKey="losses"
+          dataKey="lossPercent"
+          stackId="winloss"
           fill="url(#lossFill)"
-          name="Losses"
+          name="Loss %"
           radius={[3, 3, 0, 0]}
           isAnimationActive={false}
         />
@@ -157,6 +160,62 @@ export function CePeDonutChart({
   );
 }
 
+export function WinRateDonutChart({ wins, losses }: { wins: number; losses: number }) {
+  const total = wins + losses;
+  const winRate = total > 0 ? (wins / total) * 100 : 0;
+  const data = [
+    { name: "Wins", value: wins },
+    { name: "Losses", value: losses },
+  ];
+  const fills = ["url(#winDonutFill)", "url(#lossDonutFill)"];
+
+  return (
+    <div className="relative" style={{ width: "100%", height: 280 }}>
+      <ResponsiveContainer width="100%" height={280}>
+        <PieChart>
+          <defs>
+            <linearGradient id="winDonutFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="var(--thc-win)" stopOpacity={1} />
+              <stop offset="100%" stopColor="var(--thc-win)" stopOpacity={0.55} />
+            </linearGradient>
+            <linearGradient id="lossDonutFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="var(--thc-loss)" stopOpacity={1} />
+              <stop offset="100%" stopColor="var(--thc-loss)" stopOpacity={0.55} />
+            </linearGradient>
+          </defs>
+          <Pie
+            data={data}
+            dataKey="value"
+            nameKey="name"
+            innerRadius={64}
+            outerRadius={92}
+            paddingAngle={3}
+            startAngle={90}
+            endAngle={-270}
+            isAnimationActive={false}
+          >
+            {data.map((entry, index) => (
+              <Cell key={entry.name} fill={fills[index % fills.length]} />
+            ))}
+          </Pie>
+          <Tooltip contentStyle={chartTooltipStyle} />
+          <Legend
+            formatter={(value) => legendText(`${value} (${value === "Wins" ? wins : losses})`)}
+          />
+        </PieChart>
+      </ResponsiveContainer>
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center pb-8">
+        <div className="text-center">
+          <p className="font-heading text-2xl font-bold text-[var(--thc-win)]">
+            {winRate.toFixed(1)}%
+          </p>
+          <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Win Rate</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function BestWorstBarChart({
   data,
 }: {
@@ -188,6 +247,42 @@ export function BestWorstBarChart({
           ))}
         </Bar>
       </BarChart>
+    </ResponsiveContainer>
+  );
+}
+
+export function TpSlComparisonChart({
+  data,
+}: {
+  data: { date: string; tpHitPercent: number; slHitPercent: number }[];
+}) {
+  return (
+    <ResponsiveContainer width="100%" height={280}>
+      <LineChart data={data} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
+        {grid}
+        <XAxis dataKey="date" tick={axisTick} />
+        <YAxis tick={axisTick} unit="%" />
+        <Tooltip contentStyle={chartTooltipStyle} />
+        <Legend formatter={legendText} />
+        <Line
+          type="monotone"
+          dataKey="tpHitPercent"
+          name="TP Hit %"
+          stroke="var(--thc-win)"
+          strokeWidth={2.5}
+          dot={false}
+          isAnimationActive={false}
+        />
+        <Line
+          type="monotone"
+          dataKey="slHitPercent"
+          name="SL Hit %"
+          stroke="var(--thc-loss)"
+          strokeWidth={2.5}
+          dot={false}
+          isAnimationActive={false}
+        />
+      </LineChart>
     </ResponsiveContainer>
   );
 }

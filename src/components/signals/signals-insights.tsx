@@ -1,4 +1,4 @@
-import { CumulativeLineChart } from "@/components/admin/dashboard-charts";
+import { CumulativeLineChart, TpSlComparisonChart } from "@/components/admin/dashboard-charts";
 import type { DashboardMetrics } from "@/lib/signal-metrics";
 
 type Accent = "win" | "loss" | "neutral";
@@ -20,6 +20,16 @@ export function SignalsInsights({ metrics }: { metrics: DashboardMetrics }) {
       accent: metrics.totalCapturePercent >= 0 ? "win" : "loss",
     },
     { label: "CE / PE", value: `${metrics.ceCount} / ${metrics.peCount}`, accent: "neutral" },
+    {
+      label: "Best Trade",
+      value: metrics.bestTradePercent != null ? pct(metrics.bestTradePercent) : "—",
+      accent: "win",
+    },
+    {
+      label: "Worst Trade",
+      value: metrics.worstTradePercent != null ? pct(metrics.worstTradePercent) : "—",
+      accent: "loss",
+    },
   ];
 
   return (
@@ -27,7 +37,7 @@ export function SignalsInsights({ metrics }: { metrics: DashboardMetrics }) {
       <h2 className="font-heading text-sm font-semibold text-muted-foreground">
         Performance at a glance
       </h2>
-      <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         {stats.map((stat) => (
           <div
             key={stat.label}
@@ -62,9 +72,17 @@ export function SignalsInsights({ metrics }: { metrics: DashboardMetrics }) {
       </div>
 
       {metrics.cumulativeSeries.length > 1 && (
-        <div className="mt-5">
-          <p className="mb-1 text-xs text-muted-foreground">Cumulative % over time</p>
-          <CumulativeLineChart data={metrics.cumulativeSeries} />
+        <div className="mt-5 grid gap-5 lg:grid-cols-2">
+          <div>
+            <p className="mb-1 text-xs text-muted-foreground">Cumulative % over time</p>
+            <CumulativeLineChart data={metrics.cumulativeSeries} />
+          </div>
+          <div>
+            <p className="mb-1 text-xs text-muted-foreground">
+              Target Hit % vs SL Hit % (cumulative)
+            </p>
+            <TpSlComparisonChart data={metrics.tpSlComparison} />
+          </div>
         </div>
       )}
     </div>

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 
 const links = [
   { href: "/", label: "Home" },
-  { href: "/signals", label: "Past Signals" },
+  { href: "/signals", label: "Signals Overview" },
 ];
 
 export function Navbar() {

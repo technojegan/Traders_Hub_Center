@@ -34,7 +34,7 @@ export default async function SignalsPage() {
       <main className="mx-auto flex-1 w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="mb-8">
           <h1 className="font-heading text-3xl font-bold sm:text-4xl">
-            Past <span className="thc-gold-text">Signals</span>
+            Signals <span className="thc-gold-text">Overview</span>
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
             Every intraday options-buying call we&apos;ve published — transparent, unedited

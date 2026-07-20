@@ -1,6 +1,14 @@
 export const INSTAGRAM_URL = "https://www.instagram.com/traders_hub_center_/";
 export const WHATSAPP_URL = "https://chat.whatsapp.com/IuWT73Az2LN9i3cfG4pLnY";
 
+// Soft-gate demo credentials shown on the admin login page — not real
+// security, just enough friction to keep casual visitors out. Remove this
+// export (and its use in login-form.tsx) once real access control matters.
+export const DEMO_ADMIN_CREDENTIALS = {
+  email: "admin@demo.com",
+  password: "admin$123",
+};
+
 export const BATCH_INFO = {
   batchNumber: 13,
   priceInr: 4999,
