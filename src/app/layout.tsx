@@ -31,6 +31,7 @@ export default function RootLayout({
       className={`${inter.variable} ${sora.variable} dark h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
+        <div className="thc-mesh-bg" aria-hidden="true" />
         {children}
         <Toaster richColors theme="dark" />
       </body>

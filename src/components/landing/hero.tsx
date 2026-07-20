@@ -25,7 +25,7 @@ export function Hero({ stats }: { stats: HeroStats }) {
         className="pointer-events-none absolute inset-0 -z-10"
         style={{
           background:
-            "radial-gradient(60% 50% at 50% 0%, color-mix(in oklab, var(--thc-gold-start) 18%, transparent), transparent 70%)",
+            "radial-gradient(60% 50% at 50% 0%, color-mix(in oklab, var(--thc-gold-start) 22%, transparent), transparent 70%), radial-gradient(40% 35% at 85% 15%, color-mix(in oklab, var(--thc-pe) 14%, transparent), transparent 70%), radial-gradient(40% 35% at 12% 30%, color-mix(in oklab, var(--thc-ce) 12%, transparent), transparent 70%)",
         }}
       />
       <motion.div
@@ -46,7 +46,7 @@ export function Hero({ stats }: { stats: HeroStats }) {
           subscribers — every entry, stop loss and target tracked in the open.
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          <Button asChild size="lg" className="thc-glow">
+          <Button asChild size="lg" className="thc-glow thc-btn-gradient">
             <Link href="/register">Register Premium</Link>
           </Button>
           <Button asChild size="lg" variant="outline" className="thc-glow">
@@ -73,8 +73,12 @@ export function Hero({ stats }: { stats: HeroStats }) {
         {statItems.map((stat) => (
           <div
             key={stat.label}
-            className="thc-glass thc-glow rounded-xl border border-white/5 px-4 py-5 text-center"
+            className="thc-glass thc-glow relative overflow-hidden rounded-xl border border-white/5 px-4 py-5 text-center"
           >
+            <span
+              className="absolute inset-x-0 top-0 h-[3px]"
+              style={{ backgroundImage: "var(--thc-gold-gradient)" }}
+            />
             <p className="font-heading text-2xl font-bold thc-gold-text sm:text-3xl">
               {stat.value}
             </p>

@@ -2,11 +2,11 @@ import { Navbar } from "@/components/site/navbar";
 import { Footer } from "@/components/site/footer";
 import { SignalsExplorer } from "@/components/signals/signals-explorer";
 import { prisma } from "@/lib/prisma";
-import type { SignalCardData } from "@/components/signals/signal-card";
+import type { SignalRow } from "@/components/signals/signals-explorer";
 
 export const revalidate = 60;
 
-async function getSignals(): Promise<SignalCardData[]> {
+async function getSignals(): Promise<SignalRow[]> {
   const signals = await prisma.signal.findMany({ orderBy: { signalTime: "desc" } });
   return signals.map((s) => ({
     id: s.id,

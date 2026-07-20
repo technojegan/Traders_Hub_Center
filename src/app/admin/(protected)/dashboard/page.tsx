@@ -5,8 +5,11 @@ import {
   BestWorstBarChart,
   CePeDonutChart,
   CumulativeLineChart,
+  MonthlyPerformanceChart,
   WinLossBarChart,
 } from "@/components/admin/dashboard-charts";
+
+export const dynamic = "force-dynamic";
 
 export default async function AdminDashboardPage() {
   const signals = await prisma.signal.findMany({ orderBy: { signalTime: "asc" } });
@@ -74,6 +77,10 @@ export default async function AdminDashboardPage() {
         <div className="thc-glass rounded-xl border border-white/5 p-4">
           <h2 className="mb-2 font-heading text-sm font-semibold">Best &amp; Worst Trades</h2>
           <BestWorstBarChart data={bestWorst} />
+        </div>
+        <div className="thc-glass rounded-xl border border-white/5 p-4 lg:col-span-2">
+          <h2 className="mb-2 font-heading text-sm font-semibold">Monthly Performance</h2>
+          <MonthlyPerformanceChart data={metrics.monthlyPerformance} />
         </div>
       </div>
     </div>

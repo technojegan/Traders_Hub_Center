@@ -63,7 +63,7 @@ export function LoginForm() {
         />
       </div>
       {error && <p className="text-sm text-[var(--thc-loss)]">{error}</p>}
-      <Button type="submit" disabled={loading} className="thc-glow mt-2">
+      <Button type="submit" disabled={loading} className="thc-glow thc-btn-gradient mt-2">
         {loading ? "Signing in…" : "Sign In"}
       </Button>
     </form>

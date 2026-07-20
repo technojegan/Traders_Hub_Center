@@ -30,7 +30,7 @@ export function Navbar() {
           >
             Admin
           </Link>
-          <Button asChild size="sm" className="thc-glow">
+          <Button asChild size="sm" className="thc-glow thc-btn-gradient">
             <Link href="/register">Register Premium</Link>
           </Button>
         </div>

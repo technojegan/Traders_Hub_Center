@@ -108,7 +108,7 @@ export function AddSignalForm() {
           placeholder={"77300 ce\nAbove -150\nSL -145\nTrgt -170\nNow -145\nselling price 170"}
           className="min-h-[180px] font-mono text-sm"
         />
-        <Button type="button" onClick={handleParse} className="thc-glow w-fit">
+        <Button type="button" onClick={handleParse} className="thc-glow thc-btn-gradient w-fit">
           Parse
         </Button>
 
@@ -130,7 +130,7 @@ export function AddSignalForm() {
               type="button"
               onClick={handleSaveAll}
               disabled={isPending}
-              className="thc-glow w-fit"
+              className="thc-glow thc-btn-gradient w-fit"
             >
               {isPending ? "Saving…" : `Save ${drafts.length} Signal${drafts.length === 1 ? "" : "s"}`}
             </Button>

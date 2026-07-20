@@ -46,6 +46,7 @@ export interface DashboardMetrics {
   peWinRate: number;
   cumulativeSeries: { date: string; cumulativePercent: number }[];
   winLossByDay: { date: string; wins: number; losses: number }[];
+  monthlyPerformance: { month: string; totalPercent: number }[];
 }
 
 function winRateOf(signals: SignalForMetrics[]): number {
@@ -92,6 +93,15 @@ export function computeDashboardMetrics(signals: SignalForMetrics[]): DashboardM
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([date, v]) => ({ date, ...v }));
 
+  const byMonth = new Map<string, number>();
+  for (const s of sortedClosed) {
+    const month = new Date(s.signalTime).toISOString().slice(0, 7);
+    byMonth.set(month, (byMonth.get(month) ?? 0) + (s.pnlPercent ?? 0));
+  }
+  const monthlyPerformance = Array.from(byMonth.entries())
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([month, totalPercent]) => ({ month, totalPercent: Math.round(totalPercent * 100) / 100 }));
+
   return {
     totalSignals: signals.length,
     closedSignals: closed.length,
@@ -106,5 +116,6 @@ export function computeDashboardMetrics(signals: SignalForMetrics[]): DashboardM
     peWinRate: winRateOf(pe),
     cumulativeSeries,
     winLossByDay,
+    monthlyPerformance,
   };
 }

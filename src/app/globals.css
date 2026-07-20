@@ -89,6 +89,11 @@
   --thc-win: #34d399;
   --thc-loss: #f87171;
   --thc-gold-gradient: linear-gradient(135deg, var(--thc-gold-start), var(--thc-gold-end));
+
+  /* Categorical: CE/PE are identity, not outcome — kept away from the
+     win/loss (green/red) hue family so a chart never reads as "PE = bad". */
+  --thc-ce: #3987e5;
+  --thc-pe: #d55181;
 }
 
 @layer base {
@@ -120,7 +125,9 @@
   }
 
   .thc-glass {
-    background: color-mix(in oklab, var(--card) 70%, transparent);
+    background:
+      linear-gradient(160deg, oklch(0.75 0.13 90 / 7%), transparent 45%),
+      color-mix(in oklab, var(--card) 70%, transparent);
     backdrop-filter: blur(14px);
     border: 1px solid oklch(1 0 0 / 10%);
   }
@@ -131,6 +138,36 @@
   .thc-glow:hover {
     box-shadow: 0 0 0 1px oklch(0.75 0.15 90 / 40%), 0 8px 40px -8px oklch(0.75 0.15 90 / 45%);
     transform: translateY(-2px);
+  }
+
+  /* Gradient-filled CTA — layers over shadcn's solid bg-primary */
+  .thc-btn-gradient {
+    background-image: linear-gradient(
+      120deg,
+      var(--thc-gold-start),
+      var(--thc-gold-end) 55%,
+      var(--thc-gold-start)
+    );
+    background-size: 200% auto;
+    background-position: 0% 50%;
+    color: #0b0b0d;
+    border: none;
+    transition: background-position 0.5s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  }
+  .thc-btn-gradient:hover {
+    background-position: 100% 50%;
+  }
+
+  /* Fixed ambient gradient mesh — sits behind all page content */
+  .thc-mesh-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+      radial-gradient(38% 32% at 12% 8%, color-mix(in oklab, var(--thc-gold-start) 20%, transparent), transparent 70%),
+      radial-gradient(32% 28% at 92% 18%, color-mix(in oklab, var(--thc-pe) 14%, transparent), transparent 70%),
+      radial-gradient(45% 38% at 50% 100%, color-mix(in oklab, var(--thc-ce) 10%, transparent), transparent 70%);
   }
 
   .thc-win-border {

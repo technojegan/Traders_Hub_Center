@@ -127,7 +127,7 @@ export function ManualSignalForm() {
           <Input value={form.sellPrice} onChange={(e) => set("sellPrice", e.target.value)} />
         </div>
       </div>
-      <Button type="submit" disabled={isPending} className="thc-glow w-fit">
+      <Button type="submit" disabled={isPending} className="thc-glow thc-btn-gradient w-fit">
         {isPending ? "Saving…" : "Save Signal"}
       </Button>
     </form>

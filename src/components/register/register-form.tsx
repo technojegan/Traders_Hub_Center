@@ -74,7 +74,7 @@ export function RegisterForm() {
         />
       </div>
       {error && <p className="text-sm text-[var(--thc-loss)]">{error}</p>}
-      <Button type="submit" disabled={isPending} className="thc-glow mt-2">
+      <Button type="submit" disabled={isPending} className="thc-glow thc-btn-gradient mt-2">
         {isPending ? "Registering…" : "Register Premium"}
       </Button>
     </form>

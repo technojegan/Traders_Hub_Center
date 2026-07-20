@@ -1,12 +1,13 @@
 "use client";
 
 import {
+  Area,
+  AreaChart,
   Bar,
   BarChart,
   CartesianGrid,
   Cell,
-  Line,
-  LineChart,
+  Legend,
   Pie,
   PieChart,
   ResponsiveContainer,
@@ -23,6 +24,13 @@ const chartTooltipStyle = {
   color: "var(--popover-foreground)",
 };
 
+const axisTick = { fontSize: 11, fill: "var(--muted-foreground)" };
+const grid = <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />;
+
+function legendText(value: string) {
+  return <span style={{ color: "var(--muted-foreground)", fontSize: 12 }}>{value}</span>;
+}
+
 export function CumulativeLineChart({
   data,
 }: {
@@ -30,20 +38,27 @@ export function CumulativeLineChart({
 }) {
   return (
     <ResponsiveContainer width="100%" height={280}>
-      <LineChart data={data} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
-        <XAxis dataKey="date" tick={{ fontSize: 11, fill: "var(--muted-foreground)" }} />
-        <YAxis tick={{ fontSize: 11, fill: "var(--muted-foreground)" }} />
+      <AreaChart data={data} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
+        <defs>
+          <linearGradient id="cumulativeFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--primary)" stopOpacity={0.55} />
+            <stop offset="100%" stopColor="var(--primary)" stopOpacity={0.03} />
+          </linearGradient>
+        </defs>
+        {grid}
+        <XAxis dataKey="date" tick={axisTick} />
+        <YAxis tick={axisTick} />
         <Tooltip contentStyle={chartTooltipStyle} />
-        <Line
+        <Area
           type="monotone"
           dataKey="cumulativePercent"
           stroke="var(--primary)"
           strokeWidth={2.5}
+          fill="url(#cumulativeFill)"
           dot={false}
           name="Cumulative %"
         />
-      </LineChart>
+      </AreaChart>
     </ResponsiveContainer>
   );
 }
@@ -56,12 +71,23 @@ export function WinLossBarChart({
   return (
     <ResponsiveContainer width="100%" height={280}>
       <BarChart data={data} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
-        <XAxis dataKey="date" tick={{ fontSize: 11, fill: "var(--muted-foreground)" }} />
-        <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: "var(--muted-foreground)" }} />
+        <defs>
+          <linearGradient id="winFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--thc-win)" stopOpacity={0.95} />
+            <stop offset="100%" stopColor="var(--thc-win)" stopOpacity={0.35} />
+          </linearGradient>
+          <linearGradient id="lossFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--thc-loss)" stopOpacity={0.95} />
+            <stop offset="100%" stopColor="var(--thc-loss)" stopOpacity={0.35} />
+          </linearGradient>
+        </defs>
+        {grid}
+        <XAxis dataKey="date" tick={axisTick} />
+        <YAxis allowDecimals={false} tick={axisTick} />
         <Tooltip contentStyle={chartTooltipStyle} />
-        <Bar dataKey="wins" fill="var(--thc-win)" name="Wins" radius={[3, 3, 0, 0]} />
-        <Bar dataKey="losses" fill="var(--thc-loss)" name="Losses" radius={[3, 3, 0, 0]} />
+        <Legend formatter={legendText} />
+        <Bar dataKey="wins" fill="url(#winFill)" name="Wins" radius={[3, 3, 0, 0]} />
+        <Bar dataKey="losses" fill="url(#lossFill)" name="Losses" radius={[3, 3, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );
@@ -74,28 +100,44 @@ export function CePeDonutChart({
   ceCount: number;
   peCount: number;
 }) {
+  const total = ceCount + peCount;
   const data = [
     { name: "CE", value: ceCount },
     { name: "PE", value: peCount },
   ];
-  const colors = ["var(--thc-win)", "var(--thc-loss)"];
+  const fills = ["url(#ceFill)", "url(#peFill)"];
 
   return (
     <ResponsiveContainer width="100%" height={280}>
       <PieChart>
+        <defs>
+          <linearGradient id="ceFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--thc-ce)" stopOpacity={1} />
+            <stop offset="100%" stopColor="var(--thc-ce)" stopOpacity={0.55} />
+          </linearGradient>
+          <linearGradient id="peFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--thc-pe)" stopOpacity={1} />
+            <stop offset="100%" stopColor="var(--thc-pe)" stopOpacity={0.55} />
+          </linearGradient>
+        </defs>
         <Pie
           data={data}
           dataKey="value"
           nameKey="name"
-          innerRadius={60}
-          outerRadius={90}
-          paddingAngle={2}
+          innerRadius={56}
+          outerRadius={88}
+          paddingAngle={3}
+          label={({ name, value }) =>
+            total > 0 ? `${name} ${Math.round(((value ?? 0) / total) * 100)}%` : name
+          }
+          labelLine={{ stroke: "var(--muted-foreground)", strokeWidth: 1 }}
         >
           {data.map((entry, index) => (
-            <Cell key={entry.name} fill={colors[index % colors.length]} />
+            <Cell key={entry.name} fill={fills[index % fills.length]} />
           ))}
         </Pie>
         <Tooltip contentStyle={chartTooltipStyle} />
+        <Legend formatter={(value) => legendText(`${value} (${value === "CE" ? ceCount : peCount})`)} />
       </PieChart>
     </ResponsiveContainer>
   );
@@ -109,15 +151,60 @@ export function BestWorstBarChart({
   return (
     <ResponsiveContainer width="100%" height={280}>
       <BarChart data={data} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
-        <XAxis dataKey="label" tick={{ fontSize: 11, fill: "var(--muted-foreground)" }} />
-        <YAxis tick={{ fontSize: 11, fill: "var(--muted-foreground)" }} />
+        <defs>
+          <linearGradient id="bwWinFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--thc-win)" stopOpacity={0.95} />
+            <stop offset="100%" stopColor="var(--thc-win)" stopOpacity={0.35} />
+          </linearGradient>
+          <linearGradient id="bwLossFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--thc-loss)" stopOpacity={0.95} />
+            <stop offset="100%" stopColor="var(--thc-loss)" stopOpacity={0.35} />
+          </linearGradient>
+        </defs>
+        {grid}
+        <XAxis dataKey="label" tick={axisTick} />
+        <YAxis tick={axisTick} />
         <Tooltip contentStyle={chartTooltipStyle} />
         <Bar dataKey="pnlPercent" name="P&L %" radius={[3, 3, 0, 0]}>
           {data.map((entry) => (
             <Cell
               key={entry.label}
-              fill={entry.pnlPercent >= 0 ? "var(--thc-win)" : "var(--thc-loss)"}
+              fill={entry.pnlPercent >= 0 ? "url(#bwWinFill)" : "url(#bwLossFill)"}
+            />
+          ))}
+        </Bar>
+      </BarChart>
+    </ResponsiveContainer>
+  );
+}
+
+export function MonthlyPerformanceChart({
+  data,
+}: {
+  data: { month: string; totalPercent: number }[];
+}) {
+  return (
+    <ResponsiveContainer width="100%" height={280}>
+      <BarChart data={data} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
+        <defs>
+          <linearGradient id="monthWinFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--thc-win)" stopOpacity={0.95} />
+            <stop offset="100%" stopColor="var(--thc-win)" stopOpacity={0.35} />
+          </linearGradient>
+          <linearGradient id="monthLossFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--thc-loss)" stopOpacity={0.95} />
+            <stop offset="100%" stopColor="var(--thc-loss)" stopOpacity={0.35} />
+          </linearGradient>
+        </defs>
+        {grid}
+        <XAxis dataKey="month" tick={axisTick} />
+        <YAxis tick={axisTick} />
+        <Tooltip contentStyle={chartTooltipStyle} />
+        <Bar dataKey="totalPercent" name="Total Capture %" radius={[3, 3, 0, 0]}>
+          {data.map((entry) => (
+            <Cell
+              key={entry.month}
+              fill={entry.totalPercent >= 0 ? "url(#monthWinFill)" : "url(#monthLossFill)"}
             />
           ))}
         </Bar>
