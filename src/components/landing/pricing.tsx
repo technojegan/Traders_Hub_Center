@@ -13,7 +13,7 @@ function DhanOfferCard() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.5, delay: 0.1 }}
-      className="thc-glass thc-glow relative overflow-hidden rounded-2xl border border-white/5 p-6 lg:max-w-xs"
+      className="thc-glass thc-glow relative overflow-hidden rounded-2xl border border-white/5 p-6 text-center lg:max-w-xs"
     >
       <span
         className="absolute inset-x-0 top-0 h-[3px]"
