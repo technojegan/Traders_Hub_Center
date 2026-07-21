@@ -39,6 +39,15 @@ export function Pricing() {
             </span>
           </div>
 
+          <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-[var(--thc-win)]/40 bg-[var(--thc-win)]/10 px-3 py-1.5 text-xs">
+            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--thc-win)]" />
+            <span className="text-foreground/90">
+              Existing members: <span className="font-semibold text-[var(--thc-win)]">
+                ₹{BATCH_INFO.existingMemberPriceInr.toLocaleString("en-IN")} only
+              </span>
+            </span>
+          </div>
+
           <ul className="mt-6 flex flex-col gap-2.5 text-sm">
             {BATCH_INFO.benefits.map((benefit) => (
               <li key={benefit} className="flex items-start gap-2.5">

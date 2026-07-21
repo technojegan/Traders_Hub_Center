@@ -12,6 +12,7 @@ export const DEMO_ADMIN_CREDENTIALS = {
 export const BATCH_INFO = {
   batchNumber: 13,
   priceInr: 4999,
+  existingMemberPriceInr: 2999,
   startDate: "2026-07-16",
   endDate: "2026-08-15",
   zoomTimings: ["9:00 AM – 11:30 AM", "2:00 PM – 3:30 PM"],
