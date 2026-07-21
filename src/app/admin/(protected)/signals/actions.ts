@@ -47,6 +47,7 @@ export async function closeSignal(id: string, sellPrice: number) {
 
   revalidatePath("/admin/signals");
   revalidatePath("/signals");
+  revalidatePath("/dashboard");
   revalidatePath("/admin/dashboard");
   revalidatePath("/");
 

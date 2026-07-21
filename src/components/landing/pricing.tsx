@@ -61,7 +61,7 @@ export function Pricing() {
 
           <p className="mt-6 text-xs text-muted-foreground">
             We don&apos;t promise a return number — check our actual{" "}
-            <Link href="/signals" className="text-primary underline underline-offset-2">
+            <Link href="/dashboard" className="text-primary underline underline-offset-2">
               Win Rate and Total Capture %
             </Link>{" "}
             above, computed live from every signal we&apos;ve published. {BATCH_INFO.refundPolicy}

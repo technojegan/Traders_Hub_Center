@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { AccuracyTarget } from "@/components/landing/accuracy-target";
 
@@ -21,8 +22,11 @@ export function AccuracySection() {
           <p className="mt-3 text-sm text-muted-foreground sm:text-base">
             Every call gets a defined entry, stop loss, and target before it&apos;s posted —
             no vague hunches, no moving the goalposts after the fact. Our live Win Rate and
-            Total Capture % above are the same numbers you can verify on{" "}
-            <span className="text-foreground">Signals Overview</span>, trade by trade.
+            Total Capture % above are the same numbers you can verify on the{" "}
+            <Link href="/dashboard" className="text-primary underline underline-offset-2">
+              Dashboard
+            </Link>
+            , trade by trade.
           </p>
         </motion.div>
       </div>

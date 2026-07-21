@@ -37,8 +37,11 @@ export function Footer() {
             <Link href="/register" className="hover:text-primary">
               Register Premium
             </Link>
+            <Link href="/dashboard" className="hover:text-primary">
+              Dashboard
+            </Link>
             <Link href="/signals" className="hover:text-primary">
-              Signals Overview
+              Signals
             </Link>
           </div>
         </div>

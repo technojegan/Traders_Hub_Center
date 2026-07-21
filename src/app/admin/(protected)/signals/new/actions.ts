@@ -83,6 +83,7 @@ export async function createSignals(inputs: SignalInput[]) {
   }
 
   revalidatePath("/signals");
+  revalidatePath("/dashboard");
   revalidatePath("/admin/dashboard");
   revalidatePath("/");
 

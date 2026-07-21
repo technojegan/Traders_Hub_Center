@@ -5,9 +5,7 @@ import { SectionNumber } from "@/components/admin/section-number";
 import { RecentSignalsList, type RecentSignalItem } from "@/components/admin/recent-signals-list";
 import {
   BestWorstBarChart,
-  CePeDonutChart,
   CumulativeLineChart,
-  MonthlyPerformanceChart,
   WinLossBarChart,
   WinRateDonutChart,
 } from "@/components/admin/dashboard-charts";
@@ -75,12 +73,12 @@ export function DashboardContent({
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-3">
         <div className="thc-glass relative rounded-xl border border-white/5 p-4">
           <div className="mb-2 flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <SectionNumber n={3} />
-              <h2 className="font-heading text-sm font-semibold">Cumulative % Over Time</h2>
+              <h2 className="font-heading text-sm font-semibold">Cumulative %</h2>
             </div>
             <div className="thc-gold-border rounded-lg px-2.5 py-1 text-right">
               <p
@@ -103,43 +101,30 @@ export function DashboardContent({
         <div className="thc-glass rounded-xl border border-white/5 p-4">
           <div className="mb-2 flex items-center gap-2">
             <SectionNumber n={4} />
-            <h2 className="font-heading text-sm font-semibold">Win Rate</h2>
-          </div>
-          <WinRateDonutChart wins={metrics.winCount} losses={metrics.lossCount} />
-        </div>
-        <div className="thc-glass rounded-xl border border-white/5 p-4">
-          <div className="mb-2 flex items-center gap-2">
-            <SectionNumber n={5} />
             <h2 className="font-heading text-sm font-semibold">Win % vs Loss % by Day</h2>
           </div>
           <WinLossBarChart data={metrics.winLossByDay} />
         </div>
         <div className="thc-glass rounded-xl border border-white/5 p-4">
           <div className="mb-2 flex items-center gap-2">
-            <SectionNumber n={6} />
-            <h2 className="font-heading text-sm font-semibold">
-              CE vs PE ({metrics.ceCount} / {metrics.peCount})
-            </h2>
-          </div>
-          <CePeDonutChart ceCount={metrics.ceCount} peCount={metrics.peCount} />
-        </div>
-        <div className="thc-glass rounded-xl border border-white/5 p-4">
-          <div className="mb-2 flex items-center gap-2">
-            <SectionNumber n={7} />
+            <SectionNumber n={5} />
             <h2 className="font-heading text-sm font-semibold">Best &amp; Worst Trades</h2>
           </div>
           <BestWorstBarChart data={bestWorst} />
         </div>
-        <div className="thc-glass rounded-xl border border-white/5 p-4 lg:col-span-2">
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div className="thc-glass rounded-xl border border-white/5 p-4">
           <div className="mb-2 flex items-center gap-2">
-            <SectionNumber n={8} />
-            <h2 className="font-heading text-sm font-semibold">Monthly Performance</h2>
+            <SectionNumber n={6} />
+            <h2 className="font-heading text-sm font-semibold">Win Rate</h2>
           </div>
-          <MonthlyPerformanceChart data={metrics.monthlyPerformance} />
+          <WinRateDonutChart wins={metrics.winCount} losses={metrics.lossCount} />
         </div>
-        <div className="thc-glass rounded-xl border border-white/5 p-4 lg:col-span-2">
+        <div className="thc-glass rounded-xl border border-white/5 p-4">
           <div className="mb-2 flex items-center gap-2">
-            <SectionNumber n={9} />
+            <SectionNumber n={7} />
             <h2 className="font-heading text-sm font-semibold">Recent Signals</h2>
           </div>
           <RecentSignalsList signals={recentSignals} />
