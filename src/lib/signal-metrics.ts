@@ -49,6 +49,7 @@ export interface DashboardMetrics {
     date: string;
     profitPercent: number;
     lossPercent: number;
+    netPercent: number;
   }[];
   winCount: number;
   lossCount: number;
@@ -99,11 +100,16 @@ export function computeDashboardMetrics(signals: SignalForMetrics[]): DashboardM
   }
   const winLossByDay = Array.from(byDay.entries())
     .sort(([a], [b]) => a.localeCompare(b))
-    .map(([date, v]) => ({
-      date,
-      profitPercent: Math.round(v.profitPercent * 100) / 100,
-      lossPercent: Math.round(v.lossPercent * 100) / 100,
-    }));
+    .map(([date, v]) => {
+      const profitPercent = Math.round(v.profitPercent * 100) / 100;
+      const lossPercent = Math.round(v.lossPercent * 100) / 100;
+      return {
+        date,
+        profitPercent,
+        lossPercent,
+        netPercent: Math.round((profitPercent + lossPercent) * 100) / 100,
+      };
+    });
 
   return {
     totalSignals: signals.length,

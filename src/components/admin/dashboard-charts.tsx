@@ -17,11 +17,6 @@ import {
   YAxis,
 } from "recharts";
 
-function percentLabel(value: unknown) {
-  const n = typeof value === "number" ? value : 0;
-  return Math.abs(n) >= 4 ? `${n >= 0 ? "+" : ""}${Math.round(n)}` : "";
-}
-
 const chartTooltipStyle = {
   backgroundColor: "var(--popover)",
   border: "1px solid rgba(255,255,255,0.1)",
@@ -70,19 +65,41 @@ export function CumulativeLineChart({
   );
 }
 
+interface NetLabelProps {
+  x?: number | string;
+  y?: number | string;
+  width?: number | string;
+  value?: number | string;
+}
+
+function NetPercentLabel({ x = 0, y = 0, width = 0, value }: NetLabelProps) {
+  if (typeof value !== "number") return null;
+  const cx = Number(x);
+  const cy = Number(y);
+  const cw = Number(width);
+  const isPositive = value >= 0;
+  return (
+    <text
+      x={cx + cw / 2}
+      y={cy - 6}
+      textAnchor="middle"
+      fontSize={10}
+      fontWeight={700}
+      fill={isPositive ? "var(--thc-win)" : "var(--thc-loss)"}
+    >
+      {`${isPositive ? "+" : ""}${value}%`}
+    </text>
+  );
+}
+
 export function WinLossBarChart({
   data,
 }: {
-  data: { date: string; profitPercent: number; lossPercent: number }[];
+  data: { date: string; profitPercent: number; lossPercent: number; netPercent: number }[];
 }) {
   return (
     <ResponsiveContainer width="100%" height={280}>
-      <BarChart
-        data={data}
-        margin={{ top: 8, right: 16, left: 0, bottom: 0 }}
-        barCategoryGap="20%"
-        barGap={4}
-      >
+      <BarChart data={data} margin={{ top: 20, right: 16, left: 0, bottom: 0 }} barCategoryGap="30%">
         <defs>
           <linearGradient id="winFill" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="var(--thc-win)" stopOpacity={0.95} />
@@ -100,36 +117,22 @@ export function WinLossBarChart({
         <Legend formatter={legendText} />
         <Bar
           dataKey="profitPercent"
+          stackId="pnl"
           fill="url(#winFill)"
           name="Total Profit %"
           radius={[3, 3, 0, 0]}
           isAnimationActive={false}
         >
-          <LabelList
-            dataKey="profitPercent"
-            position="top"
-            formatter={percentLabel}
-            fill="var(--thc-win)"
-            fontSize={9}
-            fontWeight={700}
-          />
+          <LabelList dataKey="netPercent" position="top" content={NetPercentLabel} />
         </Bar>
         <Bar
           dataKey="lossPercent"
+          stackId="pnl"
           fill="url(#lossFill)"
           name="Total Loss %"
           radius={[0, 0, 3, 3]}
           isAnimationActive={false}
-        >
-          <LabelList
-            dataKey="lossPercent"
-            position="bottom"
-            formatter={percentLabel}
-            fill="var(--thc-loss)"
-            fontSize={9}
-            fontWeight={700}
-          />
-        </Bar>
+        />
       </BarChart>
     </ResponsiveContainer>
   );
