@@ -191,11 +191,45 @@ export function WinRateDonutChart({ wins, losses }: { wins: number; losses: numb
   );
 }
 
-export function OngoingRiskRewardChart({
-  data,
+interface RiskRewardPoint {
+  label: string;
+  buyPrice: number;
+  sellTargetPrice: number;
+  sellSlPrice: number;
+  gainPercent: number;
+  lossPercent: number;
+}
+
+function RiskRewardTooltip({
+  active,
+  payload,
 }: {
-  data: { label: string; gainPercent: number; lossPercent: number }[];
+  active?: boolean;
+  payload?: { payload: RiskRewardPoint }[];
 }) {
+  if (!active || !payload || payload.length === 0) return null;
+  const point = payload[0].payload;
+  return (
+    <div
+      className="rounded-lg border border-white/10 px-3 py-2 text-xs"
+      style={{ backgroundColor: "var(--popover)", color: "var(--popover-foreground)" }}
+    >
+      <p className="mb-1.5 font-semibold">{point.label}</p>
+      <p style={{ color: "var(--muted-foreground)" }}>
+        Buy (Entry): <span style={{ color: "var(--popover-foreground)" }}>₹{point.buyPrice}</span>
+      </p>
+      <p style={{ color: "var(--thc-win)" }}>
+        Sell (Target): ₹{point.sellTargetPrice} ({point.gainPercent >= 0 ? "+" : ""}
+        {point.gainPercent}%)
+      </p>
+      <p style={{ color: "var(--thc-loss)" }}>
+        Sell (SL): ₹{point.sellSlPrice} ({point.lossPercent}%)
+      </p>
+    </div>
+  );
+}
+
+export function OngoingRiskRewardChart({ data }: { data: RiskRewardPoint[] }) {
   return (
     <ResponsiveContainer width="100%" height={220}>
       <BarChart data={data} margin={{ top: 8, right: 16, left: 0, bottom: 0 }} barGap={4}>
@@ -212,7 +246,7 @@ export function OngoingRiskRewardChart({
         {grid}
         <XAxis dataKey="label" tick={axisTick} />
         <YAxis unit="%" tick={axisTick} />
-        <Tooltip contentStyle={chartTooltipStyle} />
+        <Tooltip content={<RiskRewardTooltip />} cursor={{ fill: "rgba(255,255,255,0.04)" }} />
         <Legend formatter={legendText} />
         <Bar
           dataKey="gainPercent"

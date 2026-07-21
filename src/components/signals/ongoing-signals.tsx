@@ -19,6 +19,9 @@ function toRiskReward(signal: SignalRow) {
   );
   return {
     label: `${signal.strike}${signal.optionType}`,
+    buyPrice: signal.entryPrice,
+    sellTargetPrice: bestTarget,
+    sellSlPrice: signal.stopLoss,
     gainPercent: Math.round(gainPercent * 100) / 100,
     lossPercent: Math.round(lossPercent * 100) / 100,
   };
