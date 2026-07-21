@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   Area,
   AreaChart,
@@ -7,7 +8,6 @@ import {
   BarChart,
   CartesianGrid,
   Cell,
-  LabelList,
   Legend,
   Pie,
   PieChart,
@@ -22,6 +22,16 @@ const chartTooltipStyle = {
   border: "1px solid rgba(255,255,255,0.1)",
   borderRadius: 8,
   fontSize: 12,
+  color: "var(--popover-foreground)",
+};
+
+const chartTooltipLabelStyle = {
+  color: "var(--popover-foreground)",
+  marginBottom: 4,
+  fontWeight: 600,
+};
+
+const chartTooltipItemStyle = {
   color: "var(--popover-foreground)",
 };
 
@@ -49,7 +59,10 @@ export function CumulativeLineChart({
         {grid}
         <XAxis dataKey="date" tick={axisTick} />
         <YAxis tick={axisTick} />
-        <Tooltip contentStyle={chartTooltipStyle} />
+        <Tooltip contentStyle={chartTooltipStyle}
+          labelStyle={chartTooltipLabelStyle}
+          itemStyle={chartTooltipItemStyle}
+        />
         <Area
           type="monotone"
           dataKey="cumulativePercent"
@@ -65,76 +78,160 @@ export function CumulativeLineChart({
   );
 }
 
-interface NetLabelProps {
-  x?: number | string;
-  y?: number | string;
-  width?: number | string;
-  value?: number | string;
+interface DayPnl {
+  date: string;
+  profitPercent: number;
+  lossPercent: number;
+  netPercent: number;
 }
 
-function NetPercentLabel({ x = 0, y = 0, width = 0, value }: NetLabelProps) {
-  if (typeof value !== "number") return null;
-  const cx = Number(x);
-  const cy = Number(y);
-  const cw = Number(width);
-  const isPositive = value >= 0;
-  return (
-    <text
-      x={cx + cw / 2}
-      y={cy - 6}
-      textAnchor="middle"
-      fontSize={10}
-      fontWeight={700}
-      fill={isPositive ? "var(--thc-win)" : "var(--thc-loss)"}
-    >
-      {`${isPositive ? "+" : ""}${value}%`}
-    </text>
-  );
+const CHART_WIDTH = 640;
+const CHART_HEIGHT = 260;
+const CHART_PAD = { top: 24, right: 12, bottom: 44, left: 34 };
+
+function niceBound(value: number) {
+  return Math.ceil(Math.max(Math.abs(value), 5) / 5) * 5;
 }
 
-export function WinLossBarChart({
-  data,
-}: {
-  data: { date: string; profitPercent: number; lossPercent: number; netPercent: number }[];
-}) {
+// Hand-rolled SVG instead of recharts here: recharts' stacked/array-valued Bar
+// rendering (needed for a single diverging profit/loss column) didn't combine
+// the two series into one bar in this version — each still got its own X slot.
+export function WinLossBarChart({ data }: { data: DayPnl[] }) {
+  const [hovered, setHovered] = useState<number | null>(null);
+
+  const innerWidth = CHART_WIDTH - CHART_PAD.left - CHART_PAD.right;
+  const innerHeight = CHART_HEIGHT - CHART_PAD.top - CHART_PAD.bottom;
+
+  const maxProfit = Math.max(0, ...data.map((d) => d.profitPercent));
+  const maxLoss = Math.min(0, ...data.map((d) => d.lossPercent));
+  const yMax = niceBound(maxProfit);
+  const yMin = -niceBound(Math.abs(maxLoss));
+  const span = yMax - yMin || 1;
+
+  const yScale = (v: number) => CHART_PAD.top + ((yMax - v) / span) * innerHeight;
+  const zeroY = yScale(0);
+
+  const slot = innerWidth / Math.max(data.length, 1);
+  const barWidth = Math.min(28, slot * 0.5);
+  const yTicks = Array.from(new Set([yMax, yMax / 2, 0, yMin / 2, yMin]));
+
   return (
-    <ResponsiveContainer width="100%" height={280}>
-      <BarChart data={data} margin={{ top: 20, right: 16, left: 0, bottom: 0 }} barCategoryGap="30%">
-        <defs>
-          <linearGradient id="winFill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="var(--thc-win)" stopOpacity={0.95} />
-            <stop offset="100%" stopColor="var(--thc-win)" stopOpacity={0.35} />
-          </linearGradient>
-          <linearGradient id="lossFill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="var(--thc-loss)" stopOpacity={0.35} />
-            <stop offset="100%" stopColor="var(--thc-loss)" stopOpacity={0.95} />
-          </linearGradient>
-        </defs>
-        {grid}
-        <XAxis dataKey="date" tick={axisTick} />
-        <YAxis unit="%" tick={axisTick} />
-        <Tooltip contentStyle={chartTooltipStyle} />
-        <Legend formatter={legendText} />
-        <Bar
-          dataKey="profitPercent"
-          stackId="pnl"
-          fill="url(#winFill)"
-          name="Total Profit %"
-          radius={[3, 3, 0, 0]}
-          isAnimationActive={false}
+    <div className="relative">
+      <svg viewBox={`0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`} className="w-full" style={{ height: 280 }}>
+        {yTicks.map((tick) => (
+          <g key={tick}>
+            <line
+              x1={CHART_PAD.left}
+              x2={CHART_WIDTH - CHART_PAD.right}
+              y1={yScale(tick)}
+              y2={yScale(tick)}
+              stroke={tick === 0 ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.08)"}
+              strokeDasharray={tick === 0 ? undefined : "3 3"}
+            />
+            <text
+              x={CHART_PAD.left - 6}
+              y={yScale(tick) + 3}
+              textAnchor="end"
+              fontSize={10}
+              fill="var(--muted-foreground)"
+            >
+              {`${Math.round(tick)}%`}
+            </text>
+          </g>
+        ))}
+
+        {data.map((d, i) => {
+          const cx = CHART_PAD.left + slot * i + slot / 2;
+          const barX = cx - barWidth / 2;
+          const profitY = yScale(Math.max(d.profitPercent, 0));
+          const lossY = yScale(Math.min(d.lossPercent, 0));
+          const isHovered = hovered === i;
+
+          return (
+            <g
+              key={d.date}
+              onMouseEnter={() => setHovered(i)}
+              onMouseLeave={() => setHovered((h) => (h === i ? null : h))}
+            >
+              <rect x={barX - 4} y={CHART_PAD.top} width={barWidth + 8} height={innerHeight} fill="transparent" />
+              {d.profitPercent > 0 && (
+                <rect
+                  x={barX}
+                  y={profitY}
+                  width={barWidth}
+                  height={Math.max(zeroY - profitY, 0)}
+                  rx={3}
+                  fill="var(--thc-win)"
+                  opacity={isHovered ? 1 : 0.85}
+                />
+              )}
+              {d.lossPercent < 0 && (
+                <rect
+                  x={barX}
+                  y={zeroY}
+                  width={barWidth}
+                  height={Math.max(lossY - zeroY, 0)}
+                  rx={3}
+                  fill="var(--thc-loss)"
+                  opacity={isHovered ? 1 : 0.85}
+                />
+              )}
+              <text
+                x={cx}
+                y={Math.min(profitY, zeroY) - 6}
+                textAnchor="middle"
+                fontSize={10}
+                fontWeight={700}
+                fill={d.netPercent >= 0 ? "var(--thc-win)" : "var(--thc-loss)"}
+              >
+                {`${d.netPercent >= 0 ? "+" : ""}${d.netPercent}%`}
+              </text>
+              <text
+                x={cx}
+                y={CHART_HEIGHT - 10}
+                textAnchor="end"
+                fontSize={10}
+                fill="var(--muted-foreground)"
+                transform={`rotate(-90 ${cx} ${CHART_HEIGHT - 10})`}
+              >
+                {d.date.slice(5)}
+              </text>
+            </g>
+          );
+        })}
+      </svg>
+
+      {hovered != null && data[hovered] && (
+        <div
+          className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full rounded-lg border border-white/10 px-3 py-2 text-xs shadow-lg"
+          style={{
+            backgroundColor: "var(--popover)",
+            color: "var(--popover-foreground)",
+            left: `${((CHART_PAD.left + slot * hovered + slot / 2) / CHART_WIDTH) * 100}%`,
+            top: `${(yScale(Math.max(data[hovered].profitPercent, 0)) / CHART_HEIGHT) * 100}%`,
+          }}
         >
-          <LabelList dataKey="netPercent" position="top" content={NetPercentLabel} />
-        </Bar>
-        <Bar
-          dataKey="lossPercent"
-          stackId="pnl"
-          fill="url(#lossFill)"
-          name="Total Loss %"
-          radius={[0, 0, 3, 3]}
-          isAnimationActive={false}
-        />
-      </BarChart>
-    </ResponsiveContainer>
+          <p className="mb-1 font-semibold">{data[hovered].date}</p>
+          <p style={{ color: "var(--thc-win)" }}>Profit: +{data[hovered].profitPercent}%</p>
+          <p style={{ color: "var(--thc-loss)" }}>Loss: {data[hovered].lossPercent}%</p>
+          <p>
+            Net: {data[hovered].netPercent >= 0 ? "+" : ""}
+            {data[hovered].netPercent}%
+          </p>
+        </div>
+      )}
+
+      <div className="mt-2 flex items-center justify-center gap-4 text-xs text-muted-foreground">
+        <span className="flex items-center gap-1.5">
+          <span className="h-2 w-2 rounded-sm" style={{ backgroundColor: "var(--thc-win)" }} />
+          Total Profit %
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="h-2 w-2 rounded-sm" style={{ backgroundColor: "var(--thc-loss)" }} />
+          Total Loss %
+        </span>
+      </div>
+    </div>
   );
 }
 
@@ -176,7 +273,10 @@ export function WinRateDonutChart({ wins, losses }: { wins: number; losses: numb
               <Cell key={entry.name} fill={fills[index % fills.length]} />
             ))}
           </Pie>
-          <Tooltip contentStyle={chartTooltipStyle} />
+          <Tooltip contentStyle={chartTooltipStyle}
+          labelStyle={chartTooltipLabelStyle}
+          itemStyle={chartTooltipItemStyle}
+        />
           <Legend
             formatter={(value) => legendText(`${value} (${value === "Wins" ? wins : losses})`)}
           />
@@ -277,7 +377,7 @@ export function BestWorstBarChart({
 }) {
   return (
     <ResponsiveContainer width="100%" height={280}>
-      <BarChart data={data} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
+      <BarChart data={data} margin={{ top: 8, right: 16, left: 0, bottom: 24 }}>
         <defs>
           <linearGradient id="bwWinFill" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="var(--thc-win)" stopOpacity={0.95} />
@@ -289,9 +389,19 @@ export function BestWorstBarChart({
           </linearGradient>
         </defs>
         {grid}
-        <XAxis dataKey="label" tick={axisTick} />
+        <XAxis
+          dataKey="label"
+          tick={axisTick}
+          angle={-90}
+          textAnchor="end"
+          interval={0}
+          height={70}
+        />
         <YAxis tick={axisTick} />
-        <Tooltip contentStyle={chartTooltipStyle} />
+        <Tooltip contentStyle={chartTooltipStyle}
+          labelStyle={chartTooltipLabelStyle}
+          itemStyle={chartTooltipItemStyle}
+        />
         <Bar dataKey="pnlPercent" name="P&L %" radius={[3, 3, 0, 0]} isAnimationActive={false}>
           {data.map((entry) => (
             <Cell

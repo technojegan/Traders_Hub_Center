@@ -131,14 +131,17 @@ export function computeDashboardMetrics(signals: SignalForMetrics[]): DashboardM
 }
 
 export function computeBestWorstTrades<
-  T extends Pick<Signal, "strike" | "optionType" | "pnlPercent">,
+  T extends Pick<Signal, "strike" | "optionType" | "pnlPercent" | "signalTime">,
 >(signals: T[], n = 5) {
   const closed = signals.filter((s) => s.pnlPercent != null);
   return [...closed]
     .sort((a, b) => (b.pnlPercent ?? 0) - (a.pnlPercent ?? 0))
     .filter((_, i, arr) => i < n || i >= arr.length - n)
     .map((s) => ({
-      label: `${s.strike} ${s.optionType}`,
+      label: new Date(s.signalTime).toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "short",
+      }),
       pnlPercent: Math.round((s.pnlPercent ?? 0) * 100) / 100,
     }));
 }

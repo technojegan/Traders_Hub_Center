@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn, formatSignalDate, formatSignalTime } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -143,10 +143,7 @@ export function OngoingSignals({ signals }: { signals: SignalRow[] }) {
                   <TableCell>{signal.stopLoss}</TableCell>
                   <TableCell>{signal.targets.join(", ")}</TableCell>
                   <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
-                    {new Date(signal.signalTime).toLocaleDateString("en-IN", {
-                      day: "2-digit",
-                      month: "short",
-                    })}
+                    {formatSignalDate(signal.signalTime)} {formatSignalTime(signal.signalTime)}
                   </TableCell>
                 </TableRow>
               ))

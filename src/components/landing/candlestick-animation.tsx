@@ -34,10 +34,6 @@ const CANDLES: Candle[] = [
   { x: 478, bodyTop: 20, bodyBottom: 38, wickTop: 12, wickBottom: 46, up: true },
 ];
 
-const TREND_POINTS = CANDLES.map((c) => `${c.x + CANDLE_WIDTH / 2},${(c.bodyTop + c.bodyBottom) / 2}`).join(
-  " ",
-);
-
 export function CandlestickAnimation({ className }: { className?: string }) {
   return (
     <svg
@@ -74,18 +70,6 @@ export function CandlestickAnimation({ className }: { className?: string }) {
           />
         </motion.g>
       ))}
-
-      <motion.polyline
-        points={TREND_POINTS}
-        fill="none"
-        stroke="var(--thc-gold-start)"
-        strokeWidth={2.5}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        initial={{ pathLength: 0, opacity: 0 }}
-        animate={{ pathLength: 1, opacity: 0.9 }}
-        transition={{ duration: 1.6, delay: 0.6, ease: "easeInOut" }}
-      />
     </svg>
   );
 }

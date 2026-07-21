@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
+import { cn, formatSignalDate, formatSignalTime } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -102,10 +102,8 @@ export function ManageSignalsTable({ signals }: { signals: ManageSignalRow[] }) 
               return (
                 <TableRow key={signal.id} className="border-b-white/5">
                   <TableCell className="hidden whitespace-nowrap text-muted-foreground sm:table-cell">
-                    {new Date(signal.signalTime).toLocaleDateString("en-IN", {
-                      day: "2-digit",
-                      month: "short",
-                    })}
+                    {formatSignalDate(signal.signalTime)}{" "}
+                    <span className="text-xs">{formatSignalTime(signal.signalTime)}</span>
                   </TableCell>
                   <TableCell className="whitespace-nowrap font-medium">
                     <div className="flex items-center gap-1.5">

@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, formatSignalDate, formatSignalTime } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import {
   Select,
@@ -253,10 +253,8 @@ export function SignalsExplorer({ signals }: { signals: SignalRow[] }) {
                       )}
                     >
                       <TableCell className="hidden whitespace-nowrap text-muted-foreground sm:table-cell">
-                        {new Date(signal.signalTime).toLocaleDateString("en-IN", {
-                          day: "2-digit",
-                          month: "short",
-                        })}
+                        {formatSignalDate(signal.signalTime)}{" "}
+                        <span className="text-xs">{formatSignalTime(signal.signalTime)}</span>
                       </TableCell>
                       <TableCell className="whitespace-nowrap font-medium">
                         <div className="flex items-center gap-1.5">
