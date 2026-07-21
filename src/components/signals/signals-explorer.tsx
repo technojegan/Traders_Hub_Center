@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -41,7 +42,8 @@ const STATUS_LABEL: Record<SignalRow["status"], string> = {
 
 type OptionFilter = "ALL" | "CE" | "PE";
 type ResultFilter = "ALL" | "WIN" | "LOSS" | "OPEN";
-type SortOrder = "NEWEST" | "OLDEST";
+type SortColumn = "date" | "strike" | "entry" | "sl" | "pnl";
+type SortDirection = "asc" | "desc";
 
 function outcomeClass(pnlPercent: number | null) {
   if (pnlPercent == null) return "border-l-[var(--thc-gold-start)]";
@@ -50,10 +52,67 @@ function outcomeClass(pnlPercent: number | null) {
   return "border-l-[var(--thc-gold-start)]";
 }
 
+function sortValue(signal: SignalRow, column: SortColumn): number {
+  switch (column) {
+    case "date":
+      return new Date(signal.signalTime).getTime();
+    case "strike":
+      return signal.strike;
+    case "entry":
+      return signal.entryPrice;
+    case "sl":
+      return signal.stopLoss;
+    case "pnl":
+      return signal.pnlPercent ?? Number.NEGATIVE_INFINITY;
+  }
+}
+
+const filterTriggerClass =
+  "h-6 w-fit gap-1 border-none bg-transparent px-1 text-[10px] font-medium normal-case text-muted-foreground hover:text-foreground data-[size=sm]:h-6";
+
+function SortButton({
+  label,
+  column,
+  active,
+  direction,
+  onSort,
+}: {
+  label: string;
+  column: SortColumn;
+  active: boolean;
+  direction: SortDirection;
+  onSort: (column: SortColumn) => void;
+}) {
+  const Icon = active ? (direction === "asc" ? ArrowUp : ArrowDown) : ArrowUpDown;
+  return (
+    <button
+      type="button"
+      onClick={() => onSort(column)}
+      className={cn(
+        "inline-flex items-center gap-1 transition-colors hover:text-foreground",
+        active && "text-foreground",
+      )}
+    >
+      {label}
+      <Icon className="size-3" />
+    </button>
+  );
+}
+
 export function SignalsExplorer({ signals }: { signals: SignalRow[] }) {
   const [optionFilter, setOptionFilter] = useState<OptionFilter>("ALL");
   const [resultFilter, setResultFilter] = useState<ResultFilter>("ALL");
-  const [sortOrder, setSortOrder] = useState<SortOrder>("NEWEST");
+  const [sortColumn, setSortColumn] = useState<SortColumn>("date");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
+
+  function handleSort(column: SortColumn) {
+    if (column === sortColumn) {
+      setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
+    } else {
+      setSortColumn(column);
+      setSortDirection("desc");
+    }
+  }
 
   const filtered = useMemo(() => {
     let list = signals;
@@ -71,51 +130,16 @@ export function SignalsExplorer({ signals }: { signals: SignalRow[] }) {
     }
 
     return [...list].sort((a, b) => {
-      const diff = new Date(a.signalTime).getTime() - new Date(b.signalTime).getTime();
-      return sortOrder === "NEWEST" ? -diff : diff;
+      const diff = sortValue(a, sortColumn) - sortValue(b, sortColumn);
+      return sortDirection === "asc" ? diff : -diff;
     });
-  }, [signals, optionFilter, resultFilter, sortOrder]);
+  }, [signals, optionFilter, resultFilter, sortColumn, sortDirection]);
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap items-center gap-3">
-        <Select value={optionFilter} onValueChange={(v) => setOptionFilter(v as OptionFilter)}>
-          <SelectTrigger className="w-[120px]">
-            <SelectValue placeholder="Type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="ALL">All Types</SelectItem>
-            <SelectItem value="CE">CE only</SelectItem>
-            <SelectItem value="PE">PE only</SelectItem>
-          </SelectContent>
-        </Select>
-
-        <Select value={resultFilter} onValueChange={(v) => setResultFilter(v as ResultFilter)}>
-          <SelectTrigger className="w-[140px]">
-            <SelectValue placeholder="Result" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="ALL">All Results</SelectItem>
-            <SelectItem value="WIN">Wins</SelectItem>
-            <SelectItem value="LOSS">Losses</SelectItem>
-            <SelectItem value="OPEN">Open</SelectItem>
-          </SelectContent>
-        </Select>
-
-        <Select value={sortOrder} onValueChange={(v) => setSortOrder(v as SortOrder)}>
-          <SelectTrigger className="w-[140px]">
-            <SelectValue placeholder="Sort" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="NEWEST">Newest first</SelectItem>
-            <SelectItem value="OLDEST">Oldest first</SelectItem>
-          </SelectContent>
-        </Select>
-
-        <span className="ml-auto text-sm text-muted-foreground">
-          {filtered.length} signal{filtered.length === 1 ? "" : "s"}
-        </span>
-      </div>
+    <div className="flex flex-col gap-4">
+      <span className="text-sm text-muted-foreground">
+        {filtered.length} signal{filtered.length === 1 ? "" : "s"}
+      </span>
 
       {filtered.length === 0 ? (
         <p className="py-16 text-center text-sm text-muted-foreground">
@@ -127,14 +151,87 @@ export function SignalsExplorer({ signals }: { signals: SignalRow[] }) {
             <Table>
               <TableHeader>
                 <TableRow className="border-b-white/10 hover:bg-transparent">
-                  <TableHead className="hidden sm:table-cell">Date</TableHead>
-                  <TableHead>Strike</TableHead>
-                  <TableHead className="hidden sm:table-cell">Entry</TableHead>
-                  <TableHead className="hidden md:table-cell">SL</TableHead>
+                  <TableHead className="hidden sm:table-cell">
+                    <SortButton
+                      label="Date"
+                      column="date"
+                      active={sortColumn === "date"}
+                      direction={sortDirection}
+                      onSort={handleSort}
+                    />
+                  </TableHead>
+                  <TableHead>
+                    <div className="flex flex-col gap-1">
+                      <SortButton
+                        label="Strike"
+                        column="strike"
+                        active={sortColumn === "strike"}
+                        direction={sortDirection}
+                        onSort={handleSort}
+                      />
+                      <Select
+                        value={optionFilter}
+                        onValueChange={(v) => setOptionFilter(v as OptionFilter)}
+                      >
+                        <SelectTrigger size="sm" className={filterTriggerClass}>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="ALL">All Types</SelectItem>
+                          <SelectItem value="CE">CE only</SelectItem>
+                          <SelectItem value="PE">PE only</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </TableHead>
+                  <TableHead className="hidden sm:table-cell">
+                    <SortButton
+                      label="Entry"
+                      column="entry"
+                      active={sortColumn === "entry"}
+                      direction={sortDirection}
+                      onSort={handleSort}
+                    />
+                  </TableHead>
+                  <TableHead className="hidden md:table-cell">
+                    <SortButton
+                      label="SL"
+                      column="sl"
+                      active={sortColumn === "sl"}
+                      direction={sortDirection}
+                      onSort={handleSort}
+                    />
+                  </TableHead>
                   <TableHead className="hidden md:table-cell">Target(s)</TableHead>
                   <TableHead className="hidden lg:table-cell">Sell Price</TableHead>
-                  <TableHead>P&amp;L %</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead>
+                    <SortButton
+                      label="P&L %"
+                      column="pnl"
+                      active={sortColumn === "pnl"}
+                      direction={sortDirection}
+                      onSort={handleSort}
+                    />
+                  </TableHead>
+                  <TableHead>
+                    <div className="flex flex-col gap-1">
+                      <span>Status</span>
+                      <Select
+                        value={resultFilter}
+                        onValueChange={(v) => setResultFilter(v as ResultFilter)}
+                      >
+                        <SelectTrigger size="sm" className={filterTriggerClass}>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="ALL">All Results</SelectItem>
+                          <SelectItem value="WIN">Wins</SelectItem>
+                          <SelectItem value="LOSS">Losses</SelectItem>
+                          <SelectItem value="OPEN">Open</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
