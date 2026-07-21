@@ -14,6 +14,75 @@ async function requireAdmin() {
   }
 }
 
+export interface SignalUpdateInput {
+  strike: number;
+  optionType: "CE" | "PE";
+  entryPrice: number;
+  stopLoss: number;
+  targets: number[];
+  sellPrice: number | null;
+}
+
+export async function updateSignal(id: string, input: SignalUpdateInput) {
+  await requireAdmin();
+
+  const signal = await prisma.signal.findUnique({ where: { id } });
+  if (!signal) {
+    return { success: false, error: "Signal not found." };
+  }
+
+  const pnlPercent =
+    input.sellPrice != null ? calcPnlPercent(input.entryPrice, input.sellPrice) : null;
+  const status = deriveStatus({
+    entryPrice: input.entryPrice,
+    stopLoss: input.stopLoss,
+    targets: input.targets,
+    sellPrice: input.sellPrice,
+  });
+
+  await prisma.signal.update({
+    where: { id },
+    data: {
+      strike: input.strike,
+      optionType: input.optionType,
+      entryPrice: input.entryPrice,
+      stopLoss: input.stopLoss,
+      targets: input.targets,
+      sellPrice: input.sellPrice,
+      pnlPercent,
+      status,
+      closedTime: input.sellPrice != null ? (signal.closedTime ?? new Date()) : null,
+    },
+  });
+
+  revalidatePath("/admin/signals");
+  revalidatePath("/signals");
+  revalidatePath("/dashboard");
+  revalidatePath("/admin/dashboard");
+  revalidatePath("/");
+
+  return { success: true };
+}
+
+export async function deleteSignal(id: string) {
+  await requireAdmin();
+
+  const signal = await prisma.signal.findUnique({ where: { id } });
+  if (!signal) {
+    return { success: false, error: "Signal not found." };
+  }
+
+  await prisma.signal.delete({ where: { id } });
+
+  revalidatePath("/admin/signals");
+  revalidatePath("/signals");
+  revalidatePath("/dashboard");
+  revalidatePath("/admin/dashboard");
+  revalidatePath("/");
+
+  return { success: true };
+}
+
 export async function closeSignal(id: string, sellPrice: number) {
   await requireAdmin();
 

@@ -9,6 +9,7 @@ import {
   WinRateDonutChart,
 } from "@/components/admin/dashboard-charts";
 import type { DashboardMetrics } from "@/lib/signal-metrics";
+import { BATCH_INFO } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 export function DashboardContent({
@@ -25,15 +26,22 @@ export function DashboardContent({
   return (
     <div className="flex flex-col gap-8">
       <div className="thc-glass thc-gold-border relative rounded-2xl p-6">
-        <div className="mb-2 flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <SectionNumber n={1} />
-            <h2 className="font-heading text-sm font-semibold">Cumulative %</h2>
-          </div>
-          <div className="thc-gold-border rounded-lg px-2.5 py-1 text-right">
+        <div className="mb-4 flex items-center gap-2">
+          <SectionNumber n={1} />
+          <h2 className="font-heading text-sm font-semibold">Cumulative %</h2>
+        </div>
+        <div className="grid gap-6 sm:grid-cols-[minmax(160px,220px)_1fr] sm:items-center">
+          <div className="thc-glow relative overflow-hidden rounded-xl border border-white/5 bg-black/20 p-5 text-center sm:text-left">
+            <span
+              className="absolute inset-x-0 top-0 h-[3px]"
+              style={{ backgroundImage: "var(--thc-gold-gradient)" }}
+            />
+            <p className="text-xs uppercase tracking-wide text-muted-foreground">
+              Total Capture in {BATCH_INFO.batchNumber}th Batch
+            </p>
             <p
               className={cn(
-                "font-heading text-sm font-bold leading-none",
+                "mt-2 font-heading text-4xl font-bold leading-none sm:text-5xl",
                 metrics.totalCapturePercent >= 0
                   ? "text-[var(--thc-win)]"
                   : "text-[var(--thc-loss)]",
@@ -41,12 +49,9 @@ export function DashboardContent({
             >
               {pct(metrics.totalCapturePercent)}
             </p>
-            <p className="text-[9px] uppercase tracking-wide text-muted-foreground">
-              Total Capture
-            </p>
           </div>
+          <CumulativeLineChart data={metrics.cumulativeSeries} />
         </div>
-        <CumulativeLineChart data={metrics.cumulativeSeries} />
       </div>
 
       <div>
