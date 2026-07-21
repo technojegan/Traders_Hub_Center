@@ -3,6 +3,7 @@ import { Footer } from "@/components/site/footer";
 import { Hero } from "@/components/landing/hero";
 import { TrustStats } from "@/components/landing/trust-stats";
 import { HowItWorks } from "@/components/landing/how-it-works";
+import { Testimonials } from "@/components/landing/testimonials";
 import { Pricing } from "@/components/landing/pricing";
 import { InstagramGrid } from "@/components/landing/instagram-grid";
 
@@ -14,6 +15,7 @@ export default function Home() {
         <Hero />
         <TrustStats />
         <HowItWorks />
+        <Testimonials />
         <Pricing />
         <InstagramGrid />
       </main>

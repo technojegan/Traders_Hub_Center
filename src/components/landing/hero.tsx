@@ -21,16 +21,18 @@ export function Hero() {
           initial={{ opacity: 0, x: -24 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.7, ease: "easeOut" }}
-          className="order-2 flex justify-center lg:order-1 lg:justify-start"
+          className="order-2 w-full lg:order-1"
         >
-          <video
-            className="thc-glow w-full max-w-md rounded-2xl border border-white/10"
-            src="/videos/trading.mp4"
-            autoPlay
-            muted
-            loop
-            playsInline
-          />
+          <div className="thc-glow h-[260px] w-full overflow-hidden rounded-2xl border border-white/10 sm:h-[340px] lg:h-[420px]">
+            <video
+              className="h-full w-full object-cover"
+              src="/videos/trading.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+            />
+          </div>
         </motion.div>
 
         <motion.div

@@ -36,6 +36,58 @@ export const PAYMENT_INFO = {
   ],
 };
 
+export interface Testimonial {
+  name: string;
+  role: string;
+  date: string;
+  quote: string;
+}
+
+// Placeholder testimonials in the meantime — swap for real subscriber
+// reviews once collected.
+export const TESTIMONIALS: Testimonial[] = [
+  {
+    name: "Arun K",
+    role: "Premium Trader",
+    date: "18 Jul 2026",
+    quote:
+      "Every call comes with an exact entry, SL and target — no guesswork. Been following for 2 batches now.",
+  },
+  {
+    name: "Priya S",
+    role: "Premium Trader",
+    date: "15 Jul 2026",
+    quote:
+      "What I like most is they track every signal openly on the dashboard, wins and losses both.",
+  },
+  {
+    name: "Karthik R",
+    role: "Premium Trader",
+    date: "12 Jul 2026",
+    quote:
+      "Live Zoom sessions actually explain the reasoning behind each trade, not just the call.",
+  },
+  {
+    name: "Divya M",
+    role: "Premium Trader",
+    date: "10 Jul 2026",
+    quote: "Signals come on time during market hours, entries and SL are always clear.",
+  },
+  {
+    name: "Suresh N",
+    role: "Premium Trader",
+    date: "05 Jul 2026",
+    quote:
+      "Transparent track record is what convinced me — the win rate on the dashboard is real, not marketing.",
+  },
+  {
+    name: "Meena V",
+    role: "Premium Trader",
+    date: "02 Jul 2026",
+    quote: "Good risk management focus — they always remind capital protection first.",
+  },
+];
+
 export interface InstagramThumbnail {
   thumbnailUrl: string;
   videoUrl: string;
