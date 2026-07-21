@@ -197,4 +197,21 @@
       transform: translateY(0);
     }
   }
+
+  .thc-marquee-track {
+    animation: thc-marquee linear infinite;
+    animation-duration: var(--thc-marquee-duration, 28s);
+  }
+  .thc-marquee-track:hover {
+    animation-play-state: paused;
+  }
+
+  @keyframes thc-marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
 }

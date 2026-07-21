@@ -7,9 +7,8 @@ import {
   BarChart,
   CartesianGrid,
   Cell,
+  LabelList,
   Legend,
-  Line,
-  LineChart,
   Pie,
   PieChart,
   ResponsiveContainer,
@@ -17,6 +16,11 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+
+function percentLabel(value: unknown) {
+  const n = typeof value === "number" ? value : 0;
+  return n >= 5 ? `${Math.round(n)}%` : "";
+}
 
 const chartTooltipStyle = {
   backgroundColor: "var(--popover)",
@@ -95,7 +99,16 @@ export function WinLossBarChart({
           fill="url(#winFill)"
           name="Win %"
           isAnimationActive={false}
-        />
+        >
+          <LabelList
+            dataKey="winPercent"
+            position="inside"
+            formatter={percentLabel}
+            fill="#0b0b0d"
+            fontSize={11}
+            fontWeight={700}
+          />
+        </Bar>
         <Bar
           dataKey="lossPercent"
           stackId="winloss"
@@ -103,7 +116,16 @@ export function WinLossBarChart({
           name="Loss %"
           radius={[3, 3, 0, 0]}
           isAnimationActive={false}
-        />
+        >
+          <LabelList
+            dataKey="lossPercent"
+            position="inside"
+            formatter={percentLabel}
+            fill="#0b0b0d"
+            fontSize={11}
+            fontWeight={700}
+          />
+        </Bar>
       </BarChart>
     </ResponsiveContainer>
   );
@@ -247,42 +269,6 @@ export function BestWorstBarChart({
           ))}
         </Bar>
       </BarChart>
-    </ResponsiveContainer>
-  );
-}
-
-export function TpSlComparisonChart({
-  data,
-}: {
-  data: { date: string; tpHitPercent: number; slHitPercent: number }[];
-}) {
-  return (
-    <ResponsiveContainer width="100%" height={280}>
-      <LineChart data={data} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
-        {grid}
-        <XAxis dataKey="date" tick={axisTick} />
-        <YAxis tick={axisTick} unit="%" />
-        <Tooltip contentStyle={chartTooltipStyle} />
-        <Legend formatter={legendText} />
-        <Line
-          type="monotone"
-          dataKey="tpHitPercent"
-          name="TP Hit %"
-          stroke="var(--thc-win)"
-          strokeWidth={2.5}
-          dot={false}
-          isAnimationActive={false}
-        />
-        <Line
-          type="monotone"
-          dataKey="slHitPercent"
-          name="SL Hit %"
-          stroke="var(--thc-loss)"
-          strokeWidth={2.5}
-          dot={false}
-          isAnimationActive={false}
-        />
-      </LineChart>
     </ResponsiveContainer>
   );
 }

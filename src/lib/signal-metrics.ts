@@ -53,9 +53,6 @@ export interface DashboardMetrics {
     lossPercent: number;
   }[];
   monthlyPerformance: { month: string; totalPercent: number }[];
-  tpSlComparison: { date: string; tpHitPercent: number; slHitPercent: number }[];
-  targetHitCount: number;
-  slHitCount: number;
   winCount: number;
   lossCount: number;
 }
@@ -123,19 +120,6 @@ export function computeDashboardMetrics(signals: SignalForMetrics[]): DashboardM
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([month, totalPercent]) => ({ month, totalPercent: Math.round(totalPercent * 100) / 100 }));
 
-  let tpCount = 0;
-  let slCount = 0;
-  const tpSlComparison = sortedClosed.map((s, i) => {
-    if (s.status === "TARGET_HIT") tpCount += 1;
-    else if (s.status === "SL_HIT") slCount += 1;
-    const n = i + 1;
-    return {
-      date: new Date(s.signalTime).toISOString().slice(0, 10),
-      tpHitPercent: Math.round((tpCount / n) * 10000) / 100,
-      slHitPercent: Math.round((slCount / n) * 10000) / 100,
-    };
-  });
-
   return {
     totalSignals: signals.length,
     closedSignals: closed.length,
@@ -151,10 +135,29 @@ export function computeDashboardMetrics(signals: SignalForMetrics[]): DashboardM
     cumulativeSeries,
     winLossByDay,
     monthlyPerformance,
-    tpSlComparison,
-    targetHitCount: tpCount,
-    slHitCount: slCount,
     winCount,
     lossCount,
   };
+}
+
+export function computeBestWorstTrades<
+  T extends Pick<Signal, "strike" | "optionType" | "pnlPercent">,
+>(signals: T[], n = 5) {
+  const closed = signals.filter((s) => s.pnlPercent != null);
+  return [...closed]
+    .sort((a, b) => (b.pnlPercent ?? 0) - (a.pnlPercent ?? 0))
+    .filter((_, i, arr) => i < n || i >= arr.length - n)
+    .map((s) => ({
+      label: `${s.strike} ${s.optionType}`,
+      pnlPercent: Math.round((s.pnlPercent ?? 0) * 100) / 100,
+    }));
+}
+
+export function getRecentSignals<T extends Pick<Signal, "signalTime">>(
+  signals: T[],
+  n = 6,
+): T[] {
+  return [...signals]
+    .sort((a, b) => new Date(b.signalTime).getTime() - new Date(a.signalTime).getTime())
+    .slice(0, n);
 }

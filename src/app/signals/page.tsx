@@ -1,9 +1,13 @@
 import { Navbar } from "@/components/site/navbar";
 import { Footer } from "@/components/site/footer";
 import { SignalsExplorer } from "@/components/signals/signals-explorer";
-import { SignalsInsights } from "@/components/signals/signals-insights";
+import { DashboardContent } from "@/components/dashboard/dashboard-content";
 import { prisma } from "@/lib/prisma";
-import { computeDashboardMetrics } from "@/lib/signal-metrics";
+import {
+  computeBestWorstTrades,
+  computeDashboardMetrics,
+  getRecentSignals,
+} from "@/lib/signal-metrics";
 import type { SignalRow } from "@/components/signals/signals-explorer";
 
 export const revalidate = 60;
@@ -15,6 +19,8 @@ async function getSignals() {
 export default async function SignalsPage() {
   const signals = await getSignals();
   const metrics = computeDashboardMetrics(signals);
+  const bestWorst = computeBestWorstTrades(signals);
+  const recentSignals = getRecentSignals(signals);
   const rows: SignalRow[] = signals.map((s) => ({
     id: s.id,
     strike: s.strike,
@@ -38,10 +44,16 @@ export default async function SignalsPage() {
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
             Every intraday options-buying call we&apos;ve published — transparent, unedited
-            track record.
+            track record. This dashboard is the same one our admin sees, no login required.
           </p>
         </div>
-        <SignalsInsights metrics={metrics} />
+        <div className="mb-10">
+          <DashboardContent
+            metrics={metrics}
+            bestWorst={bestWorst}
+            recentSignals={recentSignals}
+          />
+        </div>
         <SignalsExplorer signals={rows} />
       </main>
       <Footer />
