@@ -17,7 +17,7 @@ export function Hero() {
         loop
         playsInline
       />
-      <div className="pointer-events-none absolute inset-0 -z-20 bg-black/70" />
+      <div className="pointer-events-none absolute inset-0 -z-20 bg-black/85" />
       <div
         className="pointer-events-none absolute inset-0 -z-10"
         style={{
@@ -32,7 +32,7 @@ export function Hero() {
         transition={{ duration: 0.7, ease: "easeOut" }}
         className="relative mx-auto max-w-3xl text-center"
       >
-        <p className="mb-4 inline-flex items-center rounded-full border border-white/10 px-3 py-1 text-xs font-medium text-muted-foreground">
+        <p className="mb-4 inline-flex items-center rounded-full border border-white/10 px-3 py-1 text-sm font-medium text-muted-foreground">
           Intraday Options Signals · CE &amp; PE
         </p>
         <h1 className="font-heading text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
@@ -40,10 +40,10 @@ export function Hero() {
           <span className="thc-gold-text">consistency</span>
         </h1>
         <div className="mx-auto mt-6 max-w-xl">
-          <h2 className="font-heading text-xl font-bold sm:text-2xl">
+          <h2 className="font-heading text-2xl font-bold sm:text-3xl">
             Precision, <span className="thc-gold-text">not luck</span>
           </h2>
-          <p className="mt-2 text-sm text-muted-foreground sm:text-base">
+          <p className="mt-2 text-base text-muted-foreground sm:text-lg">
             Every call gets a defined entry, stop loss, and target before it&apos;s posted — no
             vague hunches, no moving the goalposts after the fact. Our live Win Rate and Total
             Capture % are the same numbers you can verify on the{" "}
@@ -53,7 +53,7 @@ export function Hero() {
             , trade by trade.
           </p>
         </div>
-        <p className="mx-auto mt-5 max-w-xl text-base text-muted-foreground sm:text-lg">
+        <p className="mx-auto mt-5 max-w-xl text-lg text-muted-foreground sm:text-xl">
           Traders Hub Center publishes transparent, intraday options-buying calls to premium
           subscribers — every entry, stop loss and target tracked in the open.
         </p>
