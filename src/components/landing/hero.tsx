@@ -6,22 +6,9 @@ import { Button } from "@/components/ui/button";
 import { WhatsAppIcon, InstagramIcon } from "@/components/site/icons";
 import { CandlestickAnimation } from "@/components/landing/candlestick-animation";
 import { AccuracyTarget } from "@/components/landing/accuracy-target";
-import { CountUp } from "@/components/landing/count-up";
 import { INSTAGRAM_URL, WHATSAPP_URL } from "@/lib/constants";
 
-export interface HeroStats {
-  winRate: number;
-  totalSignals: number;
-  totalCapturePercent: number;
-}
-
-export function Hero({ stats }: { stats: HeroStats }) {
-  const statItems = [
-    { label: "Win Rate", value: stats.winRate, decimals: 0, suffix: "%" },
-    { label: "Signals Given", value: stats.totalSignals, decimals: 0, suffix: "" },
-    { label: "Total Capture", value: stats.totalCapturePercent, decimals: 0, suffix: "%" },
-  ];
-
+export function Hero() {
   return (
     <section className="relative overflow-hidden px-4 pt-20 pb-16 sm:px-6 sm:pt-28 lg:px-8">
       <div
@@ -62,7 +49,7 @@ export function Hero({ stats }: { stats: HeroStats }) {
             <p className="mt-2 text-sm text-muted-foreground sm:text-base">
               Every call gets a defined entry, stop loss, and target before it&apos;s posted — no
               vague hunches, no moving the goalposts after the fact. Our live Win Rate and Total
-              Capture % below are the same numbers you can verify on the{" "}
+              Capture % are the same numbers you can verify on the{" "}
               <Link href="/dashboard" className="text-primary underline underline-offset-2">
                 Dashboard
               </Link>
@@ -92,29 +79,6 @@ export function Hero({ stats }: { stats: HeroStats }) {
           </div>
         </motion.div>
       </div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, delay: 0.15, ease: "easeOut" }}
-        className="mx-auto mt-14 grid max-w-2xl grid-cols-3 gap-4"
-      >
-        {statItems.map((stat) => (
-          <div
-            key={stat.label}
-            className="thc-glass thc-glow relative overflow-hidden rounded-xl border border-white/5 px-4 py-5 text-center"
-          >
-            <span
-              className="absolute inset-x-0 top-0 h-[3px]"
-              style={{ backgroundImage: "var(--thc-gold-gradient)" }}
-            />
-            <p className="font-heading text-2xl font-bold thc-gold-text sm:text-3xl">
-              <CountUp value={stat.value} decimals={stat.decimals} suffix={stat.suffix} />
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">{stat.label}</p>
-          </div>
-        ))}
-      </motion.div>
     </section>
   );
 }

@@ -34,7 +34,7 @@ export interface SignalRow {
 }
 
 const STATUS_LABEL: Record<SignalRow["status"], string> = {
-  OPEN: "Open",
+  OPEN: "Open*",
   TARGET_HIT: "Target Hit",
   SL_HIT: "SL Hit",
   CLOSED_MANUAL: "Closed",

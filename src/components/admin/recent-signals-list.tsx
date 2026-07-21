@@ -19,7 +19,7 @@ export interface RecentSignalItem {
 }
 
 const STATUS_LABEL: Record<RecentSignalItem["status"], string> = {
-  OPEN: "Open",
+  OPEN: "Open*",
   TARGET_HIT: "Target Hit",
   SL_HIT: "SL Hit",
   CLOSED_MANUAL: "Closed",

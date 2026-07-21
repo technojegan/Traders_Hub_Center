@@ -20,7 +20,7 @@ export const BATCH_INFO = {
   benefits: [
     "Unlimited intraday CE/PE calls on WhatsApp during market hours",
     "Live Zoom sessions — trades explained and copy-traded live",
-    "Every Friday off",
+    "Better to avoid Friday market high premiums",
   ],
   refundPolicy: "Refund not applicable once a batch has started.",
 };

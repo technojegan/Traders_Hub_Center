@@ -92,6 +92,13 @@ function niceBound(value: number) {
   return Math.ceil(Math.max(Math.abs(value), 5) / 5) * 5;
 }
 
+function formatAxisDate(dateStr: string) {
+  const date = new Date(dateStr);
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = date.toLocaleDateString("en-IN", { month: "short" });
+  return `${day}-${month}`;
+}
+
 // SVG viewBox width is measured from the container so 1 unit = 1 real pixel —
 // a fixed viewBox scaled to fit a narrow dashboard card shrank the text along
 // with the coordinate space, making it illegible.
@@ -212,13 +219,13 @@ export function WinLossBarChart({ data }: { data: DayPnl[] }) {
               </text>
               <text
                 x={cx}
-                y={CHART_HEIGHT - 10}
+                y={CHART_HEIGHT - CHART_PAD.bottom + 10}
                 textAnchor="end"
                 fontSize={10}
                 fill="var(--muted-foreground)"
-                transform={`rotate(-90 ${cx} ${CHART_HEIGHT - 10})`}
+                transform={`rotate(-90 ${cx} ${CHART_HEIGHT - CHART_PAD.bottom + 10})`}
               >
-                {d.date.slice(5)}
+                {formatAxisDate(d.date)}
               </text>
             </g>
           );
