@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { WhatsAppIcon, InstagramIcon } from "@/components/site/icons";
 import { CandlestickAnimation } from "@/components/landing/candlestick-animation";
+import { AccuracyTarget } from "@/components/landing/accuracy-target";
 import { CountUp } from "@/components/landing/count-up";
 import { INSTAGRAM_URL, WHATSAPP_URL } from "@/lib/constants";
 
@@ -35,9 +36,10 @@ export function Hero({ stats }: { stats: HeroStats }) {
           initial={{ opacity: 0, x: -24 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.7, ease: "easeOut" }}
-          className="order-2 flex justify-center lg:order-1 lg:justify-start"
+          className="order-2 flex flex-col items-center gap-6 lg:order-1 lg:items-start"
         >
           <CandlestickAnimation className="h-[220px] w-full max-w-md sm:h-[280px]" />
+          <AccuracyTarget />
         </motion.div>
 
         <motion.div
@@ -53,6 +55,20 @@ export function Hero({ stats }: { stats: HeroStats }) {
             Trade with <span className="thc-gold-text">accuracy</span> and{" "}
             <span className="thc-gold-text">consistency</span>
           </h1>
+          <div className="mx-auto mt-6 max-w-xl lg:mx-0">
+            <h2 className="font-heading text-xl font-bold sm:text-2xl">
+              Precision, <span className="thc-gold-text">not luck</span>
+            </h2>
+            <p className="mt-2 text-sm text-muted-foreground sm:text-base">
+              Every call gets a defined entry, stop loss, and target before it&apos;s posted — no
+              vague hunches, no moving the goalposts after the fact. Our live Win Rate and Total
+              Capture % below are the same numbers you can verify on the{" "}
+              <Link href="/dashboard" className="text-primary underline underline-offset-2">
+                Dashboard
+              </Link>
+              , trade by trade.
+            </p>
+          </div>
           <p className="mx-auto mt-5 max-w-xl text-base text-muted-foreground sm:text-lg lg:mx-0">
             Traders Hub Center publishes transparent, intraday options-buying calls to premium
             subscribers — every entry, stop loss and target tracked in the open.
