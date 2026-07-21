@@ -191,6 +191,48 @@ export function WinRateDonutChart({ wins, losses }: { wins: number; losses: numb
   );
 }
 
+export function OngoingRiskRewardChart({
+  data,
+}: {
+  data: { label: string; gainPercent: number; lossPercent: number }[];
+}) {
+  return (
+    <ResponsiveContainer width="100%" height={220}>
+      <BarChart data={data} margin={{ top: 8, right: 16, left: 0, bottom: 0 }} barGap={4}>
+        <defs>
+          <linearGradient id="riskGainFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--thc-win)" stopOpacity={0.95} />
+            <stop offset="100%" stopColor="var(--thc-win)" stopOpacity={0.35} />
+          </linearGradient>
+          <linearGradient id="riskLossFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--thc-loss)" stopOpacity={0.35} />
+            <stop offset="100%" stopColor="var(--thc-loss)" stopOpacity={0.95} />
+          </linearGradient>
+        </defs>
+        {grid}
+        <XAxis dataKey="label" tick={axisTick} />
+        <YAxis unit="%" tick={axisTick} />
+        <Tooltip contentStyle={chartTooltipStyle} />
+        <Legend formatter={legendText} />
+        <Bar
+          dataKey="gainPercent"
+          name="Potential Gain %"
+          fill="url(#riskGainFill)"
+          radius={[3, 3, 0, 0]}
+          isAnimationActive={false}
+        />
+        <Bar
+          dataKey="lossPercent"
+          name="Potential Risk %"
+          fill="url(#riskLossFill)"
+          radius={[0, 0, 3, 3]}
+          isAnimationActive={false}
+        />
+      </BarChart>
+    </ResponsiveContainer>
+  );
+}
+
 export function BestWorstBarChart({
   data,
 }: {

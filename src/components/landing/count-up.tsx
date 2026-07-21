@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useInView } from "framer-motion";
 
 export function CountUp({
   value,
@@ -15,11 +16,13 @@ export function CountUp({
   suffix?: string;
   prefix?: string;
 }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref, { once: true, amount: 0.4 });
   const [display, setDisplay] = useState(0);
   const startedRef = useRef(false);
 
   useEffect(() => {
-    if (startedRef.current) return;
+    if (!isInView || startedRef.current) return;
     startedRef.current = true;
 
     const start = performance.now();
@@ -37,13 +40,13 @@ export function CountUp({
 
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
-  }, [value, duration]);
+  }, [isInView, value, duration]);
 
   return (
-    <>
+    <span ref={ref}>
       {prefix}
       {display.toFixed(decimals)}
       {suffix}
-    </>
+    </span>
   );
 }
