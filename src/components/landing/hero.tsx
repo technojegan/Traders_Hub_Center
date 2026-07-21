@@ -4,8 +4,6 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { WhatsAppIcon, InstagramIcon } from "@/components/site/icons";
-import { CandlestickAnimation } from "@/components/landing/candlestick-animation";
-import { AccuracyTarget } from "@/components/landing/accuracy-target";
 import { INSTAGRAM_URL, WHATSAPP_URL } from "@/lib/constants";
 
 export function Hero() {
@@ -23,10 +21,16 @@ export function Hero() {
           initial={{ opacity: 0, x: -24 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.7, ease: "easeOut" }}
-          className="order-2 flex flex-col items-center gap-6 lg:order-1 lg:items-start"
+          className="order-2 flex justify-center lg:order-1 lg:justify-start"
         >
-          <CandlestickAnimation className="h-[220px] w-full max-w-md sm:h-[280px]" />
-          <AccuracyTarget />
+          <video
+            className="thc-glow w-full max-w-md rounded-2xl border border-white/10"
+            src="/videos/trading.mp4"
+            autoPlay
+            muted
+            loop
+            playsInline
+          />
         </motion.div>
 
         <motion.div
