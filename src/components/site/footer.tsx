@@ -43,6 +43,9 @@ export function Footer() {
             <Link href="/signals" className="hover:text-primary">
               Signals
             </Link>
+            <Link href="/contact" className="hover:text-primary">
+              Contact
+            </Link>
           </div>
         </div>
 
