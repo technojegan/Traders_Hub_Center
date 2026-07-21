@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Area,
   AreaChart,
@@ -85,7 +85,6 @@ interface DayPnl {
   netPercent: number;
 }
 
-const CHART_WIDTH = 640;
 const CHART_HEIGHT = 260;
 const CHART_PAD = { top: 24, right: 12, bottom: 44, left: 34 };
 
@@ -93,11 +92,32 @@ function niceBound(value: number) {
   return Math.ceil(Math.max(Math.abs(value), 5) / 5) * 5;
 }
 
+// SVG viewBox width is measured from the container so 1 unit = 1 real pixel —
+// a fixed viewBox scaled to fit a narrow dashboard card shrank the text along
+// with the coordinate space, making it illegible.
+function useContainerWidth(fallback: number) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [width, setWidth] = useState(fallback);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const update = () => setWidth(el.clientWidth || fallback);
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [fallback]);
+
+  return [ref, width] as const;
+}
+
 // Hand-rolled SVG instead of recharts here: recharts' stacked/array-valued Bar
 // rendering (needed for a single diverging profit/loss column) didn't combine
 // the two series into one bar in this version — each still got its own X slot.
 export function WinLossBarChart({ data }: { data: DayPnl[] }) {
   const [hovered, setHovered] = useState<number | null>(null);
+  const [containerRef, CHART_WIDTH] = useContainerWidth(360);
 
   const innerWidth = CHART_WIDTH - CHART_PAD.left - CHART_PAD.right;
   const innerHeight = CHART_HEIGHT - CHART_PAD.top - CHART_PAD.bottom;
@@ -116,8 +136,12 @@ export function WinLossBarChart({ data }: { data: DayPnl[] }) {
   const yTicks = Array.from(new Set([yMax, yMax / 2, 0, yMin / 2, yMin]));
 
   return (
-    <div className="relative">
-      <svg viewBox={`0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`} className="w-full" style={{ height: 280 }}>
+    <div ref={containerRef} className="relative">
+      <svg
+        viewBox={`0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`}
+        className="w-full"
+        style={{ height: CHART_HEIGHT }}
+      >
         {yTicks.map((tick) => (
           <g key={tick}>
             <line
