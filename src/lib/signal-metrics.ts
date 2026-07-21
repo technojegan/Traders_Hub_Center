@@ -47,9 +47,7 @@ export interface DashboardMetrics {
   cumulativeSeries: { date: string; cumulativePercent: number }[];
   winLossByDay: {
     date: string;
-    wins: number;
-    losses: number;
-    winPercent: number;
+    profitPercent: number;
     lossPercent: number;
   }[];
   winCount: number;
@@ -90,25 +88,22 @@ export function computeDashboardMetrics(signals: SignalForMetrics[]): DashboardM
     };
   });
 
-  const byDay = new Map<string, { wins: number; losses: number }>();
+  const byDay = new Map<string, { profitPercent: number; lossPercent: number }>();
   for (const s of sortedClosed) {
     const day = new Date(s.signalTime).toISOString().slice(0, 10);
-    const entry = byDay.get(day) ?? { wins: 0, losses: 0 };
-    if ((s.pnlPercent ?? 0) > 0) entry.wins += 1;
-    else entry.losses += 1;
+    const entry = byDay.get(day) ?? { profitPercent: 0, lossPercent: 0 };
+    const pnl = s.pnlPercent ?? 0;
+    if (pnl > 0) entry.profitPercent += pnl;
+    else entry.lossPercent += pnl;
     byDay.set(day, entry);
   }
   const winLossByDay = Array.from(byDay.entries())
     .sort(([a], [b]) => a.localeCompare(b))
-    .map(([date, v]) => {
-      const total = v.wins + v.losses;
-      return {
-        date,
-        ...v,
-        winPercent: total > 0 ? Math.round((v.wins / total) * 10000) / 100 : 0,
-        lossPercent: total > 0 ? Math.round((v.losses / total) * 10000) / 100 : 0,
-      };
-    });
+    .map(([date, v]) => ({
+      date,
+      profitPercent: Math.round(v.profitPercent * 100) / 100,
+      lossPercent: Math.round(v.lossPercent * 100) / 100,
+    }));
 
   return {
     totalSignals: signals.length,

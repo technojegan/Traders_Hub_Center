@@ -101,7 +101,7 @@ export function DashboardContent({
         <div className="thc-glass rounded-xl border border-white/5 p-4">
           <div className="mb-2 flex items-center gap-2">
             <SectionNumber n={4} />
-            <h2 className="font-heading text-sm font-semibold">Win % vs Loss % by Day</h2>
+            <h2 className="font-heading text-sm font-semibold">Profit % vs Loss % by Day</h2>
           </div>
           <WinLossBarChart data={metrics.winLossByDay} />
         </div>
@@ -114,21 +114,22 @@ export function DashboardContent({
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <div className="thc-glass rounded-xl border border-white/5 p-4">
-          <div className="mb-2 flex items-center gap-2">
-            <SectionNumber n={6} />
-            <h2 className="font-heading text-sm font-semibold">Win Rate</h2>
-          </div>
+      <div className="thc-glass rounded-xl border border-white/5 p-4">
+        <div className="mb-2 flex items-center gap-2">
+          <SectionNumber n={6} />
+          <h2 className="font-heading text-sm font-semibold">Win Rate</h2>
+        </div>
+        <div className="mx-auto max-w-xs">
           <WinRateDonutChart wins={metrics.winCount} losses={metrics.lossCount} />
         </div>
-        <div className="thc-glass rounded-xl border border-white/5 p-4">
-          <div className="mb-2 flex items-center gap-2">
-            <SectionNumber n={7} />
-            <h2 className="font-heading text-sm font-semibold">Recent Signals</h2>
-          </div>
-          <RecentSignalsList signals={recentSignals} />
+      </div>
+
+      <div className="thc-glass rounded-xl border border-white/5 p-4">
+        <div className="mb-2 flex items-center gap-2">
+          <SectionNumber n={7} />
+          <h2 className="font-heading text-sm font-semibold">Recent Signals</h2>
         </div>
+        <RecentSignalsList signals={recentSignals} />
       </div>
     </div>
   );

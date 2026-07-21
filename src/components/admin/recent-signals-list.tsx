@@ -1,5 +1,13 @@
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export interface RecentSignalItem {
   id: string;
@@ -19,61 +27,73 @@ const STATUS_LABEL: Record<RecentSignalItem["status"], string> = {
 
 export function RecentSignalsList({ signals }: { signals: RecentSignalItem[] }) {
   return (
-    <ul className="flex flex-col divide-y divide-white/5">
-      {signals.map((signal) => {
-        const isWin = signal.pnlPercent != null && signal.pnlPercent > 0;
-        const isLoss = signal.pnlPercent != null && signal.pnlPercent < 0;
-        const dotColor = isWin
-          ? "bg-[var(--thc-win)]"
-          : isLoss
-            ? "bg-[var(--thc-loss)]"
-            : "bg-primary";
+    <div className="overflow-x-auto">
+      <Table>
+        <TableHeader>
+          <TableRow className="border-b-white/10 hover:bg-transparent">
+            <TableHead>Date</TableHead>
+            <TableHead>Strike</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead className="text-right">P&amp;L %</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {signals.map((signal) => {
+            const isWin = signal.pnlPercent != null && signal.pnlPercent > 0;
+            const isLoss = signal.pnlPercent != null && signal.pnlPercent < 0;
+            const dotColor = isWin
+              ? "bg-[var(--thc-win)]"
+              : isLoss
+                ? "bg-[var(--thc-loss)]"
+                : "bg-primary";
 
-        return (
-          <li key={signal.id} className="flex items-center justify-between gap-3 py-2.5">
-            <div className="flex items-center gap-2.5">
-              <span className={cn("h-2 w-2 shrink-0 rounded-full", dotColor)} />
-              <span className="font-heading text-sm font-bold">{signal.strike}</span>
-              <Badge
-                variant="outline"
-                className={cn(
-                  "px-1.5 py-0 text-[10px] font-bold",
-                  signal.optionType === "CE"
-                    ? "border-[var(--thc-ce)]/50 text-[var(--thc-ce)]"
-                    : "border-[var(--thc-pe)]/50 text-[var(--thc-pe)]",
-                )}
-              >
-                {signal.optionType}
-              </Badge>
-              <span className="text-xs text-muted-foreground">
-                {STATUS_LABEL[signal.status]}
-              </span>
-            </div>
-            <div className="flex items-center gap-3 text-right">
-              <span
-                className={cn(
-                  "font-heading text-sm font-bold",
-                  isWin
-                    ? "text-[var(--thc-win)]"
-                    : isLoss
-                      ? "text-[var(--thc-loss)]"
-                      : "text-muted-foreground",
-                )}
-              >
-                {signal.pnlPercent != null
-                  ? `${signal.pnlPercent > 0 ? "+" : ""}${signal.pnlPercent.toFixed(1)}%`
-                  : "—"}
-              </span>
-              <span className="w-12 shrink-0 text-[11px] text-muted-foreground">
-                {new Date(signal.signalTime).toLocaleDateString("en-IN", {
-                  day: "2-digit",
-                  month: "short",
-                })}
-              </span>
-            </div>
-          </li>
-        );
-      })}
-    </ul>
+            return (
+              <TableRow key={signal.id} className="border-b-white/5">
+                <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
+                  {new Date(signal.signalTime).toLocaleDateString("en-IN", {
+                    day: "2-digit",
+                    month: "short",
+                  })}
+                </TableCell>
+                <TableCell className="whitespace-nowrap font-medium">
+                  <div className="flex items-center gap-1.5">
+                    <span className={cn("h-2 w-2 shrink-0 rounded-full", dotColor)} />
+                    <span className="font-heading font-bold">{signal.strike}</span>
+                    <Badge
+                      variant="outline"
+                      className={cn(
+                        "px-1.5 py-0 text-[10px] font-bold",
+                        signal.optionType === "CE"
+                          ? "border-[var(--thc-ce)]/50 text-[var(--thc-ce)]"
+                          : "border-[var(--thc-pe)]/50 text-[var(--thc-pe)]",
+                      )}
+                    >
+                      {signal.optionType}
+                    </Badge>
+                  </div>
+                </TableCell>
+                <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
+                  {STATUS_LABEL[signal.status]}
+                </TableCell>
+                <TableCell
+                  className={cn(
+                    "text-right font-heading font-bold",
+                    isWin
+                      ? "text-[var(--thc-win)]"
+                      : isLoss
+                        ? "text-[var(--thc-loss)]"
+                        : "text-muted-foreground",
+                  )}
+                >
+                  {signal.pnlPercent != null
+                    ? `${signal.pnlPercent > 0 ? "+" : ""}${signal.pnlPercent.toFixed(1)}%`
+                    : "—"}
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
+    </div>
   );
 }

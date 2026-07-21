@@ -19,7 +19,7 @@ import {
 
 function percentLabel(value: unknown) {
   const n = typeof value === "number" ? value : 0;
-  return n >= 12 ? `${Math.round(n)}` : "";
+  return Math.abs(n) >= 4 ? `${n >= 0 ? "+" : ""}${Math.round(n)}` : "";
 }
 
 const chartTooltipStyle = {
@@ -73,14 +73,15 @@ export function CumulativeLineChart({
 export function WinLossBarChart({
   data,
 }: {
-  data: { date: string; winPercent: number; lossPercent: number }[];
+  data: { date: string; profitPercent: number; lossPercent: number }[];
 }) {
   return (
     <ResponsiveContainer width="100%" height={280}>
       <BarChart
         data={data}
         margin={{ top: 8, right: 16, left: 0, bottom: 0 }}
-        barCategoryGap="6%"
+        barCategoryGap="20%"
+        barGap={4}
       >
         <defs>
           <linearGradient id="winFill" x1="0" y1="0" x2="0" y2="1">
@@ -88,45 +89,44 @@ export function WinLossBarChart({
             <stop offset="100%" stopColor="var(--thc-win)" stopOpacity={0.35} />
           </linearGradient>
           <linearGradient id="lossFill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="var(--thc-loss)" stopOpacity={0.95} />
-            <stop offset="100%" stopColor="var(--thc-loss)" stopOpacity={0.35} />
+            <stop offset="0%" stopColor="var(--thc-loss)" stopOpacity={0.35} />
+            <stop offset="100%" stopColor="var(--thc-loss)" stopOpacity={0.95} />
           </linearGradient>
         </defs>
         {grid}
         <XAxis dataKey="date" tick={axisTick} />
-        <YAxis domain={[0, 100]} unit="%" tick={axisTick} />
+        <YAxis unit="%" tick={axisTick} />
         <Tooltip contentStyle={chartTooltipStyle} />
         <Legend formatter={legendText} />
         <Bar
-          dataKey="winPercent"
-          stackId="winloss"
+          dataKey="profitPercent"
           fill="url(#winFill)"
-          name="Win %"
+          name="Total Profit %"
+          radius={[3, 3, 0, 0]}
           isAnimationActive={false}
         >
           <LabelList
-            dataKey="winPercent"
-            position="inside"
+            dataKey="profitPercent"
+            position="top"
             formatter={percentLabel}
-            fill="#0b0b0d"
-            fontSize={8}
+            fill="var(--thc-win)"
+            fontSize={9}
             fontWeight={700}
           />
         </Bar>
         <Bar
           dataKey="lossPercent"
-          stackId="winloss"
           fill="url(#lossFill)"
-          name="Loss %"
-          radius={[3, 3, 0, 0]}
+          name="Total Loss %"
+          radius={[0, 0, 3, 3]}
           isAnimationActive={false}
         >
           <LabelList
             dataKey="lossPercent"
-            position="inside"
+            position="bottom"
             formatter={percentLabel}
-            fill="#0b0b0d"
-            fontSize={8}
+            fill="var(--thc-loss)"
+            fontSize={9}
             fontWeight={700}
           />
         </Bar>
