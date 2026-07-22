@@ -400,17 +400,12 @@ function makeRiskRewardLabel(
     const cx = Number(x);
     const cy = Number(y);
     const cw = Number(width);
-    const dy = position === "top" ? -8 : 18;
+    const midX = cx + cw / 2;
+    const baseY = position === "top" ? cy - 22 : cy + 20;
     return (
-      <text
-        x={cx + cw / 2}
-        y={cy + dy}
-        textAnchor="middle"
-        fontSize={13}
-        fontWeight={700}
-        fill={color}
-      >
-        {`₹${point[priceKey]} (${pct >= 0 ? "+" : ""}${pct}%)`}
+      <text x={midX} textAnchor="middle" fontSize={13} fontWeight={700} fill={color}>
+        <tspan x={midX} y={baseY}>{`₹${point[priceKey]}`}</tspan>
+        <tspan x={midX} y={baseY + 14}>{`(${pct >= 0 ? "+" : ""}${pct}%)`}</tspan>
       </text>
     );
   };
@@ -457,7 +452,12 @@ function riskRewardLegendText(value: string) {
 export function OngoingRiskRewardChart({ data }: { data: RiskRewardPoint[] }) {
   return (
     <ResponsiveContainer width="100%" height={340}>
-      <BarChart data={data} margin={{ top: 28, right: 16, left: 0, bottom: 20 }} barGap={4}>
+      <BarChart
+        data={data}
+        margin={{ top: 36, right: 16, left: 0, bottom: 20 }}
+        barGap={4}
+        barCategoryGap="20%"
+      >
         <defs>
           <linearGradient id="riskGainFill" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="var(--thc-win)" stopOpacity={0.95} />

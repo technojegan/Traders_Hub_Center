@@ -58,8 +58,7 @@ export function OngoingSignals({ signals }: { signals: SignalRow[] }) {
               className="flex items-center gap-1.5 rounded-full border border-white/10 bg-black/20 px-3 py-1 text-sm text-muted-foreground"
             >
               <span className="font-heading text-base font-bold thc-gold-text">
-                {signal.strike}
-                {signal.optionType}
+                {signal.strike} {signal.optionType}
               </span>
               <span>
                 · Entry @{" "}

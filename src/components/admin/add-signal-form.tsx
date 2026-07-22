@@ -109,7 +109,7 @@ export function AddSignalForm() {
 
         {drafts.length > 0 && (
           <div className="flex flex-col gap-4">
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="flex flex-col gap-4">
               {drafts.map((draft, i) => (
                 <SignalDraftEditor
                   key={draft.key}
