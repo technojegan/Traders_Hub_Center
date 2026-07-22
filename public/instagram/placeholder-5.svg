@@ -1,16 +1,28 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" width="400" height="500">
   <defs>
-    <linearGradient id="g5" x1="0" y1="0" x2="1" y2="1">
+    <linearGradient id="bg5" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#0b0b0d"/>
       <stop offset="1" stop-color="#1a1508"/>
     </linearGradient>
+    <radialGradient id="glowGold5" cx="0.5" cy="0.4" r="0.65">
+      <stop offset="0" stop-color="#d4af37" stop-opacity="0.32"/>
+      <stop offset="1" stop-color="#d4af37" stop-opacity="0"/>
+    </radialGradient>
     <linearGradient id="gold5" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0" stop-color="#d4af37"/>
       <stop offset="1" stop-color="#f0c949"/>
     </linearGradient>
   </defs>
-  <rect width="400" height="500" fill="url(#g5)"/>
-  <circle cx="200" cy="230" r="54" fill="none" stroke="url(#gold5)" stroke-width="3"/>
-  <path d="M186 205 L186 255 L228 230 Z" fill="url(#gold5)"/>
-  <text x="200" y="340" text-anchor="middle" fill="#f5f2e8" font-family="Arial, sans-serif" font-size="16" opacity="0.85">Reel 05</text>
+  <rect width="400" height="500" fill="url(#bg5)"/>
+  <rect width="400" height="500" fill="url(#glowGold5)"/>
+
+  <!-- stack of reel cards -->
+  <rect x="130" y="170" width="110" height="140" rx="14" fill="none" stroke="url(#gold5)" stroke-width="2" opacity="0.45" transform="rotate(-10 185 240)"/>
+  <rect x="150" y="165" width="110" height="140" rx="14" fill="none" stroke="url(#gold5)" stroke-width="2" opacity="0.7" transform="rotate(6 205 235)"/>
+  <rect x="145" y="160" width="110" height="140" rx="14" fill="#0b0b0d" stroke="url(#gold5)" stroke-width="3"/>
+  <circle cx="200" cy="230" r="30" fill="none" stroke="url(#gold5)" stroke-width="3"/>
+  <path d="M190 214 L190 246 L216 230 Z" fill="url(#gold5)"/>
+
+  <text x="200" y="352" text-anchor="middle" fill="#f5f2e8" font-family="Arial, sans-serif" font-size="15" font-weight="700" opacity="0.9">More Reels</text>
+  <text x="200" y="374" text-anchor="middle" fill="#a3a09a" font-family="Arial, sans-serif" font-size="12">@traders_hub_center_</text>
 </svg>

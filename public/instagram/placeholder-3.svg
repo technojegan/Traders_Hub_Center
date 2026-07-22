@@ -1,16 +1,34 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" width="400" height="500">
   <defs>
-    <linearGradient id="g3" x1="0" y1="1" x2="1" y2="0">
+    <linearGradient id="bg3" x1="0" y1="1" x2="1" y2="0">
       <stop offset="0" stop-color="#0b0b0d"/>
-      <stop offset="1" stop-color="#1a1508"/>
+      <stop offset="1" stop-color="#0d1712"/>
     </linearGradient>
+    <radialGradient id="glowWin3" cx="0.8" cy="0.15" r="0.65">
+      <stop offset="0" stop-color="#34d399" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#34d399" stop-opacity="0"/>
+    </radialGradient>
     <linearGradient id="gold3" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0" stop-color="#d4af37"/>
       <stop offset="1" stop-color="#f0c949"/>
     </linearGradient>
   </defs>
-  <rect width="400" height="500" fill="url(#g3)"/>
-  <circle cx="200" cy="230" r="54" fill="none" stroke="url(#gold3)" stroke-width="3"/>
-  <path d="M186 205 L186 255 L228 230 Z" fill="url(#gold3)"/>
-  <text x="200" y="340" text-anchor="middle" fill="#f5f2e8" font-family="Arial, sans-serif" font-size="16" opacity="0.85">Reel 03</text>
+  <rect width="400" height="500" fill="url(#bg3)"/>
+  <rect width="400" height="500" fill="url(#glowWin3)"/>
+
+  <!-- staircase uptrend -->
+  <polyline points="70,340 70,300 140,300 140,265 210,265 210,220 280,220 280,175 320,175"
+    fill="none" stroke="#34d399" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="70" cy="340" r="6" fill="url(#gold3)"/>
+
+  <!-- winning checkmark badge -->
+  <circle cx="320" cy="160" r="26" fill="#0b0b0d" stroke="#34d399" stroke-width="3"/>
+  <path d="M308 160 L317 169 L334 149" fill="none" stroke="#34d399" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <text x="70" y="378" fill="#a3a09a" font-family="Arial, sans-serif" font-size="13" font-weight="600">Entry</text>
+  <text x="278" y="382" text-anchor="end" fill="#34d399" font-family="Arial, sans-serif" font-size="13" font-weight="700">Target Hit</text>
+
+  <!-- play button -->
+  <circle cx="332" cy="418" r="30" fill="#0b0b0d" stroke="url(#gold3)" stroke-width="2"/>
+  <path d="M323 403 L323 433 L349 418 Z" fill="url(#gold3)"/>
 </svg>
