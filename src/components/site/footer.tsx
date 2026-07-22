@@ -46,6 +46,9 @@ export function Footer() {
             <Link href="/contact" className="hover:text-primary">
               Contact
             </Link>
+            <Link href="/terms" className="hover:text-primary">
+              T &amp; C
+            </Link>
           </div>
         </div>
 
@@ -63,6 +66,13 @@ export function Footer() {
             losses. Trade only after understanding the strategy and always follow proper risk
             management. Capital protection first, profits come next. Past performance is not
             indicative of future results.
+          </p>
+          <p>
+            Full{" "}
+            <Link href="/terms" className="text-primary underline underline-offset-2">
+              Terms &amp; Conditions
+            </Link>{" "}
+            apply to every batch and membership.
           </p>
         </div>
       </div>

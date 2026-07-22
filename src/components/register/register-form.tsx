@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -60,7 +61,12 @@ export function RegisterForm() {
               </li>
             ))}
           </ul>
-          <p className="mt-3 text-xs text-muted-foreground/70">{BATCH_INFO.refundPolicy}</p>
+          <p className="mt-3 text-xs text-muted-foreground/70">
+            {BATCH_INFO.refundPolicy}{" "}
+            <Link href="/terms" className="text-primary underline underline-offset-2">
+              T &amp; C
+            </Link>
+          </p>
         </div>
 
         <Button asChild className="thc-glow thc-btn-gradient w-full">

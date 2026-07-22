@@ -49,14 +49,16 @@ function DhanOfferCard() {
       <div className="mt-5 border-t border-white/5 pt-4">
         <p className="text-sm font-medium text-foreground">Already have a Dhan account?</p>
         <p className="mt-1 text-sm text-muted-foreground">
-          Refer friends &amp; family and get a{" "}
-          <span className="font-semibold text-primary">free premium group</span> for the next
-          batch.
+          Refer friends &amp; family and{" "}
+          <span className="font-semibold text-primary">Win Free premium group access*</span>
         </p>
-        <ul className="mt-2 flex flex-col gap-1 text-xs text-muted-foreground">
-          <li>• Minimum 10 referrals</li>
-          <li>• Minimum 50 trades in 1 account</li>
-        </ul>
+        <p className="mt-2 text-[10px] text-muted-foreground/70">
+          *Conditions apply — see{" "}
+          <Link href="/terms" className="text-primary underline underline-offset-2">
+            T&amp;C
+          </Link>
+          .
+        </p>
       </div>
 
       <Button asChild size="sm" variant="outline" className="thc-glow mt-auto w-full">
@@ -139,7 +141,10 @@ export function Pricing() {
             <Link href="/dashboard" className="text-primary underline underline-offset-2">
               Win Rate and Total Capture %
             </Link>{" "}
-            above, computed live from every signal we&apos;ve published. {BATCH_INFO.refundPolicy}
+            above, computed live from every signal we&apos;ve published. {BATCH_INFO.refundPolicy}{" "}
+            <Link href="/terms" className="text-primary underline underline-offset-2">
+              T &amp; C
+            </Link>
           </p>
 
           <Button asChild size="lg" className="thc-glow thc-btn-gradient mt-6 w-full">
