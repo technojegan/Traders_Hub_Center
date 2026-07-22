@@ -1,7 +1,9 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
@@ -12,9 +14,24 @@ const links = [
   { href: "/admin/signals", label: "Manage Signals" },
 ];
 
+function useUsername() {
+  const [username, setUsername] = useState<string | null>(null);
+
+  useEffect(() => {
+    const supabase = createSupabaseBrowserClient();
+    supabase.auth.getUser().then(({ data }) => {
+      const email = data.user?.email;
+      setUsername(email ? email.split("@")[0] : null);
+    });
+  }, []);
+
+  return username;
+}
+
 export function AdminNav() {
   const pathname = usePathname();
   const router = useRouter();
+  const username = useUsername();
 
   async function handleLogout() {
     const supabase = createSupabaseBrowserClient();
@@ -39,6 +56,14 @@ export function AdminNav() {
           </Link>
         ))}
       </nav>
+      {username && (
+        <div className="flex items-center gap-2">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-primary/40 bg-primary/10 text-primary">
+            <UserRound className="h-4 w-4" />
+          </span>
+          <span className="hidden text-sm font-medium capitalize sm:inline">{username}</span>
+        </div>
+      )}
       <Button variant="outline" size="sm" onClick={handleLogout}>
         Log out
       </Button>

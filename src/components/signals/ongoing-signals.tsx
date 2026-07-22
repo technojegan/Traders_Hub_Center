@@ -39,119 +39,145 @@ export function OngoingSignals({ signals }: { signals: SignalRow[] }) {
 
   return (
     <div className="thc-glass thc-neutral-border mb-8 rounded-2xl border p-4 sm:p-6">
-      <div className="mb-3 flex items-center gap-2">
-        <span
-          className={cn(
-            "h-2 w-2 shrink-0 rounded-full",
-            isEmpty ? "bg-muted-foreground/40" : "bg-primary",
-          )}
-        />
-        <h2 className="font-heading text-sm font-semibold">
-          {signals.length} Ongoing Trade{signals.length === 1 ? "" : "s"}
-        </h2>
+      <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1.5">
+        <div className="flex items-center gap-2">
+          <span
+            className={cn(
+              "h-2 w-2 shrink-0 rounded-full",
+              isEmpty ? "bg-muted-foreground/40" : "bg-primary",
+            )}
+          />
+          <h2 className="font-heading text-sm font-semibold">
+            {signals.length} Ongoing Trade{signals.length === 1 ? "" : "s"}
+          </h2>
+        </div>
+        {!isEmpty &&
+          signals.map((signal) => (
+            <span
+              key={signal.id}
+              className="flex items-center gap-1.5 rounded-full border border-white/10 bg-black/20 px-3 py-1 text-sm text-muted-foreground"
+            >
+              <span className="font-heading text-base font-bold thc-gold-text">
+                {signal.strike}
+                {signal.optionType}
+              </span>
+              <span>
+                · Entry @{" "}
+                <span className="font-heading text-base font-bold thc-gold-text">
+                  ₹{signal.entryPrice}
+                </span>
+              </span>
+            </span>
+          ))}
       </div>
 
-      <div className="mb-4 grid gap-4 lg:grid-cols-[1fr_180px]">
-        <div className="rounded-xl border border-white/5 bg-black/10 p-3">
+      <div className="grid gap-4 lg:grid-cols-2">
+        <div className="rounded-xl border border-white/5 bg-black/10 p-3 lg:flex lg:h-full lg:items-stretch">
           {isEmpty ? (
-            <div className="flex h-[140px] flex-col items-center justify-center gap-1 text-center">
+            <div className="flex h-[140px] w-full flex-col items-center justify-center gap-1 text-center lg:h-full">
               <p className="text-xs text-muted-foreground">
                 No open trades right now — the risk/reward chart will populate once a signal goes
                 live.
               </p>
             </div>
           ) : (
-            <OngoingRiskRewardChart data={chartData} />
+            <div className="h-full w-full">
+              <OngoingRiskRewardChart data={chartData} />
+            </div>
           )}
         </div>
 
-        <div className="grid grid-cols-3 gap-3 lg:grid-cols-1">
-          <div className="thc-glass rounded-xl border border-white/5 p-3">
-            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
-              Avg Potential Gain
-            </p>
-            <p
-              className={cn(
-                "mt-1 font-heading text-2xl font-bold",
-                isEmpty ? "text-muted-foreground" : "text-[var(--thc-win)]",
-              )}
-            >
-              {isEmpty ? "—" : `+${avgGain.toFixed(1)}%`}
-            </p>
+        <div className="flex flex-col gap-4">
+          <div className="grid grid-cols-3 gap-3">
+            <div className="thc-glass rounded-xl border border-white/5 p-3">
+              <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                Avg Potential Gain
+              </p>
+              <p
+                className={cn(
+                  "mt-1 font-heading text-2xl font-bold",
+                  isEmpty ? "text-muted-foreground" : "text-[var(--thc-win)]",
+                )}
+              >
+                {isEmpty ? "—" : `+${avgGain.toFixed(1)}%`}
+              </p>
+            </div>
+            <div className="thc-glass rounded-xl border border-white/5 p-3">
+              <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                Avg Potential Risk
+              </p>
+              <p
+                className={cn(
+                  "mt-1 font-heading text-2xl font-bold",
+                  isEmpty ? "text-muted-foreground" : "text-[var(--thc-loss)]",
+                )}
+              >
+                {isEmpty ? "—" : `${avgLoss.toFixed(1)}%`}
+              </p>
+            </div>
+            <div className="thc-glass rounded-xl border border-white/5 p-3">
+              <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                Open Positions
+              </p>
+              <p className="mt-1 font-heading text-2xl font-bold thc-gold-text">
+                {signals.length}
+              </p>
+            </div>
           </div>
-          <div className="thc-glass rounded-xl border border-white/5 p-3">
-            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
-              Avg Potential Risk
-            </p>
-            <p
-              className={cn(
-                "mt-1 font-heading text-2xl font-bold",
-                isEmpty ? "text-muted-foreground" : "text-[var(--thc-loss)]",
-              )}
-            >
-              {isEmpty ? "—" : `${avgLoss.toFixed(1)}%`}
-            </p>
-          </div>
-          <div className="thc-glass rounded-xl border border-white/5 p-3">
-            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
-              Open Positions
-            </p>
-            <p className="mt-1 font-heading text-2xl font-bold thc-gold-text">{signals.length}</p>
+
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-b-white/10 hover:bg-transparent">
+                  <TableHead>Strike</TableHead>
+                  <TableHead>Entry</TableHead>
+                  <TableHead>SL</TableHead>
+                  <TableHead>Target(s)</TableHead>
+                  <TableHead>Since</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {isEmpty ? (
+                  <TableRow className="hover:bg-transparent">
+                    <TableCell
+                      colSpan={5}
+                      className="py-6 text-center text-xs text-muted-foreground"
+                    >
+                      No ongoing trades at the moment.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  signals.map((signal) => (
+                    <TableRow key={signal.id} className="border-b-white/5">
+                      <TableCell className="whitespace-nowrap font-medium">
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-heading font-bold">{signal.strike}</span>
+                          <Badge
+                            variant="outline"
+                            className={cn(
+                              "px-1.5 py-0 text-[10px] font-bold",
+                              signal.optionType === "CE"
+                                ? "border-[var(--thc-ce)]/50 text-[var(--thc-ce)]"
+                                : "border-[var(--thc-pe)]/50 text-[var(--thc-pe)]",
+                            )}
+                          >
+                            {signal.optionType}
+                          </Badge>
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-bold">{signal.entryPrice}</TableCell>
+                      <TableCell>{signal.stopLoss}</TableCell>
+                      <TableCell>{signal.targets.join(", ")}</TableCell>
+                      <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
+                        {formatSignalDate(signal.signalTime)} {formatSignalTime(signal.signalTime)}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
           </div>
         </div>
-      </div>
-
-      <div className="overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow className="border-b-white/10 hover:bg-transparent">
-              <TableHead>Strike</TableHead>
-              <TableHead>Entry</TableHead>
-              <TableHead>SL</TableHead>
-              <TableHead>Target(s)</TableHead>
-              <TableHead>Since</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isEmpty ? (
-              <TableRow className="hover:bg-transparent">
-                <TableCell
-                  colSpan={5}
-                  className="py-6 text-center text-xs text-muted-foreground"
-                >
-                  No ongoing trades at the moment.
-                </TableCell>
-              </TableRow>
-            ) : (
-              signals.map((signal) => (
-                <TableRow key={signal.id} className="border-b-white/5">
-                  <TableCell className="whitespace-nowrap font-medium">
-                    <div className="flex items-center gap-1.5">
-                      <span className="font-heading font-bold">{signal.strike}</span>
-                      <Badge
-                        variant="outline"
-                        className={cn(
-                          "px-1.5 py-0 text-[10px] font-bold",
-                          signal.optionType === "CE"
-                            ? "border-[var(--thc-ce)]/50 text-[var(--thc-ce)]"
-                            : "border-[var(--thc-pe)]/50 text-[var(--thc-pe)]",
-                        )}
-                      >
-                        {signal.optionType}
-                      </Badge>
-                    </div>
-                  </TableCell>
-                  <TableCell>{signal.entryPrice}</TableCell>
-                  <TableCell>{signal.stopLoss}</TableCell>
-                  <TableCell>{signal.targets.join(", ")}</TableCell>
-                  <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
-                    {formatSignalDate(signal.signalTime)} {formatSignalTime(signal.signalTime)}
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
       </div>
     </div>
   );

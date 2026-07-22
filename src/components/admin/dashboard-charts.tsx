@@ -400,13 +400,13 @@ function makeRiskRewardLabel(
     const cx = Number(x);
     const cy = Number(y);
     const cw = Number(width);
-    const dy = position === "top" ? -6 : 14;
+    const dy = position === "top" ? -8 : 18;
     return (
       <text
         x={cx + cw / 2}
         y={cy + dy}
         textAnchor="middle"
-        fontSize={10}
+        fontSize={13}
         fontWeight={700}
         fill={color}
       >
@@ -436,9 +436,9 @@ function makeEntryPriceLabel(data: RiskRewardPoint[]) {
     return (
       <text
         x={cx + cw / 2}
-        y={zeroY - 4}
+        y={zeroY - 6}
         textAnchor="middle"
-        fontSize={9}
+        fontSize={13}
         fontWeight={700}
         fill="var(--thc-gold-start)"
       >
@@ -448,10 +448,16 @@ function makeEntryPriceLabel(data: RiskRewardPoint[]) {
   };
 }
 
+const riskRewardAxisTick = { fontSize: 13, fill: "var(--muted-foreground)" };
+
+function riskRewardLegendText(value: string) {
+  return <span style={{ color: "var(--muted-foreground)", fontSize: 13 }}>{value}</span>;
+}
+
 export function OngoingRiskRewardChart({ data }: { data: RiskRewardPoint[] }) {
   return (
-    <ResponsiveContainer width="100%" height={220}>
-      <BarChart data={data} margin={{ top: 20, right: 16, left: 0, bottom: 20 }} barGap={4}>
+    <ResponsiveContainer width="100%" height={340}>
+      <BarChart data={data} margin={{ top: 28, right: 16, left: 0, bottom: 20 }} barGap={4}>
         <defs>
           <linearGradient id="riskGainFill" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="var(--thc-win)" stopOpacity={0.95} />
@@ -463,10 +469,10 @@ export function OngoingRiskRewardChart({ data }: { data: RiskRewardPoint[] }) {
           </linearGradient>
         </defs>
         {grid}
-        <XAxis dataKey="label" tick={axisTick} />
-        <YAxis unit="%" tick={axisTick} />
+        <XAxis dataKey="label" tick={riskRewardAxisTick} />
+        <YAxis unit="%" tick={riskRewardAxisTick} />
         <Tooltip content={<RiskRewardTooltip />} cursor={{ fill: "rgba(255,255,255,0.04)" }} />
-        <Legend formatter={legendText} />
+        <Legend formatter={riskRewardLegendText} />
         <ReferenceLine y={0} stroke="var(--thc-gold-start)" strokeDasharray="4 4" strokeWidth={1.5} />
         <Bar
           dataKey="gainPercent"
