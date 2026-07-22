@@ -1,6 +1,21 @@
+import { prisma } from "@/lib/prisma";
 import { AddSignalForm } from "@/components/admin/add-signal-form";
 
-export default function AddSignalPage() {
+export const dynamic = "force-dynamic";
+
+export default async function AddSignalPage() {
+  const ongoing = await prisma.signal.findMany({
+    where: { status: "OPEN" },
+    orderBy: { signalTime: "desc" },
+  });
+
+  const ongoingTrades = ongoing.map((s) => ({
+    id: s.id,
+    strike: s.strike,
+    optionType: s.optionType,
+    adminNote: s.adminNote,
+  }));
+
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -10,7 +25,7 @@ export default function AddSignalPage() {
           confirm.
         </p>
       </div>
-      <AddSignalForm />
+      <AddSignalForm ongoingTrades={ongoingTrades} />
     </div>
   );
 }

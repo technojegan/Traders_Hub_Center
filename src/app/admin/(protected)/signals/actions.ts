@@ -68,6 +68,26 @@ export async function updateSignal(id: string, input: SignalUpdateInput) {
   return { success: true };
 }
 
+export async function updateAdminNote(id: string, adminNote: string | null) {
+  await requireAdmin();
+
+  const signal = await prisma.signal.findUnique({ where: { id } });
+  if (!signal) {
+    return { success: false, error: "Signal not found." };
+  }
+
+  await prisma.signal.update({
+    where: { id },
+    data: { adminNote },
+  });
+
+  revalidatePath("/admin/signals");
+  revalidatePath("/admin/signals/new");
+  revalidatePath("/signals");
+
+  return { success: true };
+}
+
 export async function deleteSignal(id: string) {
   await requireAdmin();
 

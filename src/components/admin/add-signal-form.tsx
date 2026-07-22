@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { SignalDraftEditor, type EditableDraft } from "@/components/admin/signal-draft-editor";
 import { ManualSignalForm } from "@/components/admin/manual-signal-form";
+import { OngoingTradeNotes, type OngoingTrade } from "@/components/admin/ongoing-trade-notes";
 import { parseSignalMessage } from "@/lib/parser";
 import { createSignals, type SignalInput } from "@/app/admin/(protected)/signals/new/actions";
 
@@ -59,7 +60,7 @@ function draftToInput(draft: EditableDraft): SignalInput | null {
   };
 }
 
-export function AddSignalForm() {
+export function AddSignalForm({ ongoingTrades }: { ongoingTrades: OngoingTrade[] }) {
   const [rawText, setRawText] = useState("");
   const [drafts, setDrafts] = useState<EditableDraft[]>([]);
   const [isPending, startTransition] = useTransition();
@@ -95,49 +96,53 @@ export function AddSignalForm() {
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
-      <div className="flex flex-col gap-4">
-        <h2 className="font-heading text-sm font-semibold text-muted-foreground">Smart Paste</h2>
-        <Textarea
-          value={rawText}
-          onChange={(e) => setRawText(e.target.value)}
-          placeholder={"77300 ce\nAbove -150\nSL -145\nTrgt -170\nNow -145\nselling price 170"}
-          className="min-h-[180px] font-mono text-sm"
-        />
-        <Button type="button" onClick={handleParse} className="thc-glow thc-btn-gradient w-fit">
-          Parse
-        </Button>
+    <div className="flex flex-col gap-6">
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div className="flex flex-col gap-4">
+          <h2 className="font-heading text-sm font-semibold text-muted-foreground">Smart Paste</h2>
+          <Textarea
+            value={rawText}
+            onChange={(e) => setRawText(e.target.value)}
+            placeholder={"77300 ce\nAbove -150\nSL -145\nTrgt -170\nNow -145\nselling price 170"}
+            className="min-h-[180px] font-mono text-sm"
+          />
+          <Button type="button" onClick={handleParse} className="thc-glow thc-btn-gradient w-fit">
+            Parse
+          </Button>
 
-        {drafts.length > 0 && (
-          <div className="flex flex-col gap-4">
+          {drafts.length > 0 && (
             <div className="flex flex-col gap-4">
-              {drafts.map((draft, i) => (
-                <SignalDraftEditor
-                  key={draft.key}
-                  draft={draft}
-                  onChange={(next) =>
-                    setDrafts((prev) => prev.map((d, idx) => (idx === i ? next : d)))
-                  }
-                  onRemove={() => setDrafts((prev) => prev.filter((_, idx) => idx !== i))}
-                />
-              ))}
+              <div className="flex flex-col gap-4">
+                {drafts.map((draft, i) => (
+                  <SignalDraftEditor
+                    key={draft.key}
+                    draft={draft}
+                    onChange={(next) =>
+                      setDrafts((prev) => prev.map((d, idx) => (idx === i ? next : d)))
+                    }
+                    onRemove={() => setDrafts((prev) => prev.filter((_, idx) => idx !== i))}
+                  />
+                ))}
+              </div>
+              <Button
+                type="button"
+                onClick={handleSaveAll}
+                disabled={isPending}
+                className="thc-glow thc-btn-gradient w-fit"
+              >
+                {isPending ? "Saving…" : `Save ${drafts.length} Signal${drafts.length === 1 ? "" : "s"}`}
+              </Button>
             </div>
-            <Button
-              type="button"
-              onClick={handleSaveAll}
-              disabled={isPending}
-              className="thc-glow thc-btn-gradient w-fit"
-            >
-              {isPending ? "Saving…" : `Save ${drafts.length} Signal${drafts.length === 1 ? "" : "s"}`}
-            </Button>
-          </div>
-        )}
+          )}
+        </div>
+
+        <div className="flex flex-col gap-4 border-t border-white/5 pt-6 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-6">
+          <h2 className="font-heading text-sm font-semibold text-muted-foreground">Manual Entry</h2>
+          <ManualSignalForm />
+        </div>
       </div>
 
-      <div className="flex flex-col gap-4 border-t border-white/5 pt-6 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-6">
-        <h2 className="font-heading text-sm font-semibold text-muted-foreground">Manual Entry</h2>
-        <ManualSignalForm />
-      </div>
+      <OngoingTradeNotes trades={ongoingTrades} />
     </div>
   );
 }
