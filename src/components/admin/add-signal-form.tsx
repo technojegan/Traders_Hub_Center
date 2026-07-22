@@ -20,6 +20,7 @@ function toEditableDraft(index: number, raw: string): EditableDraft {
     targets: parsed.targets.join(","),
     priceAtSignal: parsed.priceAtSignal != null ? String(parsed.priceAtSignal) : "",
     sellPrice: parsed.sellPrice != null ? String(parsed.sellPrice) : "",
+    risk: "Medium",
     rawMessage: parsed.rawMessage,
     warnings: parsed.warnings,
   };

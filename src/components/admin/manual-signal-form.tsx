@@ -22,6 +22,7 @@ const EMPTY = {
   targets: "",
   priceAtSignal: "",
   sellPrice: "",
+  risk: "Medium" as "Low" | "Medium" | "High",
 };
 
 export function ManualSignalForm() {
@@ -125,6 +126,22 @@ export function ManualSignalForm() {
         <div className="flex flex-col gap-1.5">
           <Label>Sell Price (optional)</Label>
           <Input value={form.sellPrice} onChange={(e) => set("sellPrice", e.target.value)} />
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <Label>Risk</Label>
+          <Select
+            value={form.risk}
+            onValueChange={(v) => set("risk", v as "Low" | "Medium" | "High")}
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Low">Low</SelectItem>
+              <SelectItem value="Medium">Medium</SelectItem>
+              <SelectItem value="High">High</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
       <Button type="submit" disabled={isPending} className="thc-glow thc-btn-gradient w-fit">

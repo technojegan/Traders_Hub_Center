@@ -20,6 +20,7 @@ export interface EditableDraft {
   targets: string;
   priceAtSignal: string;
   sellPrice: string;
+  risk: "Low" | "Medium" | "High";
   rawMessage: string;
   warnings: string[];
 }
@@ -118,6 +119,19 @@ export function SignalDraftEditor({
             inputMode="decimal"
             placeholder="Leave blank if still open"
           />
+        </div>
+        <div className="flex flex-col gap-1">
+          <Label className="text-xs">Risk</Label>
+          <Select value={draft.risk} onValueChange={(v) => set("risk", v as EditableDraft["risk"])}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Low">Low</SelectItem>
+              <SelectItem value="Medium">Medium</SelectItem>
+              <SelectItem value="High">High</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
     </div>

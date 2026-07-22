@@ -46,6 +46,12 @@ export function Footer() {
             <Link href="/contact" className="hover:text-primary">
               Contact
             </Link>
+            <Link href="/faq" className="hover:text-primary">
+              FAQ
+            </Link>
+            <Link href="/privacy" className="hover:text-primary">
+              Privacy Policy
+            </Link>
             <Link href="/terms" className="hover:text-primary">
               T &amp; C
             </Link>
