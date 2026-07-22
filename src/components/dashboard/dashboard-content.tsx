@@ -9,7 +9,6 @@ import {
   WinRateDonutChart,
 } from "@/components/admin/dashboard-charts";
 import type { DashboardMetrics } from "@/lib/signal-metrics";
-import { BATCH_INFO } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 export function DashboardContent({
@@ -37,7 +36,7 @@ export function DashboardContent({
               style={{ backgroundImage: "var(--thc-gold-gradient)" }}
             />
             <p className="text-xs uppercase tracking-wide text-muted-foreground">
-              Total Capture in {BATCH_INFO.batchNumber}th Batch
+              Total % Won this Batch
             </p>
             <p
               className={cn(

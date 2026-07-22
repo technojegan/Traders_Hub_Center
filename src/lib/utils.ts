@@ -6,7 +6,10 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatSignalDate(date: string | Date) {
-  return new Date(date).toLocaleDateString("en-IN", { day: "2-digit", month: "short" })
+  const d = new Date(date)
+  const day = String(d.getDate()).padStart(2, "0")
+  const month = d.toLocaleDateString("en-IN", { month: "short" })
+  return `${day}${month}`
 }
 
 export function formatSignalTime(date: string | Date) {

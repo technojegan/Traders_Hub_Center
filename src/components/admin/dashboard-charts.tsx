@@ -40,6 +40,13 @@ const chartTooltipItemStyle = {
 const axisTick = { fontSize: 11, fill: "var(--muted-foreground)" };
 const grid = <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />;
 
+function formatDdMmm(dateStr: string) {
+  const date = new Date(dateStr);
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = date.toLocaleDateString("en-IN", { month: "short" });
+  return `${day}${month}`;
+}
+
 function legendText(value: string) {
   return <span style={{ color: "var(--muted-foreground)", fontSize: 12 }}>{value}</span>;
 }
@@ -59,11 +66,12 @@ export function CumulativeLineChart({
           </linearGradient>
         </defs>
         {grid}
-        <XAxis dataKey="date" tick={axisTick} />
+        <XAxis dataKey="date" tick={axisTick} tickFormatter={formatDdMmm} />
         <YAxis tick={axisTick} />
         <Tooltip contentStyle={chartTooltipStyle}
           labelStyle={chartTooltipLabelStyle}
           itemStyle={chartTooltipItemStyle}
+          labelFormatter={formatDdMmm}
         />
         <Area
           type="monotone"
@@ -92,13 +100,6 @@ const CHART_PAD = { top: 24, right: 12, bottom: 44, left: 34 };
 
 function niceBound(value: number) {
   return Math.ceil(Math.max(Math.abs(value), 5) / 5) * 5;
-}
-
-function formatAxisDate(dateStr: string) {
-  const date = new Date(dateStr);
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = date.toLocaleDateString("en-IN", { month: "short" });
-  return `${day}-${month}`;
 }
 
 // SVG viewBox width is measured from the container so 1 unit = 1 real pixel —
@@ -227,7 +228,7 @@ export function WinLossBarChart({ data }: { data: DayPnl[] }) {
                 fill="var(--muted-foreground)"
                 transform={`rotate(-90 ${cx} ${CHART_HEIGHT - CHART_PAD.bottom + 10})`}
               >
-                {formatAxisDate(d.date)}
+                {formatDdMmm(d.date)}
               </text>
             </g>
           );
@@ -244,7 +245,7 @@ export function WinLossBarChart({ data }: { data: DayPnl[] }) {
             top: `${(yScale(Math.max(data[hovered].profitPercent, 0)) / CHART_HEIGHT) * 100}%`,
           }}
         >
-          <p className="mb-1 font-semibold">{data[hovered].date}</p>
+          <p className="mb-1 font-semibold">{formatDdMmm(data[hovered].date)}</p>
           <p style={{ color: "var(--thc-win)" }}>Profit: +{data[hovered].profitPercent}%</p>
           <p style={{ color: "var(--thc-loss)" }}>Loss: {data[hovered].lossPercent}%</p>
           <p>
@@ -390,20 +391,30 @@ function makeRiskRewardLabel(
   data: RiskRewardPoint[],
   priceKey: "sellTargetPrice" | "sellSlPrice",
   pctKey: "gainPercent" | "lossPercent",
-  color: string,
   position: "top" | "bottom",
 ) {
-  return function RiskRewardLabel({ x = 0, y = 0, width = 0, index = 0 }: RiskRewardLabelProps) {
+  return function RiskRewardLabel({
+    x = 0,
+    y = 0,
+    width = 0,
+    height = 0,
+    index = 0,
+  }: RiskRewardLabelProps) {
     const point = data[index];
     if (!point) return null;
     const pct = point[pctKey];
     const cx = Number(x);
     const cy = Number(y);
     const cw = Number(width);
+    const ch = Number(height);
     const midX = cx + cw / 2;
-    const baseY = position === "top" ? cy - 22 : cy + 20;
+    // Anchored in from the bar's far tip (away from the zero line) rather
+    // than centered — keeps the label clear of the Entry label at the zero
+    // line and stays inside the bar regardless of magnitude, instead of
+    // spilling into the X-axis category labels below the chart.
+    const baseY = position === "top" ? cy + Math.min(18, ch * 0.4) : cy + ch - Math.min(20, ch * 0.5);
     return (
-      <text x={midX} textAnchor="middle" fontSize={13} fontWeight={700} fill={color}>
+      <text x={midX} textAnchor="middle" fontSize={12} fontWeight={700} fill="#f5f2e8">
         <tspan x={midX} y={baseY}>{`₹${point[priceKey]}`}</tspan>
         <tspan x={midX} y={baseY + 14}>{`(${pct >= 0 ? "+" : ""}${pct}%)`}</tspan>
       </text>
@@ -484,13 +495,7 @@ export function OngoingRiskRewardChart({ data }: { data: RiskRewardPoint[] }) {
           <LabelList dataKey="gainPercent" content={makeEntryPriceLabel(data)} />
           <LabelList
             dataKey="gainPercent"
-            content={makeRiskRewardLabel(
-              data,
-              "sellTargetPrice",
-              "gainPercent",
-              "var(--thc-win)",
-              "top",
-            )}
+            content={makeRiskRewardLabel(data, "sellTargetPrice", "gainPercent", "top")}
           />
         </Bar>
         <Bar
@@ -502,13 +507,7 @@ export function OngoingRiskRewardChart({ data }: { data: RiskRewardPoint[] }) {
         >
           <LabelList
             dataKey="lossPercent"
-            content={makeRiskRewardLabel(
-              data,
-              "sellSlPrice",
-              "lossPercent",
-              "var(--thc-loss)",
-              "bottom",
-            )}
+            content={makeRiskRewardLabel(data, "sellSlPrice", "lossPercent", "bottom")}
           />
         </Bar>
       </BarChart>

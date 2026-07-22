@@ -143,13 +143,15 @@ export function computeBestWorstTrades<
   return [...closed]
     .sort((a, b) => (b.pnlPercent ?? 0) - (a.pnlPercent ?? 0))
     .filter((_, i, arr) => i < n || i >= arr.length - n)
-    .map((s) => ({
-      label: new Date(s.signalTime).toLocaleDateString("en-IN", {
-        day: "2-digit",
-        month: "short",
-      }),
-      pnlPercent: Math.round((s.pnlPercent ?? 0) * 100) / 100,
-    }));
+    .map((s) => {
+      const d = new Date(s.signalTime);
+      const day = String(d.getDate()).padStart(2, "0");
+      const month = d.toLocaleDateString("en-IN", { month: "short" });
+      return {
+        label: `${day}${month}`,
+        pnlPercent: Math.round((s.pnlPercent ?? 0) * 100) / 100,
+      };
+    });
 }
 
 export function getRecentSignals<T extends Pick<Signal, "signalTime">>(
