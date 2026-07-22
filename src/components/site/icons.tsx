@@ -7,6 +7,14 @@ export function WhatsAppIcon({ className }: { className?: string }) {
   );
 }
 
+export function TelegramIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+      <path d="M21.05 2.927 2.4 10.24c-1.27.51-1.263 1.216-.232 1.53l4.79 1.494 1.847 5.65c.225.62.116.865.766.865.5 0 .72-.228 1-.5l2.4-2.334 4.85 3.58c.892.494 1.535.238 1.76-.827l3.19-15.03c.32-1.302-.497-1.893-1.72-1.74zM8.5 14.086l9.24-8.35c.414-.36-.09-.535-.638-.208L6.42 12.86l-4.36-1.36 18.99-7.324-1.7 15.99-5.24-3.87-3.19 3.076z" />
+    </svg>
+  );
+}
+
 export function InstagramIcon({ className }: { className?: string }) {
   return (
     <svg

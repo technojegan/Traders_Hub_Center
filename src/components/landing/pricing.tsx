@@ -19,8 +19,11 @@ function DhanOfferCard() {
         className="absolute inset-x-0 top-0 h-[3px]"
         style={{ backgroundImage: "var(--thc-gold-gradient)" }}
       />
-      <p className="font-heading text-lg font-bold">
-        Open a Demat account with <span className="thc-gold-text">Dhan</span> 🔥
+      <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-sm font-bold text-primary">
+        D
+      </div>
+      <p className="mt-3 font-heading text-lg font-bold">
+        Free Demat account with <span className="thc-gold-text">Dhan</span> 🔥
       </p>
       <p className="mt-2 text-sm text-muted-foreground">
         Don&apos;t miss it — pick either offer:
