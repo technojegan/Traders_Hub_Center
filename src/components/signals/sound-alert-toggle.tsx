@@ -36,11 +36,27 @@ export function SoundAlertToggle({ initialUpdatedAt }: { initialUpdatedAt: strin
   const lastSeenRef = useRef<string | null>(initialUpdatedAt);
 
   useEffect(() => {
-    if (localStorage.getItem(STORAGE_KEY) === "true") setEnabled(true);
+    if (localStorage.getItem(STORAGE_KEY) === "true") {
+      setEnabled(true);
+      if (!audioCtxRef.current) {
+        audioCtxRef.current = new AudioContext();
+      }
+    }
   }, []);
 
   useEffect(() => {
     if (!enabled) return;
+
+    // A freshly created AudioContext starts "suspended" until a user
+    // gesture — this covers the case where sound was already on from a
+    // previous visit (restored from localStorage, no fresh toggle click).
+    function resumeOnInteraction() {
+      if (audioCtxRef.current?.state === "suspended") {
+        audioCtxRef.current.resume();
+      }
+    }
+    document.addEventListener("click", resumeOnInteraction);
+    document.addEventListener("keydown", resumeOnInteraction);
 
     const interval = setInterval(async () => {
       try {
@@ -63,7 +79,11 @@ export function SoundAlertToggle({ initialUpdatedAt }: { initialUpdatedAt: strin
       }
     }, POLL_INTERVAL_MS);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener("click", resumeOnInteraction);
+      document.removeEventListener("keydown", resumeOnInteraction);
+    };
   }, [enabled]);
 
   function handleToggle() {
