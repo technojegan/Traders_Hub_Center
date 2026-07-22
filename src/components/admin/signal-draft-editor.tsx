@@ -103,7 +103,7 @@ export function SignalDraftEditor({
           />
         </div>
         <div className="flex flex-col gap-1">
-          <Label className="text-xs">Now (at signal)</Label>
+          <Label className="text-xs">Current Price</Label>
           <Input
             value={draft.priceAtSignal}
             onChange={(e) => set("priceAtSignal", e.target.value)}

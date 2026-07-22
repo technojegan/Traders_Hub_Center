@@ -115,7 +115,7 @@ export function ManualSignalForm() {
           />
         </div>
         <div className="flex flex-col gap-1.5">
-          <Label>Price at Signal (Now)</Label>
+          <Label>Current Price</Label>
           <Input
             value={form.priceAtSignal}
             onChange={(e) => set("priceAtSignal", e.target.value)}

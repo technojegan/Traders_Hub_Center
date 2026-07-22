@@ -4,7 +4,6 @@ import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SignalDraftEditor, type EditableDraft } from "@/components/admin/signal-draft-editor";
 import { ManualSignalForm } from "@/components/admin/manual-signal-form";
 import { parseSignalMessage } from "@/lib/parser";
@@ -95,13 +94,9 @@ export function AddSignalForm() {
   }
 
   return (
-    <Tabs defaultValue="paste" className="w-full">
-      <TabsList>
-        <TabsTrigger value="paste">Smart Paste</TabsTrigger>
-        <TabsTrigger value="manual">Manual Entry</TabsTrigger>
-      </TabsList>
-
-      <TabsContent value="paste" className="flex flex-col gap-4">
+    <div className="grid gap-6 lg:grid-cols-2">
+      <div className="flex flex-col gap-4">
+        <h2 className="font-heading text-sm font-semibold text-muted-foreground">Smart Paste</h2>
         <Textarea
           value={rawText}
           onChange={(e) => setRawText(e.target.value)}
@@ -136,11 +131,12 @@ export function AddSignalForm() {
             </Button>
           </div>
         )}
-      </TabsContent>
+      </div>
 
-      <TabsContent value="manual">
+      <div className="flex flex-col gap-4 border-t border-white/5 pt-6 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-6">
+        <h2 className="font-heading text-sm font-semibold text-muted-foreground">Manual Entry</h2>
         <ManualSignalForm />
-      </TabsContent>
-    </Tabs>
+      </div>
+    </div>
   );
 }

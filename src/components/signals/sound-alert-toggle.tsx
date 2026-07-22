@@ -9,20 +9,28 @@ const POLL_INTERVAL_MS = 15000;
 
 function playAlertTone(ctx: AudioContext) {
   const now = ctx.currentTime;
-  [880, 1180].forEach((freq, i) => {
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = "sine";
-    osc.frequency.value = freq;
-    const start = now + i * 0.18;
-    gain.gain.setValueAtTime(0, start);
-    gain.gain.linearRampToValueAtTime(0.25, start + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.001, start + 0.22);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(start);
-    osc.stop(start + 0.25);
-  });
+  const notes = [660, 880, 1320];
+  const noteGap = 0.14;
+  const noteDuration = 0.18;
+  const repeatGap = 0.32;
+
+  for (let repeat = 0; repeat < 2; repeat++) {
+    const repeatStart = now + repeat * (notes.length * noteGap + repeatGap);
+    notes.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "triangle";
+      osc.frequency.value = freq;
+      const start = repeatStart + i * noteGap;
+      gain.gain.setValueAtTime(0, start);
+      gain.gain.linearRampToValueAtTime(0.4, start + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.001, start + noteDuration);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(start);
+      osc.stop(start + noteDuration + 0.02);
+    });
+  }
 }
 
 export function SoundAlertToggle({ initialUpdatedAt }: { initialUpdatedAt: string | null }) {

@@ -8,6 +8,7 @@ import {
   BarChart,
   CartesianGrid,
   Cell,
+  LabelList,
   Legend,
   Pie,
   PieChart,
@@ -376,10 +377,47 @@ function RiskRewardTooltip({
   );
 }
 
+interface RiskRewardLabelProps {
+  x?: number | string;
+  y?: number | string;
+  width?: number | string;
+  index?: number;
+}
+
+function makeRiskRewardLabel(
+  data: RiskRewardPoint[],
+  priceKey: "sellTargetPrice" | "sellSlPrice",
+  pctKey: "gainPercent" | "lossPercent",
+  color: string,
+  position: "top" | "bottom",
+) {
+  return function RiskRewardLabel({ x = 0, y = 0, width = 0, index = 0 }: RiskRewardLabelProps) {
+    const point = data[index];
+    if (!point) return null;
+    const pct = point[pctKey];
+    const cx = Number(x);
+    const cy = Number(y);
+    const cw = Number(width);
+    const dy = position === "top" ? -6 : 14;
+    return (
+      <text
+        x={cx + cw / 2}
+        y={cy + dy}
+        textAnchor="middle"
+        fontSize={10}
+        fontWeight={700}
+        fill={color}
+      >
+        {`₹${point[priceKey]} (${pct >= 0 ? "+" : ""}${pct}%)`}
+      </text>
+    );
+  };
+}
+
 export function OngoingRiskRewardChart({ data }: { data: RiskRewardPoint[] }) {
   return (
     <ResponsiveContainer width="100%" height={220}>
-      <BarChart data={data} margin={{ top: 8, right: 16, left: 0, bottom: 0 }} barGap={4}>
+      <BarChart data={data} margin={{ top: 20, right: 16, left: 0, bottom: 20 }} barGap={4}>
         <defs>
           <linearGradient id="riskGainFill" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="var(--thc-win)" stopOpacity={0.95} />
@@ -401,14 +439,36 @@ export function OngoingRiskRewardChart({ data }: { data: RiskRewardPoint[] }) {
           fill="url(#riskGainFill)"
           radius={[3, 3, 0, 0]}
           isAnimationActive={false}
-        />
+        >
+          <LabelList
+            dataKey="gainPercent"
+            content={makeRiskRewardLabel(
+              data,
+              "sellTargetPrice",
+              "gainPercent",
+              "var(--thc-win)",
+              "top",
+            )}
+          />
+        </Bar>
         <Bar
           dataKey="lossPercent"
           name="Potential Risk %"
           fill="url(#riskLossFill)"
           radius={[0, 0, 3, 3]}
           isAnimationActive={false}
-        />
+        >
+          <LabelList
+            dataKey="lossPercent"
+            content={makeRiskRewardLabel(
+              data,
+              "sellSlPrice",
+              "lossPercent",
+              "var(--thc-loss)",
+              "bottom",
+            )}
+          />
+        </Bar>
       </BarChart>
     </ResponsiveContainer>
   );

@@ -92,6 +92,13 @@ interface EditDraft {
   stopLoss: string;
   targets: string;
   sellPrice: string;
+  signalTime: string;
+}
+
+function toDatetimeLocal(iso: string) {
+  const d = new Date(iso);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
 function toDraft(signal: ManageSignalRow): EditDraft {
@@ -102,6 +109,7 @@ function toDraft(signal: ManageSignalRow): EditDraft {
     stopLoss: String(signal.stopLoss),
     targets: signal.targets.join(", "),
     sellPrice: signal.sellPrice != null ? String(signal.sellPrice) : "",
+    signalTime: toDatetimeLocal(signal.signalTime),
   };
 }
 
@@ -147,6 +155,11 @@ function ManageSignalRowItem({ signal }: { signal: ManageSignalRow }) {
       toast.error("Sell price must be a valid number.");
       return;
     }
+    const signalTime = new Date(draft.signalTime);
+    if (Number.isNaN(signalTime.getTime())) {
+      toast.error("Enter a valid date & time.");
+      return;
+    }
 
     const input: SignalUpdateInput = {
       strike,
@@ -155,6 +168,7 @@ function ManageSignalRowItem({ signal }: { signal: ManageSignalRow }) {
       stopLoss,
       targets,
       sellPrice,
+      signalTime,
     };
 
     startSaving(async () => {
@@ -187,9 +201,13 @@ function ManageSignalRowItem({ signal }: { signal: ManageSignalRow }) {
   if (isEditing) {
     return (
       <TableRow className="border-b-white/5 bg-white/[0.02]">
-        <TableCell className="hidden whitespace-nowrap text-muted-foreground sm:table-cell">
-          {formatSignalDate(signal.signalTime)}{" "}
-          <span className="text-xs">{formatSignalTime(signal.signalTime)}</span>
+        <TableCell className="hidden sm:table-cell">
+          <Input
+            type="datetime-local"
+            value={draft.signalTime}
+            onChange={(e) => setDraft((d) => ({ ...d, signalTime: e.target.value }))}
+            className="h-8 w-[170px] text-xs"
+          />
         </TableCell>
         <TableCell className="whitespace-nowrap">
           <div className="flex items-center gap-1.5">

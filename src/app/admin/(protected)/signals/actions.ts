@@ -21,6 +21,7 @@ export interface SignalUpdateInput {
   stopLoss: number;
   targets: number[];
   sellPrice: number | null;
+  signalTime: Date;
 }
 
 export async function updateSignal(id: string, input: SignalUpdateInput) {
@@ -49,6 +50,7 @@ export async function updateSignal(id: string, input: SignalUpdateInput) {
       stopLoss: input.stopLoss,
       targets: input.targets,
       sellPrice: input.sellPrice,
+      signalTime: input.signalTime,
       pnlPercent,
       status,
       closedTime: input.sellPrice != null ? (signal.closedTime ?? new Date()) : null,

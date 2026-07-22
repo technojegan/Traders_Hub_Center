@@ -51,7 +51,7 @@ export function OngoingSignals({ signals }: { signals: SignalRow[] }) {
         </h2>
       </div>
 
-      <div className="mb-4 grid gap-4 lg:grid-cols-[1fr_240px]">
+      <div className="mb-4 grid gap-4 lg:grid-cols-[1fr_180px]">
         <div className="rounded-xl border border-white/5 bg-black/10 p-3">
           {isEmpty ? (
             <div className="flex h-[140px] flex-col items-center justify-center gap-1 text-center">
@@ -72,7 +72,7 @@ export function OngoingSignals({ signals }: { signals: SignalRow[] }) {
             </p>
             <p
               className={cn(
-                "mt-1 font-heading text-lg font-bold",
+                "mt-1 font-heading text-2xl font-bold",
                 isEmpty ? "text-muted-foreground" : "text-[var(--thc-win)]",
               )}
             >
@@ -85,7 +85,7 @@ export function OngoingSignals({ signals }: { signals: SignalRow[] }) {
             </p>
             <p
               className={cn(
-                "mt-1 font-heading text-lg font-bold",
+                "mt-1 font-heading text-2xl font-bold",
                 isEmpty ? "text-muted-foreground" : "text-[var(--thc-loss)]",
               )}
             >
@@ -96,7 +96,7 @@ export function OngoingSignals({ signals }: { signals: SignalRow[] }) {
             <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
               Open Positions
             </p>
-            <p className="mt-1 font-heading text-lg font-bold thc-gold-text">{signals.length}</p>
+            <p className="mt-1 font-heading text-2xl font-bold thc-gold-text">{signals.length}</p>
           </div>
         </div>
       </div>
