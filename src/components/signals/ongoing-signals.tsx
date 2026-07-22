@@ -51,52 +51,54 @@ export function OngoingSignals({ signals }: { signals: SignalRow[] }) {
         </h2>
       </div>
 
-      <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
-        <div className="thc-glass rounded-xl border border-white/5 p-3">
-          <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
-            Avg Potential Gain
-          </p>
-          <p
-            className={cn(
-              "mt-1 font-heading text-lg font-bold",
-              isEmpty ? "text-muted-foreground" : "text-[var(--thc-win)]",
-            )}
-          >
-            {isEmpty ? "—" : `+${avgGain.toFixed(1)}%`}
-          </p>
+      <div className="mb-4 grid gap-4 lg:grid-cols-[1fr_240px]">
+        <div className="rounded-xl border border-white/5 bg-black/10 p-3">
+          {isEmpty ? (
+            <div className="flex h-[140px] flex-col items-center justify-center gap-1 text-center">
+              <p className="text-xs text-muted-foreground">
+                No open trades right now — the risk/reward chart will populate once a signal goes
+                live.
+              </p>
+            </div>
+          ) : (
+            <OngoingRiskRewardChart data={chartData} />
+          )}
         </div>
-        <div className="thc-glass rounded-xl border border-white/5 p-3">
-          <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
-            Avg Potential Risk
-          </p>
-          <p
-            className={cn(
-              "mt-1 font-heading text-lg font-bold",
-              isEmpty ? "text-muted-foreground" : "text-[var(--thc-loss)]",
-            )}
-          >
-            {isEmpty ? "—" : `${avgLoss.toFixed(1)}%`}
-          </p>
-        </div>
-        <div className="thc-glass col-span-2 rounded-xl border border-white/5 p-3 sm:col-span-1">
-          <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
-            Open Positions
-          </p>
-          <p className="mt-1 font-heading text-lg font-bold thc-gold-text">{signals.length}</p>
-        </div>
-      </div>
 
-      <div className="mb-4 rounded-xl border border-white/5 bg-black/10 p-3">
-        {isEmpty ? (
-          <div className="flex h-[140px] flex-col items-center justify-center gap-1 text-center">
-            <p className="text-xs text-muted-foreground">
-              No open trades right now — the risk/reward chart will populate once a signal goes
-              live.
+        <div className="grid grid-cols-3 gap-3 lg:grid-cols-1">
+          <div className="thc-glass rounded-xl border border-white/5 p-3">
+            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
+              Avg Potential Gain
+            </p>
+            <p
+              className={cn(
+                "mt-1 font-heading text-lg font-bold",
+                isEmpty ? "text-muted-foreground" : "text-[var(--thc-win)]",
+              )}
+            >
+              {isEmpty ? "—" : `+${avgGain.toFixed(1)}%`}
             </p>
           </div>
-        ) : (
-          <OngoingRiskRewardChart data={chartData} />
-        )}
+          <div className="thc-glass rounded-xl border border-white/5 p-3">
+            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
+              Avg Potential Risk
+            </p>
+            <p
+              className={cn(
+                "mt-1 font-heading text-lg font-bold",
+                isEmpty ? "text-muted-foreground" : "text-[var(--thc-loss)]",
+              )}
+            >
+              {isEmpty ? "—" : `${avgLoss.toFixed(1)}%`}
+            </p>
+          </div>
+          <div className="thc-glass rounded-xl border border-white/5 p-3">
+            <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
+              Open Positions
+            </p>
+            <p className="mt-1 font-heading text-lg font-bold thc-gold-text">{signals.length}</p>
+          </div>
+        </div>
       </div>
 
       <div className="overflow-x-auto">

@@ -266,9 +266,20 @@ export function WinLossBarChart({ data }: { data: DayPnl[] }) {
   );
 }
 
-export function WinRateDonutChart({ wins, losses }: { wins: number; losses: number }) {
+export function WinRateDonutChart({
+  wins,
+  losses,
+  gainPercent,
+  lossPercent,
+}: {
+  wins: number;
+  losses: number;
+  gainPercent: number;
+  lossPercent: number;
+}) {
   const total = wins + losses;
   const winRate = total > 0 ? (wins / total) * 100 : 0;
+  const pct = (n: number) => `${n >= 0 ? "+" : ""}${n.toFixed(1)}%`;
   const data = [
     { name: "Wins", value: wins },
     { name: "Losses", value: losses },
@@ -309,7 +320,9 @@ export function WinRateDonutChart({ wins, losses }: { wins: number; losses: numb
           itemStyle={chartTooltipItemStyle}
         />
           <Legend
-            formatter={(value) => legendText(`${value} (${value === "Wins" ? wins : losses})`)}
+            formatter={(value) =>
+              legendText(`${value} (${value === "Wins" ? pct(gainPercent) : pct(lossPercent)})`)
+            }
           />
         </PieChart>
       </ResponsiveContainer>

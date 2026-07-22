@@ -53,6 +53,8 @@ export interface DashboardMetrics {
   }[];
   winCount: number;
   lossCount: number;
+  totalGainPercent: number;
+  totalLossPercent: number;
 }
 
 function winRateOf(signals: SignalForMetrics[]): number {
@@ -75,6 +77,8 @@ export function computeDashboardMetrics(signals: SignalForMetrics[]): DashboardM
   const worstTradePercent = percents.length > 0 ? Math.min(...percents) : null;
   const winCount = closed.filter((s) => (s.pnlPercent ?? 0) > 0).length;
   const lossCount = closed.length - winCount;
+  const totalGainPercent = percents.filter((p) => p > 0).reduce((sum, p) => sum + p, 0);
+  const totalLossPercent = percents.filter((p) => p <= 0).reduce((sum, p) => sum + p, 0);
 
   const sortedClosed = [...closed].sort(
     (a, b) => new Date(a.signalTime).getTime() - new Date(b.signalTime).getTime(),
@@ -127,6 +131,8 @@ export function computeDashboardMetrics(signals: SignalForMetrics[]): DashboardM
     winLossByDay,
     winCount,
     lossCount,
+    totalGainPercent,
+    totalLossPercent,
   };
 }
 

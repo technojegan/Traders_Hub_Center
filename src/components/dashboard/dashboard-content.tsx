@@ -93,13 +93,18 @@ export function DashboardContent({
             <h2 className="font-heading text-sm font-semibold">Win Rate</h2>
           </div>
           <div className="mx-auto max-w-xs">
-            <WinRateDonutChart wins={metrics.winCount} losses={metrics.lossCount} />
+            <WinRateDonutChart
+              wins={metrics.winCount}
+              losses={metrics.lossCount}
+              gainPercent={metrics.totalGainPercent}
+              lossPercent={metrics.totalLossPercent}
+            />
           </div>
         </div>
         <div className="thc-glass rounded-xl border border-white/5 p-4">
           <div className="mb-2 flex items-center gap-2">
             <SectionNumber n={4} />
-            <h2 className="font-heading text-sm font-semibold">Profit % vs Loss % by Day</h2>
+            <h2 className="font-heading text-sm font-semibold">Profit vs. Loss % by Day</h2>
           </div>
           <WinLossBarChart data={metrics.winLossByDay} />
         </div>

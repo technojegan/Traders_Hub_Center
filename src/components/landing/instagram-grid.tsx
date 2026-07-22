@@ -2,7 +2,17 @@ import Image from "next/image";
 import { INSTAGRAM_THUMBNAILS } from "@/lib/constants";
 
 export function InstagramGrid() {
-  const items = [...INSTAGRAM_THUMBNAILS, ...INSTAGRAM_THUMBNAILS];
+  // Duplicated 4x (not 2x): with only 5 thumbnails, one copy is narrower than
+  // most desktop viewports, so a 2x loop ran out of content and visibly
+  // paused/jumped right before resetting. 4 copies keeps the -50% keyframe
+  // (still exactly "one half of the track") wide enough to always fill the
+  // viewport during the whole animation cycle.
+  const items = [
+    ...INSTAGRAM_THUMBNAILS,
+    ...INSTAGRAM_THUMBNAILS,
+    ...INSTAGRAM_THUMBNAILS,
+    ...INSTAGRAM_THUMBNAILS,
+  ];
 
   return (
     <section className="py-16">
@@ -22,7 +32,10 @@ export function InstagramGrid() {
             "linear-gradient(90deg, transparent, black 8%, black 92%, transparent)",
         }}
       >
-        <div className="thc-marquee-track flex w-max gap-4 px-4">
+        <div
+          className="thc-marquee-track flex w-max gap-4 px-4"
+          style={{ ["--thc-marquee-duration" as string]: "56s" }}
+        >
           {items.map((item, i) => (
             <a
               key={`${item.videoUrl}-${i}`}
