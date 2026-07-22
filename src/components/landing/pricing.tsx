@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { WhatsAppIcon } from "@/components/site/icons";
@@ -13,15 +14,19 @@ function DhanOfferCard() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.5, delay: 0.1 }}
-      className="thc-glass thc-glow relative overflow-hidden rounded-2xl border border-white/5 p-6 text-center lg:max-w-xs"
+      className="thc-glass thc-glow relative flex flex-col overflow-hidden rounded-2xl border border-white/5 p-6 text-center lg:max-w-xs"
     >
       <span
         className="absolute inset-x-0 top-0 h-[3px]"
         style={{ backgroundImage: "var(--thc-gold-gradient)" }}
       />
-      <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-sm font-bold text-primary">
-        D
-      </div>
+      <Image
+        src="/dhan-logo.jpg"
+        alt="Dhan"
+        width={40}
+        height={40}
+        className="mx-auto rounded-xl"
+      />
       <p className="mt-3 font-heading text-lg font-bold">
         Free Demat account with <span className="thc-gold-text">Dhan</span> 🔥
       </p>
@@ -54,7 +59,7 @@ function DhanOfferCard() {
         </ul>
       </div>
 
-      <Button asChild size="sm" variant="outline" className="thc-glow mt-5 w-full">
+      <Button asChild size="sm" variant="outline" className="thc-glow mt-auto w-full">
         <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
           <WhatsAppIcon className="h-4 w-4" />
           Grab this offer
@@ -82,7 +87,7 @@ export function Pricing() {
           </p>
         </div>
 
-        <div className="mt-10 flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-center">
+        <div className="mt-10 flex flex-col gap-6 lg:flex-row lg:items-stretch lg:justify-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
