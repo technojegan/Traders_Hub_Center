@@ -1,111 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import { Bell, BellOff } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useSoundAlert } from "@/components/site/sound-alert-provider";
 
-const STORAGE_KEY = "thc-sound-alerts-enabled";
-const POLL_INTERVAL_MS = 15000;
-
-function playAlertTone(ctx: AudioContext) {
-  const now = ctx.currentTime;
-  const notes = [660, 880, 1320];
-  const noteGap = 0.14;
-  const noteDuration = 0.18;
-
-  notes.forEach((freq, i) => {
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = "triangle";
-    osc.frequency.value = freq;
-    const start = now + i * noteGap;
-    gain.gain.setValueAtTime(0, start);
-    gain.gain.linearRampToValueAtTime(0.4, start + 0.015);
-    gain.gain.exponentialRampToValueAtTime(0.001, start + noteDuration);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(start);
-    osc.stop(start + noteDuration + 0.02);
-  });
-}
-
-export function SoundAlertToggle({ initialUpdatedAt }: { initialUpdatedAt: string | null }) {
-  const [enabled, setEnabled] = useState(false);
-  const [justAlerted, setJustAlerted] = useState(false);
-  const audioCtxRef = useRef<AudioContext | null>(null);
-  const lastSeenRef = useRef<string | null>(initialUpdatedAt);
-
-  useEffect(() => {
-    if (localStorage.getItem(STORAGE_KEY) === "true") {
-      setEnabled(true);
-      if (!audioCtxRef.current) {
-        audioCtxRef.current = new AudioContext();
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!enabled) return;
-
-    // A freshly created AudioContext starts "suspended" until a user
-    // gesture — this covers the case where sound was already on from a
-    // previous visit (restored from localStorage, no fresh toggle click).
-    function resumeOnInteraction() {
-      if (audioCtxRef.current?.state === "suspended") {
-        audioCtxRef.current.resume();
-      }
-    }
-    document.addEventListener("click", resumeOnInteraction);
-    document.addEventListener("keydown", resumeOnInteraction);
-
-    const interval = setInterval(async () => {
-      try {
-        const res = await fetch("/api/signals/latest-update", { cache: "no-store" });
-        if (!res.ok) return;
-        const data: { updatedAt: string | null } = await res.json();
-        if (
-          data.updatedAt &&
-          (!lastSeenRef.current || new Date(data.updatedAt) > new Date(lastSeenRef.current))
-        ) {
-          lastSeenRef.current = data.updatedAt;
-          if (audioCtxRef.current) {
-            playAlertTone(audioCtxRef.current);
-            setJustAlerted(true);
-            setTimeout(() => setJustAlerted(false), 1500);
-          }
-        }
-      } catch {
-        // transient network error — next poll retries
-      }
-    }, POLL_INTERVAL_MS);
-
-    return () => {
-      clearInterval(interval);
-      document.removeEventListener("click", resumeOnInteraction);
-      document.removeEventListener("keydown", resumeOnInteraction);
-    };
-  }, [enabled]);
-
-  function handleToggle() {
-    const next = !enabled;
-    setEnabled(next);
-    localStorage.setItem(STORAGE_KEY, String(next));
-
-    if (next) {
-      if (!audioCtxRef.current) {
-        audioCtxRef.current = new AudioContext();
-      }
-      if (audioCtxRef.current.state === "suspended") {
-        audioCtxRef.current.resume();
-      }
-      playAlertTone(audioCtxRef.current);
-    }
-  }
+export function SoundAlertToggle() {
+  const { enabled, justAlerted, toggle } = useSoundAlert();
 
   return (
     <button
       type="button"
-      onClick={handleToggle}
+      onClick={toggle}
       aria-pressed={enabled}
       title={
         enabled

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Sora } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
+import { SoundAlertProvider } from "@/components/site/sound-alert-provider";
 import "./globals.css";
 
 const inter = Inter({
@@ -32,7 +33,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <div className="thc-mesh-bg" aria-hidden="true" />
-        {children}
+        <SoundAlertProvider>{children}</SoundAlertProvider>
         <Toaster richColors theme="dark" />
       </body>
     </html>

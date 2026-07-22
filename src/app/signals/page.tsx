@@ -3,6 +3,7 @@ import { Footer } from "@/components/site/footer";
 import { SignalsExplorer } from "@/components/signals/signals-explorer";
 import { OngoingSignals } from "@/components/signals/ongoing-signals";
 import { SoundAlertToggle } from "@/components/signals/sound-alert-toggle";
+import { RefreshButton } from "@/components/site/refresh-button";
 import { prisma } from "@/lib/prisma";
 import type { SignalRow } from "@/components/signals/signals-explorer";
 
@@ -28,10 +29,6 @@ export default async function SignalsPage() {
     adminNote: s.adminNote,
   }));
   const ongoing = rows.filter((r) => r.status === "OPEN");
-  const initialUpdatedAt = signals.reduce<string | null>((latest, s) => {
-    const t = s.updatedAt.toISOString();
-    return !latest || t > latest ? t : latest;
-  }, null);
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -47,7 +44,10 @@ export default async function SignalsPage() {
               track record.
             </p>
           </div>
-          <SoundAlertToggle initialUpdatedAt={initialUpdatedAt} />
+          <div className="flex items-center gap-2">
+            <RefreshButton />
+            <SoundAlertToggle />
+          </div>
         </div>
         <OngoingSignals signals={ongoing} />
         <SignalsExplorer signals={rows} />
