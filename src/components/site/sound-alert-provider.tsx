@@ -8,6 +8,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 const STORAGE_KEY = "thc-sound-alerts-enabled";
@@ -68,9 +69,15 @@ interface SoundAlertContextValue {
 const SoundAlertContext = createContext<SoundAlertContextValue | null>(null);
 
 export function SoundAlertProvider({ children }: { children: ReactNode }) {
+  const router = useRouter();
   const [enabled, setEnabled] = useState(false);
   const [justAlerted, setJustAlerted] = useState(false);
   const audioCtxRef = useRef<AudioContext | null>(null);
+  const enabledRef = useRef(enabled);
+
+  useEffect(() => {
+    enabledRef.current = enabled;
+  }, [enabled]);
 
   useEffect(() => {
     if (localStorage.getItem(STORAGE_KEY) === "true") {
@@ -82,8 +89,6 @@ export function SoundAlertProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (!enabled) return;
-
     // A freshly created AudioContext starts "suspended" until a user
     // gesture — this covers sound restored from a previous visit, where
     // there's no fresh toggle click to satisfy the browser's autoplay policy.
@@ -94,7 +99,16 @@ export function SoundAlertProvider({ children }: { children: ReactNode }) {
     }
     document.addEventListener("click", resumeOnInteraction);
     document.addEventListener("keydown", resumeOnInteraction);
+    return () => {
+      document.removeEventListener("click", resumeOnInteraction);
+      document.removeEventListener("keydown", resumeOnInteraction);
+    };
+  }, []);
 
+  // Always subscribed, independent of the sound toggle — refreshes whatever
+  // page is currently open so new/updated signals show up live, with sound
+  // as an opt-in layer on top rather than a requirement for live content.
+  useEffect(() => {
     const supabase = createSupabaseBrowserClient();
     const channel = supabase
       .channel("signal-alerts")
@@ -102,7 +116,9 @@ export function SoundAlertProvider({ children }: { children: ReactNode }) {
         "postgres_changes",
         { event: "*", schema: "public", table: "Signal" },
         (payload) => {
-          if (audioCtxRef.current) {
+          router.refresh();
+
+          if (enabledRef.current && audioCtxRef.current) {
             if (payload.eventType === "INSERT") {
               playNewSignalTone(audioCtxRef.current);
             } else {
@@ -116,11 +132,9 @@ export function SoundAlertProvider({ children }: { children: ReactNode }) {
       .subscribe();
 
     return () => {
-      document.removeEventListener("click", resumeOnInteraction);
-      document.removeEventListener("keydown", resumeOnInteraction);
       supabase.removeChannel(channel);
     };
-  }, [enabled]);
+  }, [router]);
 
   function toggle() {
     const next = !enabled;
