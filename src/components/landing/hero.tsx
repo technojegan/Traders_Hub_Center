@@ -57,47 +57,53 @@ export function Hero() {
           Traders Hub Center publishes transparent, intraday options-buying calls to premium
           subscribers — every entry, stop loss and target tracked in the open.
         </p>
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+        <div className="mt-8 flex justify-center">
           <Button
             asChild
             size="lg"
-            className="thc-glow thc-btn-gradient h-14 gap-2.5 px-8 text-base"
+            className="thc-glow thc-btn-gradient h-14 gap-2.5 px-10 text-base"
           >
             <Link href="/register">Register Premium</Link>
           </Button>
-          <Button
-            asChild
-            size="lg"
-            variant="outline"
-            className="thc-glow h-14 gap-2.5 px-8 text-base"
-          >
-            <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
-              <WhatsAppIcon className="h-5 w-5" />
-              Join WhatsApp
-            </a>
-          </Button>
-          <Button
-            asChild
-            size="lg"
-            variant="outline"
-            className="thc-glow h-14 gap-2.5 px-8 text-base"
-          >
-            <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
-              <InstagramIcon className="h-5 w-5" />
-              Instagram
-            </a>
-          </Button>
-          <Button
-            asChild
-            size="lg"
-            variant="outline"
-            className="thc-glow h-14 gap-2.5 px-8 text-base"
-          >
-            <a href={TELEGRAM_URL} target="_blank" rel="noopener noreferrer">
-              <TelegramIcon className="h-5 w-5" />
-              Telegram
-            </a>
-          </Button>
+        </div>
+
+        <div className="mt-7">
+          <p className="mb-3 text-sm font-medium text-muted-foreground">Join Free on:</p>
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="thc-glow h-14 gap-2.5 px-8 text-base"
+            >
+              <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
+                <WhatsAppIcon className="h-5 w-5" />
+                WhatsApp
+              </a>
+            </Button>
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="thc-glow h-14 gap-2.5 px-8 text-base"
+            >
+              <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
+                <InstagramIcon className="h-5 w-5" />
+                Instagram
+              </a>
+            </Button>
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="thc-glow h-14 gap-2.5 px-8 text-base"
+            >
+              <a href={TELEGRAM_URL} target="_blank" rel="noopener noreferrer">
+                <TelegramIcon className="h-5 w-5" />
+                Telegram
+              </a>
+            </Button>
+          </div>
         </div>
       </motion.div>
     </section>
