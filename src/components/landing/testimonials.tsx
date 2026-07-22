@@ -1,4 +1,4 @@
-import { TESTIMONIALS, TRADER_NAMES } from "@/lib/constants";
+import { TESTIMONIALS } from "@/lib/constants";
 
 const AVATAR_COLORS = [
   "var(--thc-gold-start)",
@@ -18,7 +18,6 @@ function initials(name: string) {
 
 export function Testimonials() {
   const items = [...TESTIMONIALS, ...TESTIMONIALS];
-  const names = [...TRADER_NAMES, ...TRADER_NAMES];
 
   return (
     <section className="py-16">
@@ -70,30 +69,6 @@ export function Testimonials() {
                 </div>
               </div>
             </div>
-          ))}
-        </div>
-      </div>
-
-      <p className="mt-10 text-center text-xs font-medium uppercase tracking-wide text-muted-foreground">
-        Trusted by traders like
-      </p>
-      <div
-        className="relative mt-4 overflow-hidden"
-        style={{
-          maskImage: "linear-gradient(90deg, transparent, black 8%, black 92%, transparent)",
-        }}
-      >
-        <div
-          className="thc-marquee-track flex w-max gap-2.5 px-4"
-          style={{ ["--thc-marquee-duration" as string]: "45s" }}
-        >
-          {names.map((name, i) => (
-            <span
-              key={`${name}-${i}`}
-              className="shrink-0 rounded-full border border-white/10 bg-white/[0.03] px-3.5 py-1.5 text-xs text-muted-foreground"
-            >
-              {name}
-            </span>
           ))}
         </div>
       </div>

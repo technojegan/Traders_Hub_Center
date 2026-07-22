@@ -1,5 +1,5 @@
 import { Logo } from "@/components/site/logo";
-import { AdminNav } from "@/components/admin/admin-nav";
+import { AdminNav, AdminMobileNav } from "@/components/admin/admin-nav";
 
 export default function AdminProtectedLayout({
   children,
@@ -13,6 +13,7 @@ export default function AdminProtectedLayout({
           <Logo />
           <AdminNav />
         </div>
+        <AdminMobileNav />
       </header>
       <main className="mx-auto flex-1 w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {children}

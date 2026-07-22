@@ -13,8 +13,9 @@ export function Logo({ className }: { className?: string }) {
         className="h-12 w-12 rounded-full shadow-[0_2px_16px_-4px_var(--thc-gold-start)] transition-transform group-hover:scale-105 sm:h-14 sm:w-14"
         priority
       />
-      <span className="font-heading text-lg font-bold tracking-tight text-foreground sm:text-xl">
-        Traders Hub Center
+      <span className="font-heading text-lg font-bold tracking-tight sm:text-xl">
+        <span className="thc-gold-text">Traders</span>{" "}
+        <span className="text-foreground">Hub Center</span>
       </span>
     </Link>
   );
