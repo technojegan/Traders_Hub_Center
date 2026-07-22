@@ -89,6 +89,11 @@ export default function TermsPage() {
                 for educational purposes only and are not financial or investment advice.
               </li>
               <li>
+                • We do not promise or guarantee any specific return number or percentage. Our
+                live Win Rate and Total Capture % are historical figures computed from every
+                signal we&apos;ve published, not a forecast of future results.
+              </li>
+              <li>
                 • Trading involves substantial risk. Profits are not guaranteed, and losses can
                 occur. The mentor, community admins, and members shall not be held responsible
                 for any trading profits or losses.

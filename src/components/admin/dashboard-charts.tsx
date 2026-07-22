@@ -382,6 +382,7 @@ interface RiskRewardLabelProps {
   x?: number | string;
   y?: number | string;
   width?: number | string;
+  height?: number | string;
   index?: number;
 }
 
@@ -415,6 +416,38 @@ function makeRiskRewardLabel(
   };
 }
 
+function makeEntryPriceLabel(data: RiskRewardPoint[]) {
+  return function EntryPriceLabel({
+    x = 0,
+    y = 0,
+    width = 0,
+    height = 0,
+    index = 0,
+  }: RiskRewardLabelProps) {
+    const point = data[index];
+    if (!point) return null;
+    const cx = Number(x);
+    const cy = Number(y);
+    const cw = Number(width);
+    const ch = Number(height);
+    // The gain bar's rect always spans from its peak down to the zero line —
+    // so y + height is exactly the zero-line pixel position for this category.
+    const zeroY = cy + ch;
+    return (
+      <text
+        x={cx + cw / 2}
+        y={zeroY - 4}
+        textAnchor="middle"
+        fontSize={9}
+        fontWeight={700}
+        fill="var(--thc-gold-start)"
+      >
+        {`Entry ₹${point.buyPrice}`}
+      </text>
+    );
+  };
+}
+
 export function OngoingRiskRewardChart({ data }: { data: RiskRewardPoint[] }) {
   return (
     <ResponsiveContainer width="100%" height={220}>
@@ -434,20 +467,7 @@ export function OngoingRiskRewardChart({ data }: { data: RiskRewardPoint[] }) {
         <YAxis unit="%" tick={axisTick} />
         <Tooltip content={<RiskRewardTooltip />} cursor={{ fill: "rgba(255,255,255,0.04)" }} />
         <Legend formatter={legendText} />
-        <ReferenceLine
-          y={0}
-          stroke="var(--thc-gold-start)"
-          strokeDasharray="4 4"
-          strokeWidth={1.5}
-          label={{
-            value: "Entry Price",
-            position: "insideBottomLeft",
-            fill: "var(--thc-gold-start)",
-            fontSize: 10,
-            fontWeight: 700,
-            dy: -4,
-          }}
-        />
+        <ReferenceLine y={0} stroke="var(--thc-gold-start)" strokeDasharray="4 4" strokeWidth={1.5} />
         <Bar
           dataKey="gainPercent"
           name="Potential Gain %"
@@ -455,6 +475,7 @@ export function OngoingRiskRewardChart({ data }: { data: RiskRewardPoint[] }) {
           radius={[3, 3, 0, 0]}
           isAnimationActive={false}
         >
+          <LabelList dataKey="gainPercent" content={makeEntryPriceLabel(data)} />
           <LabelList
             dataKey="gainPercent"
             content={makeRiskRewardLabel(

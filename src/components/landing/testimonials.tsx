@@ -40,7 +40,7 @@ export function Testimonials() {
           {items.map((t, i) => (
             <div
               key={`${t.name}-${i}`}
-              className="thc-glass thc-glow w-80 shrink-0 rounded-2xl border border-white/5 p-5 text-left"
+              className="thc-glass thc-glow flex w-80 shrink-0 flex-col rounded-2xl border border-white/5 p-5 text-left"
             >
               <div className="flex items-center justify-between">
                 <span className="font-heading text-2xl leading-none text-primary">&ldquo;</span>
@@ -56,7 +56,7 @@ export function Testimonials() {
                 <span className="text-xs text-[var(--thc-gold-start)]">★★★★★</span>
               </div>
               <p className="mt-3 text-sm text-foreground/90">&ldquo;{t.quote}&rdquo;</p>
-              <div className="mt-4 flex items-center gap-2.5 border-t border-white/5 pt-3">
+              <div className="mt-auto flex items-center gap-2.5 border-t border-white/5 pt-3">
                 <span
                   className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold text-black"
                   style={{ backgroundColor: AVATAR_COLORS[i % AVATAR_COLORS.length] }}

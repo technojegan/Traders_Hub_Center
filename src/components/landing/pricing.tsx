@@ -137,11 +137,11 @@ export function Pricing() {
           </div>
 
           <p className="mt-6 text-xs text-muted-foreground">
-            We don&apos;t promise a return number — check our actual{" "}
+            Check our actual{" "}
             <Link href="/dashboard" className="text-primary underline underline-offset-2">
               Win Rate and Total Capture %
-            </Link>{" "}
-            above, computed live from every signal we&apos;ve published. {BATCH_INFO.refundPolicy}{" "}
+            </Link>
+            , computed live from every signal we&apos;ve published. {BATCH_INFO.refundPolicy}{" "}
             <Link href="/terms" className="text-primary underline underline-offset-2">
               T &amp; C
             </Link>
