@@ -12,6 +12,7 @@ import {
   Legend,
   Pie,
   PieChart,
+  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -433,6 +434,20 @@ export function OngoingRiskRewardChart({ data }: { data: RiskRewardPoint[] }) {
         <YAxis unit="%" tick={axisTick} />
         <Tooltip content={<RiskRewardTooltip />} cursor={{ fill: "rgba(255,255,255,0.04)" }} />
         <Legend formatter={legendText} />
+        <ReferenceLine
+          y={0}
+          stroke="var(--thc-gold-start)"
+          strokeDasharray="4 4"
+          strokeWidth={1.5}
+          label={{
+            value: "Entry Price",
+            position: "insideBottomLeft",
+            fill: "var(--thc-gold-start)",
+            fontSize: 10,
+            fontWeight: 700,
+            dy: -4,
+          }}
+        />
         <Bar
           dataKey="gainPercent"
           name="Potential Gain %"
