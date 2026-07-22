@@ -7,6 +7,8 @@ import { cn, formatSignalDate, formatSignalTime } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -40,6 +42,7 @@ export interface ManageSignalRow {
   pnlPercent: number | null;
   status: "OPEN" | "TARGET_HIT" | "SL_HIT" | "CLOSED_MANUAL";
   signalTime: string;
+  adminNote: string | null;
 }
 
 const STATUS_LABEL: Record<ManageSignalRow["status"], string> = {
@@ -93,6 +96,7 @@ interface EditDraft {
   targets: string;
   sellPrice: string;
   signalTime: string;
+  adminNote: string;
 }
 
 function toDatetimeLocal(iso: string) {
@@ -110,6 +114,7 @@ function toDraft(signal: ManageSignalRow): EditDraft {
     targets: signal.targets.join(", "),
     sellPrice: signal.sellPrice != null ? String(signal.sellPrice) : "",
     signalTime: toDatetimeLocal(signal.signalTime),
+    adminNote: signal.adminNote ?? "",
   };
 }
 
@@ -169,6 +174,7 @@ function ManageSignalRowItem({ signal }: { signal: ManageSignalRow }) {
       targets,
       sellPrice,
       signalTime,
+      adminNote: draft.adminNote.trim() === "" ? null : draft.adminNote.trim(),
     };
 
     startSaving(async () => {
@@ -200,6 +206,7 @@ function ManageSignalRowItem({ signal }: { signal: ManageSignalRow }) {
 
   if (isEditing) {
     return (
+      <>
       <TableRow className="border-b-white/5 bg-white/[0.02]">
         <TableCell className="hidden sm:table-cell">
           <Input
@@ -287,10 +294,25 @@ function ManageSignalRowItem({ signal }: { signal: ManageSignalRow }) {
           </div>
         </TableCell>
       </TableRow>
+      <TableRow className="border-b-white/5 bg-white/[0.02] hover:bg-white/[0.02]">
+        <TableCell colSpan={9}>
+          <Label className="text-xs text-muted-foreground">
+            Admin Update (shown to subscribers on the Trade Log)
+          </Label>
+          <Textarea
+            value={draft.adminNote}
+            onChange={(e) => setDraft((d) => ({ ...d, adminNote: e.target.value }))}
+            placeholder="e.g. Holding above 145, trailing SL to 140"
+            className="mt-1.5 min-h-[60px] text-sm"
+          />
+        </TableCell>
+      </TableRow>
+      </>
     );
   }
 
   return (
+    <>
     <TableRow className="border-b-white/5">
       <TableCell className="hidden whitespace-nowrap text-muted-foreground sm:table-cell">
         {formatSignalDate(signal.signalTime)}{" "}
@@ -356,6 +378,14 @@ function ManageSignalRowItem({ signal }: { signal: ManageSignalRow }) {
         </div>
       </TableCell>
     </TableRow>
+    {signal.adminNote && (
+      <TableRow className="border-b-white/5 hover:bg-transparent">
+        <TableCell colSpan={9} className="py-2 text-xs text-muted-foreground">
+          <span className="font-semibold text-foreground">Admin update:</span> {signal.adminNote}
+        </TableCell>
+      </TableRow>
+    )}
+    </>
   );
 }
 

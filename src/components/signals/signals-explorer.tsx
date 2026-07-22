@@ -31,6 +31,7 @@ export interface SignalRow {
   pnlPercent: number | null;
   status: "OPEN" | "TARGET_HIT" | "SL_HIT" | "CLOSED_MANUAL";
   signalTime: string | Date;
+  adminNote: string | null;
 }
 
 const STATUS_LABEL: Record<SignalRow["status"], string> = {

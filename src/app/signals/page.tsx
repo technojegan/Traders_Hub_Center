@@ -25,6 +25,7 @@ export default async function SignalsPage() {
     pnlPercent: s.pnlPercent,
     status: s.status,
     signalTime: s.signalTime.toISOString(),
+    adminNote: s.adminNote,
   }));
   const ongoing = rows.filter((r) => r.status === "OPEN");
   const initialUpdatedAt = signals.reduce<string | null>((latest, s) => {

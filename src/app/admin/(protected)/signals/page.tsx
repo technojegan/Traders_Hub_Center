@@ -17,6 +17,7 @@ export default async function ManageSignalsPage() {
     pnlPercent: s.pnlPercent,
     status: s.status,
     signalTime: s.signalTime.toISOString(),
+    adminNote: s.adminNote,
   }));
 
   const openCount = rows.filter((r) => r.status === "OPEN").length;

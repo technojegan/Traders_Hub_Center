@@ -176,6 +176,24 @@ export function OngoingSignals({ signals }: { signals: SignalRow[] }) {
               </TableBody>
             </Table>
           </div>
+
+          {signals.some((signal) => signal.adminNote) && (
+            <div className="flex flex-col gap-2">
+              {signals
+                .filter((signal) => signal.adminNote)
+                .map((signal) => (
+                  <div
+                    key={signal.id}
+                    className="thc-glass rounded-xl border border-primary/20 bg-primary/5 p-3"
+                  >
+                    <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                      Update on {signal.strike} {signal.optionType}
+                    </p>
+                    <p className="mt-1 text-sm text-foreground">{signal.adminNote}</p>
+                  </div>
+                ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
