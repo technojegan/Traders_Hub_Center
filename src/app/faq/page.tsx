@@ -2,28 +2,32 @@ import { Navbar } from "@/components/site/navbar";
 import { Footer } from "@/components/site/footer";
 import { TocSidebar, type TocEntry } from "@/components/site/toc-sidebar";
 import { LegalSection as Section } from "@/components/site/legal-section";
-import { BATCH_INFO } from "@/lib/constants";
-
-const SECTIONS: TocEntry[] = [
-  { id: "what-is-thc", label: "What is Traders Hub Center?" },
-  { id: "membership-benefits", label: "What do I get as a member?" },
-  { id: "pricing", label: "How much does it cost?" },
-  { id: "timings", label: "What are the batch timings?" },
-  { id: "how-to-join", label: "How do I join / pay?" },
-  { id: "refund-policy", label: "What is the refund policy?" },
-  { id: "guaranteed-profit", label: "Are signals guaranteed to profit?" },
-  { id: "win-rate", label: "How is the Win Rate calculated?" },
-  { id: "receiving-signals", label: "How will I receive signals?" },
-  { id: "sebi", label: "Is THC SEBI-registered?" },
-  { id: "who-can-join", label: "Who can join?" },
-  { id: "dhan-referral", label: "What is the Dhan referral offer?" },
-];
+import { clientConfig } from "@/lib/client-config";
 
 export default function FaqPage() {
-  const dateRange = `${new Date(BATCH_INFO.startDate).toLocaleDateString("en-IN", {
+  const { batchInfo, siteName, siteNameShort, dhanOfferEnabled } = clientConfig;
+
+  const SECTIONS: TocEntry[] = [
+    { id: "what-is-thc", label: `What is ${siteName}?` },
+    { id: "membership-benefits", label: "What do I get as a member?" },
+    { id: "pricing", label: "How much does it cost?" },
+    { id: "timings", label: "What are the batch timings?" },
+    { id: "how-to-join", label: "How do I join / pay?" },
+    { id: "refund-policy", label: "What is the refund policy?" },
+    { id: "guaranteed-profit", label: "Are signals guaranteed to profit?" },
+    { id: "win-rate", label: "How is the Win Rate calculated?" },
+    { id: "receiving-signals", label: "How will I receive signals?" },
+    { id: "sebi", label: `Is ${siteNameShort} SEBI-registered?` },
+    { id: "who-can-join", label: "Who can join?" },
+    ...(dhanOfferEnabled
+      ? [{ id: "dhan-referral", label: "What is the Dhan referral offer?" }]
+      : []),
+  ];
+
+  const dateRange = `${new Date(batchInfo.startDate).toLocaleDateString("en-IN", {
     day: "numeric",
     month: "short",
-  })} – ${new Date(BATCH_INFO.endDate).toLocaleDateString("en-IN", {
+  })} – ${new Date(batchInfo.endDate).toLocaleDateString("en-IN", {
     day: "numeric",
     month: "short",
   })}`;
@@ -37,7 +41,7 @@ export default function FaqPage() {
             Frequently Asked <span className="thc-gold-text">Questions</span>
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Everything you need to know before joining a Traders Hub Center batch.
+            Everything you need to know before joining a {siteName} batch.
           </p>
         </div>
 
@@ -45,9 +49,9 @@ export default function FaqPage() {
           <TocSidebar entries={SECTIONS} />
 
           <div className="thc-glass thc-neutral-border flex min-w-0 flex-1 flex-col gap-6 rounded-2xl border p-6 sm:p-8">
-            <Section id="what-is-thc" title="What is Traders Hub Center?">
+            <Section id="what-is-thc" title={`What is ${siteName}?`}>
               <p>
-                Traders Hub Center (THC) is an intraday options-buying signals community. We
+                {siteName} ({siteNameShort}) is an intraday options-buying signals community. We
                 publish every CE/PE call — entry, stop-loss, and target — openly on our{" "}
                 <span className="font-semibold text-foreground">Trade Log</span> and{" "}
                 <span className="font-semibold text-foreground">Performance Dashboard</span>, and
@@ -57,7 +61,7 @@ export default function FaqPage() {
 
             <Section id="membership-benefits" title="What do I get as a member?">
               <ul className="flex flex-col gap-1.5 [&>li]:pl-4 [&>li]:-indent-4">
-                {BATCH_INFO.benefits.map((benefit) => (
+                {batchInfo.benefits.map((benefit) => (
                   <li key={benefit}>• {benefit}</li>
                 ))}
               </ul>
@@ -65,13 +69,13 @@ export default function FaqPage() {
 
             <Section id="pricing" title="How much does it cost?">
               <p>
-                The {BATCH_INFO.batchNumber}th batch is priced at{" "}
+                The {batchInfo.batchNumber}th batch is priced at{" "}
                 <span className="font-semibold text-foreground">
-                  ₹{BATCH_INFO.priceInr.toLocaleString("en-IN")}
+                  ₹{batchInfo.priceInr.toLocaleString("en-IN")}
                 </span>
                 . Existing members get a discounted renewal price of{" "}
                 <span className="font-semibold text-foreground">
-                  ₹{BATCH_INFO.existingMemberPriceInr.toLocaleString("en-IN")}
+                  ₹{batchInfo.existingMemberPriceInr.toLocaleString("en-IN")}
                 </span>
                 . See the{" "}
                 <a href="/#pricing" className="text-primary underline underline-offset-2">
@@ -85,11 +89,11 @@ export default function FaqPage() {
               <p>This batch runs from {dateRange}.</p>
               <p>
                 <span className="font-semibold text-foreground">Live Zoom sessions:</span>{" "}
-                {BATCH_INFO.zoomTimings.join(" · ")}
+                {batchInfo.zoomTimings.join(" · ")}
               </p>
               <p>
                 <span className="font-semibold text-foreground">WhatsApp signal hours:</span>{" "}
-                {BATCH_INFO.whatsappTimings}
+                {batchInfo.whatsappTimings}
               </p>
             </Section>
 
@@ -106,7 +110,7 @@ export default function FaqPage() {
             </Section>
 
             <Section id="refund-policy" title="What is the refund policy?">
-              <p>{BATCH_INFO.refundPolicy} All fees are charged for educational training and live sessions, not for guaranteed trading returns.</p>
+              <p>{batchInfo.refundPolicy} All fees are charged for educational training and live sessions, not for guaranteed trading returns.</p>
             </Section>
 
             <Section id="guaranteed-profit" title="Are signals guaranteed to profit?">
@@ -144,7 +148,7 @@ export default function FaqPage() {
               </p>
             </Section>
 
-            <Section id="sebi" title="Is THC SEBI-registered?">
+            <Section id="sebi" title={`Is ${siteNameShort} SEBI-registered?`}>
               <p>
                 No. We are not a SEBI-registered Research Analyst or Investment Adviser. Nothing
                 shared here — Zoom sessions, WhatsApp calls, or dashboard stats — should be taken
@@ -160,17 +164,22 @@ export default function FaqPage() {
               </p>
             </Section>
 
-            <Section id="dhan-referral" title="What is the Dhan referral offer?">
-              <p>
-                Existing Dhan account holders can win free premium group access for the next batch
-                by referring friends and family — subject to a minimum of 10 referrals and 50
-                trades in 1 account. Full details are in our{" "}
-                <a href="/terms#dhan-referral" className="text-primary underline underline-offset-2">
-                  Terms &amp; Conditions
-                </a>
-                .
-              </p>
-            </Section>
+            {dhanOfferEnabled && (
+              <Section id="dhan-referral" title="What is the Dhan referral offer?">
+                <p>
+                  Existing Dhan account holders can win free premium group access for the next
+                  batch by referring friends and family — subject to a minimum of 10 referrals and
+                  50 trades in 1 account. Full details are in our{" "}
+                  <a
+                    href="/terms#dhan-referral"
+                    className="text-primary underline underline-offset-2"
+                  >
+                    Terms &amp; Conditions
+                  </a>
+                  .
+                </p>
+              </Section>
+            )}
           </div>
         </div>
       </main>

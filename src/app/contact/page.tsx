@@ -2,7 +2,7 @@ import { Navbar } from "@/components/site/navbar";
 import { Footer } from "@/components/site/footer";
 import { Button } from "@/components/ui/button";
 import { WhatsAppIcon, InstagramIcon } from "@/components/site/icons";
-import { PAYMENT_INFO, INSTAGRAM_URL, WHATSAPP_URL } from "@/lib/constants";
+import { clientConfig } from "@/lib/client-config";
 
 function toWhatsAppLink(phone: string) {
   return `https://wa.me/${phone.replace(/\D/g, "")}`;
@@ -24,7 +24,7 @@ export default function ContactPage() {
 
         <div className="grid gap-6 sm:grid-cols-2">
           <a
-            href={WHATSAPP_URL}
+            href={clientConfig.whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="thc-glass thc-glow group relative overflow-hidden rounded-2xl border border-white/5 p-6 transition-colors hover:border-primary/40"
@@ -41,7 +41,7 @@ export default function ContactPage() {
           </a>
 
           <a
-            href={INSTAGRAM_URL}
+            href={clientConfig.instagramUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="thc-glass thc-glow group relative overflow-hidden rounded-2xl border border-white/5 p-6 transition-colors hover:border-primary/40"
@@ -63,7 +63,7 @@ export default function ContactPage() {
             Support Team
           </h2>
           <div className="mt-3 grid gap-4 sm:grid-cols-2">
-            {PAYMENT_INFO.managers.map((manager) => (
+            {clientConfig.paymentInfo.managers.map((manager) => (
               <div
                 key={manager.phone}
                 className="thc-glass rounded-xl border border-white/5 p-5"

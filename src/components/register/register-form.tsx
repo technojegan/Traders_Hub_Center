@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { WhatsAppIcon } from "@/components/site/icons";
-import { BATCH_INFO, PAYMENT_INFO, WHATSAPP_URL } from "@/lib/constants";
+import { clientConfig } from "@/lib/client-config";
 import { registerSubscriber } from "@/app/register/actions";
 
 export function RegisterForm() {
@@ -41,10 +41,10 @@ export function RegisterForm() {
 
         <div className="w-full rounded-xl border border-white/10 bg-black/20 p-4 text-left text-sm">
           <p className="font-heading font-semibold">
-            Pay ₹{BATCH_INFO.priceInr.toLocaleString("en-IN")} via UPI
+            Pay ₹{clientConfig.batchInfo.priceInr.toLocaleString("en-IN")} via UPI
           </p>
           <ul className="mt-2 flex flex-col gap-1 text-muted-foreground">
-            {PAYMENT_INFO.upiIds.map((upi) => (
+            {clientConfig.paymentInfo.upiIds.map((upi) => (
               <li key={upi.vpa}>
                 <span className="font-medium text-foreground">{upi.vpa}</span> ({upi.name})
               </li>
@@ -52,7 +52,7 @@ export function RegisterForm() {
           </ul>
           <p className="mt-3 font-heading font-semibold">Questions? Contact</p>
           <ul className="mt-1 flex flex-col gap-1 text-muted-foreground">
-            {PAYMENT_INFO.managers.map((manager) => (
+            {clientConfig.paymentInfo.managers.map((manager) => (
               <li key={manager.phone}>
                 {manager.name} —{" "}
                 <a href={`tel:${manager.phone}`} className="text-primary">
@@ -62,7 +62,7 @@ export function RegisterForm() {
             ))}
           </ul>
           <p className="mt-3 text-xs text-muted-foreground/70">
-            {BATCH_INFO.refundPolicy}{" "}
+            {clientConfig.batchInfo.refundPolicy}{" "}
             <Link href="/terms" className="text-primary underline underline-offset-2">
               T &amp; C
             </Link>
@@ -70,7 +70,7 @@ export function RegisterForm() {
         </div>
 
         <Button asChild className="thc-glow thc-btn-gradient w-full">
-          <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
+          <a href={clientConfig.whatsappUrl} target="_blank" rel="noopener noreferrer">
             <WhatsAppIcon className="h-4 w-4" />
             Join WhatsApp Group
           </a>

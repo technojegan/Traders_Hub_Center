@@ -2,6 +2,7 @@ import { Navbar } from "@/components/site/navbar";
 import { Footer } from "@/components/site/footer";
 import { TocSidebar, type TocEntry } from "@/components/site/toc-sidebar";
 import { LegalSection as Section } from "@/components/site/legal-section";
+import { clientConfig } from "@/lib/client-config";
 
 const SECTIONS: TocEntry[] = [
   { id: "information-we-collect", label: "Information We Collect" },
@@ -15,6 +16,8 @@ const SECTIONS: TocEntry[] = [
 ];
 
 export default function PrivacyPage() {
+  const { siteNameShort } = clientConfig;
+
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
@@ -41,7 +44,7 @@ export default function PrivacyPage() {
                 form, we collect your{" "}
                 <span className="font-semibold text-foreground">name, phone number</span>, and
                 optionally your <span className="font-semibold text-foreground">email</span>.
-                That&apos;s the only personal information THC collects — we don&apos;t ask for
+                That&apos;s the only personal information {siteNameShort} collects — we don&apos;t ask for
                 your address, ID proof, or any payment card/bank details.
               </p>
               <p>
@@ -61,7 +64,7 @@ export default function PrivacyPage() {
 
             <Section id="payments" title="Payments">
               <p>
-                THC does not process payments or store any payment information. Membership fees
+                {siteNameShort} does not process payments or store any payment information. Membership fees
                 are paid manually via the UPI IDs or manager contacts shown on the Register page —
                 we never see or store your card, bank, or UPI app credentials.
               </p>
@@ -70,8 +73,8 @@ export default function PrivacyPage() {
             <Section id="third-parties" title="Third Parties">
               <p>
                 Joining our WhatsApp group, Telegram channel, or Instagram page means your
-                interactions there are subject to that platform&apos;s own privacy policy — THC
-                doesn&apos;t control how WhatsApp, Telegram, or Instagram handle your data.
+                interactions there are subject to that platform&apos;s own privacy policy — {siteNameShort}
+                {" "}doesn&apos;t control how WhatsApp, Telegram, or Instagram handle your data.
               </p>
               <p>
                 Our signal data and your registration details are stored with our infrastructure
@@ -82,7 +85,7 @@ export default function PrivacyPage() {
 
             <Section id="cookies" title="Cookies & Tracking">
               <p>
-                THC does not use any analytics, advertising, or tracking cookies. The only cookies
+                {siteNameShort} does not use any analytics, advertising, or tracking cookies. The only cookies
                 set by this site are session cookies for the admin login, scoped strictly to the{" "}
                 <span className="font-semibold text-foreground">/admin</span> area — visitors
                 browsing the public site never have a cookie set.
@@ -92,7 +95,7 @@ export default function PrivacyPage() {
             <Section id="data-storage" title="Data Storage & Security">
               <p>
                 Registration details are stored in a managed Postgres database and are accessible
-                only to THC admins through an authenticated admin dashboard. We take reasonable
+                only to {siteNameShort} admins through an authenticated admin dashboard. We take reasonable
                 steps to keep this data secure, but no online system can be guaranteed 100% secure.
               </p>
             </Section>

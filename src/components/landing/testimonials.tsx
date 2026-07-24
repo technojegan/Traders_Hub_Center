@@ -1,4 +1,4 @@
-import { TESTIMONIALS } from "@/lib/constants";
+import { clientConfig } from "@/lib/client-config";
 
 const AVATAR_COLORS = [
   "var(--thc-gold-start)",
@@ -17,7 +17,7 @@ function initials(name: string) {
 }
 
 export function Testimonials() {
-  const items = [...TESTIMONIALS, ...TESTIMONIALS];
+  const items = [...clientConfig.testimonials, ...clientConfig.testimonials];
 
   return (
     <section className="py-16">

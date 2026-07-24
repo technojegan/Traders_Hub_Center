@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { INSTAGRAM_THUMBNAILS } from "@/lib/constants";
+import { clientConfig } from "@/lib/client-config";
 
 export function InstagramGrid() {
   // Duplicated 4x (not 2x): with only 5 thumbnails, one copy is narrower than
@@ -7,11 +7,12 @@ export function InstagramGrid() {
   // paused/jumped right before resetting. 4 copies keeps the -50% keyframe
   // (still exactly "one half of the track") wide enough to always fill the
   // viewport during the whole animation cycle.
+  const { instagramThumbnails } = clientConfig;
   const items = [
-    ...INSTAGRAM_THUMBNAILS,
-    ...INSTAGRAM_THUMBNAILS,
-    ...INSTAGRAM_THUMBNAILS,
-    ...INSTAGRAM_THUMBNAILS,
+    ...instagramThumbnails,
+    ...instagramThumbnails,
+    ...instagramThumbnails,
+    ...instagramThumbnails,
   ];
 
   return (

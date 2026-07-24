@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Logo } from "@/components/site/logo";
 import { InstagramIcon, WhatsAppIcon } from "@/components/site/icons";
-import { INSTAGRAM_URL, WHATSAPP_URL } from "@/lib/constants";
+import { clientConfig } from "@/lib/client-config";
 
 export function Footer() {
   return (
@@ -11,19 +11,19 @@ export function Footer() {
           <Logo />
           <div className="flex items-center gap-4">
             <a
-              href={INSTAGRAM_URL}
+              href={clientConfig.instagramUrl}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Traders Hub Center on Instagram"
+              aria-label={`${clientConfig.siteName} on Instagram`}
               className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary"
             >
               <InstagramIcon className="h-5 w-5" />
             </a>
             <a
-              href={WHATSAPP_URL}
+              href={clientConfig.whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Join Traders Hub Center on WhatsApp"
+              aria-label={`Join ${clientConfig.siteName} on WhatsApp`}
               className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary"
             >
               <WhatsAppIcon className="h-5 w-5" />
@@ -32,7 +32,7 @@ export function Footer() {
         </div>
 
         <div className="flex flex-col gap-4 border-t border-white/5 pt-6 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          <p>&copy; {new Date().getFullYear()} Traders Hub Center. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} {clientConfig.siteName}. All rights reserved.</p>
           <div className="flex gap-4">
             <Link href="/register" className="hover:text-primary">
               Register Premium

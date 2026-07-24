@@ -2,20 +2,23 @@ import { Navbar } from "@/components/site/navbar";
 import { Footer } from "@/components/site/footer";
 import { TocSidebar, type TocEntry } from "@/components/site/toc-sidebar";
 import { LegalSection as Section } from "@/components/site/legal-section";
-
-const SECTIONS: TocEntry[] = [
-  { id: "disclaimer", label: "Disclaimer" },
-  { id: "market-analysis", label: "Market Analysis & Education" },
-  { id: "candidate-information", label: "Candidate Information" },
-  { id: "beginner-guidance", label: "Beginner Guidance" },
-  { id: "risk-management", label: "Risk Management Rules" },
-  { id: "risk-disclosure", label: "Risk Disclosure" },
-  { id: "dhan-referral", label: "Dhan Referral Offer" },
-  { id: "group-rules", label: "Group Rules" },
-  { id: "payment-acceptance", label: "Acceptance of Terms" },
-];
+import { clientConfig } from "@/lib/client-config";
 
 export default function TermsPage() {
+  const { siteName, siteNameShort, dhanOfferEnabled } = clientConfig;
+
+  const SECTIONS: TocEntry[] = [
+    { id: "disclaimer", label: "Disclaimer" },
+    { id: "market-analysis", label: "Market Analysis & Education" },
+    { id: "candidate-information", label: "Candidate Information" },
+    { id: "beginner-guidance", label: "Beginner Guidance" },
+    { id: "risk-management", label: "Risk Management Rules" },
+    { id: "risk-disclosure", label: "Risk Disclosure" },
+    ...(dhanOfferEnabled ? [{ id: "dhan-referral", label: "Dhan Referral Offer" }] : []),
+    { id: "group-rules", label: "Group Rules" },
+    { id: "payment-acceptance", label: "Acceptance of Terms" },
+  ];
+
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
@@ -25,7 +28,7 @@ export default function TermsPage() {
             Terms &amp; <span className="thc-gold-text">Conditions</span>
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Please read this in full before joining any Traders Hub Center batch.
+            Please read this in full before joining any {siteName} batch.
           </p>
         </div>
 
@@ -128,16 +131,18 @@ export default function TermsPage() {
               </p>
             </Section>
 
-            <Section id="dhan-referral" title="Dhan Referral Offer">
-              <p>
-                Existing Dhan account holders can win free premium group access for the next batch
-                by referring friends and family, subject to:
-              </p>
-              <ul className="flex flex-col gap-1.5 [&>li]:pl-4 [&>li]:-indent-4">
-                <li>• Minimum 10 referrals.</li>
-                <li>• Minimum 50 trades in 1 account.</li>
-              </ul>
-            </Section>
+            {dhanOfferEnabled && (
+              <Section id="dhan-referral" title="Dhan Referral Offer">
+                <p>
+                  Existing Dhan account holders can win free premium group access for the next
+                  batch by referring friends and family, subject to:
+                </p>
+                <ul className="flex flex-col gap-1.5 [&>li]:pl-4 [&>li]:-indent-4">
+                  <li>• Minimum 10 referrals.</li>
+                  <li>• Minimum 50 trades in 1 account.</li>
+                </ul>
+              </Section>
+            )}
 
             <Section id="group-rules" title="Group Rules">
               <ul className="flex flex-col gap-1.5 [&>li]:pl-4 [&>li]:-indent-4">
@@ -170,7 +175,7 @@ export default function TermsPage() {
               points before joining our community — after payment, we do not refund under any
               circumstances.
             </p>
-            <p className="text-sm font-medium text-foreground">Thanks and wish you all success,<br />THC — Founder and Admins</p>
+            <p className="text-sm font-medium text-foreground">Thanks and wish you all success,<br />{siteNameShort} — Founder and Admins</p>
           </div>
         </div>
       </main>

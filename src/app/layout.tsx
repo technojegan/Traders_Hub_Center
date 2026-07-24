@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Sora } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { SoundAlertProvider } from "@/components/site/sound-alert-provider";
+import { clientConfig } from "@/lib/client-config";
 import "./globals.css";
 
 const inter = Inter({
@@ -16,9 +17,8 @@ const sora = Sora({
 });
 
 export const metadata: Metadata = {
-  title: "Traders Hub Center | Intraday Options Signals",
-  description:
-    "Traders Hub Center (THC) publishes intraday options-buying trade signals to premium subscribers, backed by transparent performance analytics.",
+  title: `${clientConfig.siteName} | Intraday Options Signals`,
+  description: clientConfig.siteDescription,
 };
 
 export default function RootLayout({
@@ -32,6 +32,21 @@ export default function RootLayout({
       className={`${inter.variable} ${sora.variable} dark h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
+        {/* Per-client brand colors — overrides the THC defaults baked into
+            globals.css so one codebase can serve multiple deployments. */}
+        <style>{`
+          :root {
+            --primary: ${clientConfig.goldStart};
+            --ring: ${clientConfig.goldStart};
+            --chart-1: ${clientConfig.goldStart};
+            --sidebar-primary: ${clientConfig.goldStart};
+            --sidebar-ring: ${clientConfig.goldStart};
+            --accent: ${clientConfig.goldEnd};
+            --chart-4: ${clientConfig.goldEnd};
+            --thc-gold-start: ${clientConfig.goldStart};
+            --thc-gold-end: ${clientConfig.goldEnd};
+          }
+        `}</style>
         <div className="thc-mesh-bg" aria-hidden="true" />
         <SoundAlertProvider>{children}</SoundAlertProvider>
         <Toaster richColors theme="dark" />

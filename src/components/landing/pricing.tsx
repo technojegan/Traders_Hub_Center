@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { WhatsAppIcon } from "@/components/site/icons";
-import { BATCH_INFO, WHATSAPP_URL } from "@/lib/constants";
+import { clientConfig } from "@/lib/client-config";
 
 function DhanOfferCard() {
   return (
@@ -62,7 +62,7 @@ function DhanOfferCard() {
       </div>
 
       <Button asChild size="sm" variant="outline" className="thc-glow mt-auto w-full">
-        <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
+        <a href={clientConfig.whatsappUrl} target="_blank" rel="noopener noreferrer">
           <WhatsAppIcon className="h-4 w-4" />
           Grab this offer
         </a>
@@ -72,17 +72,18 @@ function DhanOfferCard() {
 }
 
 export function Pricing() {
-  const dateRange = `${new Date(BATCH_INFO.startDate).toLocaleDateString("en-IN", {
+  const { batchInfo } = clientConfig;
+  const dateRange = `${new Date(batchInfo.startDate).toLocaleDateString("en-IN", {
     day: "numeric",
     month: "short",
-  })} – ${new Date(BATCH_INFO.endDate).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}`;
+  })} – ${new Date(batchInfo.endDate).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}`;
 
   return (
     <section className="px-4 py-16 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-5xl">
         <div className="text-center">
           <h2 className="font-heading text-2xl font-bold sm:text-3xl">
-            Join the <span className="thc-gold-text">{BATCH_INFO.batchNumber}th Batch</span>
+            Join the <span className="thc-gold-text">{batchInfo.batchNumber}th Batch</span>
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
             Every call, live Zoom session, and WhatsApp signal — one flat price.
@@ -99,7 +100,7 @@ export function Pricing() {
         >
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <p className="font-heading text-4xl font-bold thc-gold-text">
-              ₹{BATCH_INFO.priceInr.toLocaleString("en-IN")}
+              ₹{batchInfo.priceInr.toLocaleString("en-IN")}
             </p>
             <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-muted-foreground">
               Batch runs {dateRange}
@@ -111,13 +112,13 @@ export function Pricing() {
             <span className="text-foreground/90">
               2nd month onwards for Existing members:{" "}
               <span className="font-semibold text-[var(--thc-win)]">
-                ₹{BATCH_INFO.existingMemberPriceInr.toLocaleString("en-IN")} only
+                ₹{batchInfo.existingMemberPriceInr.toLocaleString("en-IN")} only
               </span>
             </span>
           </div>
 
           <ul className="mt-6 flex flex-col gap-2.5 text-sm">
-            {BATCH_INFO.benefits.map((benefit) => (
+            {batchInfo.benefits.map((benefit) => (
               <li key={benefit} className="flex items-start gap-2.5">
                 <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
                 <span className="text-foreground/90">{benefit}</span>
@@ -128,11 +129,11 @@ export function Pricing() {
           <div className="mt-6 grid gap-3 border-t border-white/5 pt-6 text-xs text-muted-foreground sm:grid-cols-2">
             <div>
               <p className="font-medium text-foreground">Live Zoom timings</p>
-              <p>{BATCH_INFO.zoomTimings.join(" · ")}</p>
+              <p>{batchInfo.zoomTimings.join(" · ")}</p>
             </div>
             <div>
               <p className="font-medium text-foreground">WhatsApp signal hours</p>
-              <p>{BATCH_INFO.whatsappTimings}</p>
+              <p>{batchInfo.whatsappTimings}</p>
             </div>
           </div>
 
@@ -141,7 +142,7 @@ export function Pricing() {
             <Link href="/dashboard" className="text-primary underline underline-offset-2">
               Win Rate and Total Capture %
             </Link>
-            , computed live from every signal we&apos;ve published. {BATCH_INFO.refundPolicy}{" "}
+            , computed live from every signal we&apos;ve published. {batchInfo.refundPolicy}{" "}
             <Link href="/terms" className="text-primary underline underline-offset-2">
               T &amp; C
             </Link>
@@ -152,7 +153,7 @@ export function Pricing() {
           </Button>
         </motion.div>
 
-          <DhanOfferCard />
+          {clientConfig.dhanOfferEnabled && <DhanOfferCard />}
         </div>
       </div>
     </section>

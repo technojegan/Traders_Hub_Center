@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { WhatsAppIcon, InstagramIcon, TelegramIcon } from "@/components/site/icons";
-import { INSTAGRAM_URL, TELEGRAM_URL, WHATSAPP_URL } from "@/lib/constants";
+import { clientConfig } from "@/lib/client-config";
 
 export function Hero() {
   return (
@@ -54,7 +54,7 @@ export function Hero() {
           </p>
         </div>
         <p className="mx-auto mt-5 max-w-3xl text-lg text-muted-foreground sm:text-xl">
-          Traders Hub Center publishes transparent, intraday options-buying calls to premium
+          {clientConfig.siteName} publishes transparent, intraday options-buying calls to premium
           subscribers — every entry, stop loss and target tracked in the open.
         </p>
         <div className="mt-8 flex justify-center">
@@ -76,7 +76,7 @@ export function Hero() {
               variant="outline"
               className="thc-glow h-14 gap-2.5 px-8 text-base"
             >
-              <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
+              <a href={clientConfig.whatsappUrl} target="_blank" rel="noopener noreferrer">
                 <WhatsAppIcon className="h-5 w-5" />
                 WhatsApp
               </a>
@@ -87,7 +87,7 @@ export function Hero() {
               variant="outline"
               className="thc-glow h-14 gap-2.5 px-8 text-base"
             >
-              <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
+              <a href={clientConfig.instagramUrl} target="_blank" rel="noopener noreferrer">
                 <InstagramIcon className="h-5 w-5" />
                 Instagram
               </a>
@@ -98,7 +98,7 @@ export function Hero() {
               variant="outline"
               className="thc-glow h-14 gap-2.5 px-8 text-base"
             >
-              <a href={TELEGRAM_URL} target="_blank" rel="noopener noreferrer">
+              <a href={clientConfig.telegramUrl} target="_blank" rel="noopener noreferrer">
                 <TelegramIcon className="h-5 w-5" />
                 Telegram
               </a>
