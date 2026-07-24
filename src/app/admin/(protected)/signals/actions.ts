@@ -5,8 +5,10 @@ import { prisma } from "@/lib/prisma";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { calcPnlPercent, deriveStatus } from "@/lib/signal-metrics";
 import { formatSignalUpdateMessage, sendTelegramMessage } from "@/lib/telegram";
+import { clientConfig } from "@/lib/client-config";
 
 async function requireAdmin() {
+  if (!clientConfig.requireAdminAuth) return;
   const supabase = await createSupabaseServerClient();
   const { data } = await supabase.auth.getUser();
   if (!data.user) {

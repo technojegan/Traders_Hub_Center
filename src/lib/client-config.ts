@@ -36,6 +36,11 @@ export interface InstagramThumbnail {
 
 export interface ClientConfig {
   id: ClientId;
+  // Gate on /admin/* login + auth-checked server actions. Set false only for
+  // a deployment that's intentionally left open (e.g. a fresh client still
+  // being configured) — never flip THC's to false, its admin manages real
+  // subscriber/signal data.
+  requireAdminAuth: boolean;
   siteName: string;
   siteNameShort: string;
   siteDescription: string;
@@ -56,6 +61,7 @@ export interface ClientConfig {
 const CLIENTS: Record<ClientId, ClientConfig> = {
   thc: {
     id: "thc",
+    requireAdminAuth: true,
     siteName: "Traders Hub Center",
     siteNameShort: "THC",
     siteDescription:
@@ -176,11 +182,14 @@ const CLIENTS: Record<ClientId, ClientConfig> = {
   // another client's payment/social identifiers here.
   stockops: {
     id: "stockops",
+    // Temporary — admin area is open with no login while StockOps is being
+    // set up. Flip back to true before this deployment handles real data.
+    requireAdminAuth: false,
     siteName: "StockOps",
     siteNameShort: "StockOps",
     siteDescription:
       "StockOps publishes intraday options-buying trade signals to premium subscribers, backed by transparent performance analytics.",
-    logoSrc: "/stockops-logo-placeholder.svg",
+    logoSrc: "/stockops-logo.jpg",
     logoAlt: "StockOps",
     goldStart: "#3b82f6",
     goldEnd: "#60a5fa",

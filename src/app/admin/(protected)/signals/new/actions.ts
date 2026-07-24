@@ -9,6 +9,7 @@ import {
   formatSignalUpdateMessage,
   sendTelegramMessage,
 } from "@/lib/telegram";
+import { clientConfig } from "@/lib/client-config";
 
 export interface SignalInput {
   strike: number;
@@ -22,6 +23,7 @@ export interface SignalInput {
 }
 
 async function requireAdmin() {
+  if (!clientConfig.requireAdminAuth) return;
   const supabase = await createSupabaseServerClient();
   const { data } = await supabase.auth.getUser();
   if (!data.user) {
