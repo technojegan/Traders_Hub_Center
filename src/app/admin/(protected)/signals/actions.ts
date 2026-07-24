@@ -6,6 +6,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { calcPnlPercent, deriveStatus } from "@/lib/signal-metrics";
 import { formatSignalUpdateMessage, sendTelegramMessage } from "@/lib/telegram";
 import { clientConfig } from "@/lib/client-config";
+import type { InstrumentLiteral } from "@/lib/instruments";
 
 async function requireAdmin() {
   if (!clientConfig.requireAdminAuth) return;
@@ -19,6 +20,7 @@ async function requireAdmin() {
 export interface SignalUpdateInput {
   strike: number;
   optionType: "CE" | "PE";
+  instrument: InstrumentLiteral;
   entryPrice: number;
   stopLoss: number;
   targets: number[];
@@ -49,6 +51,7 @@ export async function updateSignal(id: string, input: SignalUpdateInput) {
     data: {
       strike: input.strike,
       optionType: input.optionType,
+      instrument: input.instrument,
       entryPrice: input.entryPrice,
       stopLoss: input.stopLoss,
       targets: input.targets,
@@ -134,6 +137,7 @@ export async function closeSignal(id: string, sellPrice: number) {
     formatSignalUpdateMessage({
       strike: signal.strike,
       optionType: signal.optionType,
+      instrument: signal.instrument,
       sellPrice,
       pnlPercent,
       status,

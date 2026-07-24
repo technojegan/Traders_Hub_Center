@@ -10,11 +10,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { X } from "lucide-react";
+import { INSTRUMENTS, INSTRUMENT_LABEL, type InstrumentLiteral } from "@/lib/instruments";
 
 export interface EditableDraft {
   key: string;
   strike: string;
   optionType: "CE" | "PE";
+  instrument: InstrumentLiteral;
   entryPrice: string;
   stopLoss: string;
   targets: string;
@@ -76,6 +78,24 @@ export function SignalDraftEditor({
             <SelectContent>
               <SelectItem value="CE">CE</SelectItem>
               <SelectItem value="PE">PE</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex flex-col gap-1">
+          <Label className="text-xs">Instrument</Label>
+          <Select
+            value={draft.instrument}
+            onValueChange={(v) => set("instrument", v as InstrumentLiteral)}
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {INSTRUMENTS.map((i) => (
+                <SelectItem key={i} value={i}>
+                  {INSTRUMENT_LABEL[i]}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>

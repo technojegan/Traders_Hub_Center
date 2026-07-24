@@ -5,12 +5,22 @@ import {
   getRecentSignals,
 } from "@/lib/signal-metrics";
 import { DashboardContent } from "@/components/dashboard/dashboard-content";
+import { InstrumentFilter } from "@/components/dashboard/instrument-filter";
 import { RefreshButton } from "@/components/site/refresh-button";
+import type { InstrumentLiteral } from "@/lib/instruments";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminDashboardPage() {
-  const signals = await prisma.signal.findMany({ orderBy: { signalTime: "asc" } });
+export default async function AdminDashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ instrument?: string }>;
+}) {
+  const { instrument } = await searchParams;
+  const allSignals = await prisma.signal.findMany({ orderBy: { signalTime: "asc" } });
+  const signals = instrument
+    ? allSignals.filter((s) => s.instrument === (instrument as InstrumentLiteral))
+    : allSignals;
   const metrics = computeDashboardMetrics(signals);
   const bestWorst = computeBestWorstTrades(signals);
   const recentSignals = getRecentSignals(signals);
@@ -24,7 +34,10 @@ export default async function AdminDashboardPage() {
             Live analytics computed from every signal in the database.
           </p>
         </div>
-        <RefreshButton />
+        <div className="flex items-center gap-2">
+          <InstrumentFilter />
+          <RefreshButton />
+        </div>
       </div>
       <DashboardContent metrics={metrics} bestWorst={bestWorst} recentSignals={recentSignals} />
     </div>

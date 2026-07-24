@@ -6,6 +6,7 @@ import { Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { updateAdminNote } from "@/app/admin/(protected)/signals/actions";
+import { INSTRUMENT_LABEL, type InstrumentLiteral } from "@/lib/instruments";
 
 const QUICK_PHRASES = [
   "READY",
@@ -31,7 +32,12 @@ export interface OngoingTrade {
   id: string;
   strike: number;
   optionType: "CE" | "PE";
+  instrument: InstrumentLiteral | null;
   adminNote: string | null;
+}
+
+function instrumentPrefix(trade: OngoingTrade) {
+  return trade.instrument ? `${INSTRUMENT_LABEL[trade.instrument]} ` : "";
 }
 
 function NoteEditor({ trade }: { trade: OngoingTrade }) {
@@ -47,7 +53,7 @@ function NoteEditor({ trade }: { trade: OngoingTrade }) {
     startTransition(async () => {
       const result = await updateAdminNote(trade.id, trimmed === "" ? null : trimmed);
       if (result.success) {
-        toast.success(`Update posted for ${trade.strike} ${trade.optionType}.`);
+        toast.success(`Update posted for ${instrumentPrefix(trade)}${trade.strike} ${trade.optionType}.`);
       } else {
         toast.error(result.error ?? "Failed to save update.");
       }
@@ -66,7 +72,7 @@ function NoteEditor({ trade }: { trade: OngoingTrade }) {
       <p className="mb-2 text-sm font-medium">
         Update on{" "}
         <span className="font-heading font-bold thc-gold-text">
-          {trade.strike} {trade.optionType}
+          {instrumentPrefix(trade)}{trade.strike} {trade.optionType}
         </span>
       </p>
       <div className="mb-3 flex flex-wrap gap-1.5">

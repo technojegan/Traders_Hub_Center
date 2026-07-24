@@ -10,10 +10,12 @@ import {
   sendTelegramMessage,
 } from "@/lib/telegram";
 import { clientConfig } from "@/lib/client-config";
+import type { InstrumentLiteral } from "@/lib/instruments";
 
 export interface SignalInput {
   strike: number;
   optionType: "CE" | "PE";
+  instrument: InstrumentLiteral;
   entryPrice: number;
   stopLoss: number;
   targets: number[];
@@ -44,6 +46,7 @@ function toSignalCreateData(input: SignalInput) {
   return {
     strike: input.strike,
     optionType: input.optionType,
+    instrument: input.instrument,
     entryPrice: input.entryPrice,
     stopLoss: input.stopLoss,
     targets: input.targets,

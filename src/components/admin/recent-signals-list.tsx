@@ -8,11 +8,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { INSTRUMENT_LABEL, type InstrumentLiteral } from "@/lib/instruments";
 
 export interface RecentSignalItem {
   id: string;
   strike: number;
   optionType: "CE" | "PE";
+  instrument: InstrumentLiteral | null;
   pnlPercent: number | null;
   status: "OPEN" | "TARGET_HIT" | "SL_HIT" | "CLOSED_MANUAL";
   signalTime: string | Date;
@@ -32,6 +34,7 @@ export function RecentSignalsList({ signals }: { signals: RecentSignalItem[] }) 
         <TableHeader>
           <TableRow className="border-b-white/10 hover:bg-transparent">
             <TableHead>Date</TableHead>
+            <TableHead>Instrument</TableHead>
             <TableHead>Strike</TableHead>
             <TableHead>Status</TableHead>
             <TableHead className="text-right">P&amp;L %</TableHead>
@@ -51,6 +54,9 @@ export function RecentSignalsList({ signals }: { signals: RecentSignalItem[] }) 
               <TableRow key={signal.id} className="border-b-white/5">
                 <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
                   {formatSignalDate(signal.signalTime)} {formatSignalTime(signal.signalTime)}
+                </TableCell>
+                <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
+                  {signal.instrument ? INSTRUMENT_LABEL[signal.instrument] : "—"}
                 </TableCell>
                 <TableCell className="whitespace-nowrap font-medium">
                   <div className="flex items-center gap-1.5">

@@ -30,11 +30,13 @@ import {
   updateSignal,
   type SignalUpdateInput,
 } from "@/app/admin/(protected)/signals/actions";
+import { INSTRUMENTS, INSTRUMENT_LABEL, type InstrumentLiteral } from "@/lib/instruments";
 
 export interface ManageSignalRow {
   id: string;
   strike: number;
   optionType: "CE" | "PE";
+  instrument: InstrumentLiteral | null;
   entryPrice: number;
   stopLoss: number;
   targets: number[];
@@ -91,6 +93,7 @@ function CloseTradeCell({ signal }: { signal: ManageSignalRow }) {
 interface EditDraft {
   strike: string;
   optionType: "CE" | "PE";
+  instrument: InstrumentLiteral;
   entryPrice: string;
   stopLoss: string;
   targets: string;
@@ -109,6 +112,7 @@ function toDraft(signal: ManageSignalRow): EditDraft {
   return {
     strike: String(signal.strike),
     optionType: signal.optionType,
+    instrument: signal.instrument ?? "NIFTY",
     entryPrice: String(signal.entryPrice),
     stopLoss: String(signal.stopLoss),
     targets: signal.targets.join(", "),
@@ -169,6 +173,7 @@ function ManageSignalRowItem({ signal }: { signal: ManageSignalRow }) {
     const input: SignalUpdateInput = {
       strike,
       optionType: draft.optionType,
+      instrument: draft.instrument,
       entryPrice,
       stopLoss,
       targets,
@@ -215,6 +220,23 @@ function ManageSignalRowItem({ signal }: { signal: ManageSignalRow }) {
             onChange={(e) => setDraft((d) => ({ ...d, signalTime: e.target.value }))}
             className="h-8 w-[170px] text-xs"
           />
+        </TableCell>
+        <TableCell>
+          <Select
+            value={draft.instrument}
+            onValueChange={(v) => setDraft((d) => ({ ...d, instrument: v as InstrumentLiteral }))}
+          >
+            <SelectTrigger size="sm" className="h-8 w-[110px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {INSTRUMENTS.map((i) => (
+                <SelectItem key={i} value={i}>
+                  {INSTRUMENT_LABEL[i]}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </TableCell>
         <TableCell className="whitespace-nowrap">
           <div className="flex items-center gap-1.5">
@@ -295,7 +317,7 @@ function ManageSignalRowItem({ signal }: { signal: ManageSignalRow }) {
         </TableCell>
       </TableRow>
       <TableRow className="border-b-white/5 bg-white/[0.02] hover:bg-white/[0.02]">
-        <TableCell colSpan={9}>
+        <TableCell colSpan={10}>
           <Label className="text-xs text-muted-foreground">
             Admin Update (shown to subscribers on the Trade Log)
           </Label>
@@ -317,6 +339,9 @@ function ManageSignalRowItem({ signal }: { signal: ManageSignalRow }) {
       <TableCell className="hidden whitespace-nowrap text-muted-foreground sm:table-cell">
         {formatSignalDate(signal.signalTime)}{" "}
         <span className="text-xs">{formatSignalTime(signal.signalTime)}</span>
+      </TableCell>
+      <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
+        {signal.instrument ? INSTRUMENT_LABEL[signal.instrument] : "—"}
       </TableCell>
       <TableCell className="whitespace-nowrap font-medium">
         <div className="flex items-center gap-1.5">
@@ -381,7 +406,7 @@ function ManageSignalRowItem({ signal }: { signal: ManageSignalRow }) {
     {signal.adminNote && (
       <TableRow className="border-b-white/5 hover:bg-transparent">
         <TableCell
-          colSpan={9}
+          colSpan={10}
           className="max-w-0 whitespace-normal break-words py-2 text-xs text-muted-foreground"
         >
           <span className="font-semibold text-foreground">Admin update:</span> {signal.adminNote}
@@ -400,6 +425,7 @@ export function ManageSignalsTable({ signals }: { signals: ManageSignalRow[] }) 
           <TableHeader>
             <TableRow className="border-b-white/10 hover:bg-transparent">
               <TableHead className="hidden sm:table-cell">Date</TableHead>
+              <TableHead>Instrument</TableHead>
               <TableHead>Strike</TableHead>
               <TableHead className="hidden sm:table-cell">Entry</TableHead>
               <TableHead className="hidden md:table-cell">SL</TableHead>

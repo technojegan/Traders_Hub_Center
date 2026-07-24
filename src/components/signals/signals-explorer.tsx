@@ -19,11 +19,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { INSTRUMENTS, INSTRUMENT_LABEL, type InstrumentLiteral } from "@/lib/instruments";
 
 export interface SignalRow {
   id: string;
   strike: number;
   optionType: "CE" | "PE";
+  instrument: InstrumentLiteral | null;
   entryPrice: number;
   stopLoss: number;
   targets: number[];
@@ -42,6 +44,7 @@ const STATUS_LABEL: Record<SignalRow["status"], string> = {
 };
 
 type OptionFilter = "ALL" | "CE" | "PE";
+type InstrumentFilter = "ALL" | InstrumentLiteral;
 type ResultFilter = "ALL" | "WIN" | "LOSS" | "OPEN";
 type SortColumn = "date" | "strike" | "entry" | "sl" | "pnl";
 type SortDirection = "asc" | "desc";
@@ -102,6 +105,7 @@ function SortButton({
 
 export function SignalsExplorer({ signals }: { signals: SignalRow[] }) {
   const [optionFilter, setOptionFilter] = useState<OptionFilter>("ALL");
+  const [instrumentFilter, setInstrumentFilter] = useState<InstrumentFilter>("ALL");
   const [resultFilter, setResultFilter] = useState<ResultFilter>("ALL");
   const [sortColumn, setSortColumn] = useState<SortColumn>("date");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
@@ -122,6 +126,10 @@ export function SignalsExplorer({ signals }: { signals: SignalRow[] }) {
       list = list.filter((s) => s.optionType === optionFilter);
     }
 
+    if (instrumentFilter !== "ALL") {
+      list = list.filter((s) => s.instrument === instrumentFilter);
+    }
+
     if (resultFilter === "WIN") {
       list = list.filter((s) => s.pnlPercent != null && s.pnlPercent > 0);
     } else if (resultFilter === "LOSS") {
@@ -134,7 +142,7 @@ export function SignalsExplorer({ signals }: { signals: SignalRow[] }) {
       const diff = sortValue(a, sortColumn) - sortValue(b, sortColumn);
       return sortDirection === "asc" ? diff : -diff;
     });
-  }, [signals, optionFilter, resultFilter, sortColumn, sortDirection]);
+  }, [signals, optionFilter, instrumentFilter, resultFilter, sortColumn, sortDirection]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -160,6 +168,27 @@ export function SignalsExplorer({ signals }: { signals: SignalRow[] }) {
                       direction={sortDirection}
                       onSort={handleSort}
                     />
+                  </TableHead>
+                  <TableHead>
+                    <div className="flex flex-col gap-1">
+                      <span>Instrument</span>
+                      <Select
+                        value={instrumentFilter}
+                        onValueChange={(v) => setInstrumentFilter(v as InstrumentFilter)}
+                      >
+                        <SelectTrigger size="sm" className={filterTriggerClass}>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="ALL">All Instruments</SelectItem>
+                          {INSTRUMENTS.map((i) => (
+                            <SelectItem key={i} value={i}>
+                              {INSTRUMENT_LABEL[i]}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </TableHead>
                   <TableHead>
                     <div className="flex flex-col gap-1">
@@ -256,6 +285,9 @@ export function SignalsExplorer({ signals }: { signals: SignalRow[] }) {
                       <TableCell className="hidden whitespace-nowrap text-muted-foreground sm:table-cell">
                         {formatSignalDate(signal.signalTime)}{" "}
                         <span className="text-xs">{formatSignalTime(signal.signalTime)}</span>
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
+                        {signal.instrument ? INSTRUMENT_LABEL[signal.instrument] : "—"}
                       </TableCell>
                       <TableCell className="whitespace-nowrap font-medium">
                         <div className="flex items-center gap-1.5">

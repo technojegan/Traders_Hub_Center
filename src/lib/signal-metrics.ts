@@ -1,4 +1,5 @@
 import type { OptionType, Signal, SignalStatus } from "@prisma/client";
+import { INSTRUMENT_LABEL } from "@/lib/instruments";
 
 export function calcPnlPercent(entryPrice: number, sellPrice: number): number {
   return ((sellPrice - entryPrice) / entryPrice) * 100;
@@ -137,7 +138,7 @@ export function computeDashboardMetrics(signals: SignalForMetrics[]): DashboardM
 }
 
 export function computeBestWorstTrades<
-  T extends Pick<Signal, "strike" | "optionType" | "pnlPercent" | "signalTime">,
+  T extends Pick<Signal, "strike" | "optionType" | "instrument" | "pnlPercent" | "signalTime">,
 >(signals: T[], n = 5) {
   const closed = signals.filter((s) => s.pnlPercent != null);
   return [...closed]
@@ -147,8 +148,9 @@ export function computeBestWorstTrades<
       const d = new Date(s.signalTime);
       const day = String(d.getDate()).padStart(2, "0");
       const month = d.toLocaleDateString("en-IN", { month: "short" });
+      const instrumentPrefix = s.instrument ? `${INSTRUMENT_LABEL[s.instrument]} ` : "";
       return {
-        label: `${day}${month}`,
+        label: `${instrumentPrefix}${day}${month}`,
         pnlPercent: Math.round((s.pnlPercent ?? 0) * 100) / 100,
       };
     });

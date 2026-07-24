@@ -1,8 +1,11 @@
+import type { InstrumentLiteral } from "@/lib/instruments";
+
 export type OptionTypeLiteral = "CE" | "PE";
 
 export interface ParsedSignalDraft {
   strike: number | null;
   optionType: OptionTypeLiteral | null;
+  instrument: InstrumentLiteral;
   entryPrice: number | null;
   stopLoss: number | null;
   targets: number[];
@@ -24,6 +27,19 @@ function num(match: RegExpMatchArray | null): number | null {
   if (!match) return null;
   const value = parseFloat(match[1]);
   return Number.isFinite(value) ? value : null;
+}
+
+// Checked in most-specific-first order since "BANKNIFTY"/"MIDCPNIFTY" both
+// contain "NIFTY" as a substring.
+function detectInstrument(block: string): { instrument: InstrumentLiteral; detected: boolean } {
+  const normalized = block.toUpperCase().replace(/\s+/g, "");
+  if (normalized.includes("BANKNIFTY")) return { instrument: "BANK_NIFTY", detected: true };
+  if (normalized.includes("MIDCPNIFTY") || normalized.includes("MIDCAPNIFTY")) {
+    return { instrument: "MIDCAP_NIFTY", detected: true };
+  }
+  if (normalized.includes("SENSEX")) return { instrument: "SENSEX", detected: true };
+  if (normalized.includes("NIFTY")) return { instrument: "NIFTY", detected: true };
+  return { instrument: "NIFTY", detected: false };
 }
 
 export function splitSignalBlocks(rawText: string): string[] {
@@ -57,6 +73,9 @@ export function parseSignalBlock(block: string): ParsedSignalDraft {
     : null;
   if (!strike || !optionType) warnings.push("Could not detect strike + CE/PE");
 
+  const { instrument, detected: instrumentDetected } = detectInstrument(block);
+  if (!instrumentDetected) warnings.push("Could not detect instrument, defaulted to Nifty");
+
   const entryPrice = num(block.match(ENTRY));
   if (entryPrice == null) warnings.push("Missing entry price (Above)");
 
@@ -80,6 +99,7 @@ export function parseSignalBlock(block: string): ParsedSignalDraft {
   return {
     strike,
     optionType,
+    instrument,
     entryPrice,
     stopLoss,
     targets,

@@ -13,6 +13,7 @@ export default async function AddSignalPage() {
     id: s.id,
     strike: s.strike,
     optionType: s.optionType,
+    instrument: s.instrument,
     adminNote: s.adminNote,
   }));
 

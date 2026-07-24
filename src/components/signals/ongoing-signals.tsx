@@ -11,6 +11,11 @@ import {
 } from "@/components/ui/table";
 import { OngoingRiskRewardChart } from "@/components/admin/dashboard-charts";
 import type { SignalRow } from "@/components/signals/signals-explorer";
+import { INSTRUMENT_LABEL } from "@/lib/instruments";
+
+function instrumentPrefix(signal: SignalRow) {
+  return signal.instrument ? `${INSTRUMENT_LABEL[signal.instrument]} ` : "";
+}
 
 function toRiskReward(signal: SignalRow) {
   const bestTarget = signal.targets.length > 0 ? Math.max(...signal.targets) : signal.entryPrice;
@@ -19,7 +24,7 @@ function toRiskReward(signal: SignalRow) {
     ((signal.stopLoss - signal.entryPrice) / signal.entryPrice) * 100,
   );
   return {
-    label: `${signal.strike}${signal.optionType}`,
+    label: `${instrumentPrefix(signal)}${signal.strike}${signal.optionType}`,
     buyPrice: signal.entryPrice,
     sellTargetPrice: bestTarget,
     sellSlPrice: signal.stopLoss,
@@ -65,7 +70,7 @@ export function OngoingSignals({ signals }: { signals: SignalRow[] }) {
               className="flex items-center gap-1.5 rounded-full border border-white/10 bg-black/20 px-3 py-1 text-sm text-muted-foreground"
             >
               <span className="font-heading text-base font-bold thc-gold-text">
-                {signal.strike} {signal.optionType}
+                {instrumentPrefix(signal)}{signal.strike} {signal.optionType}
               </span>
               <span>
                 · Entry @{" "}
@@ -135,6 +140,7 @@ export function OngoingSignals({ signals }: { signals: SignalRow[] }) {
             <Table>
               <TableHeader>
                 <TableRow className="border-b-white/10 hover:bg-transparent">
+                  <TableHead>Instrument</TableHead>
                   <TableHead>Strike</TableHead>
                   <TableHead>Entry</TableHead>
                   <TableHead>SL</TableHead>
@@ -146,7 +152,7 @@ export function OngoingSignals({ signals }: { signals: SignalRow[] }) {
                 {isEmpty ? (
                   <TableRow className="hover:bg-transparent">
                     <TableCell
-                      colSpan={5}
+                      colSpan={6}
                       className="py-6 text-center text-xs text-muted-foreground"
                     >
                       No ongoing trades at the moment.
@@ -155,6 +161,9 @@ export function OngoingSignals({ signals }: { signals: SignalRow[] }) {
                 ) : (
                   signals.map((signal) => (
                     <TableRow key={signal.id} className="border-b-white/5">
+                      <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
+                        {signal.instrument ? INSTRUMENT_LABEL[signal.instrument] : "—"}
+                      </TableCell>
                       <TableCell className="whitespace-nowrap font-medium">
                         <div className="flex items-center gap-1.5">
                           <span className="font-heading font-bold">{signal.strike}</span>
@@ -194,7 +203,7 @@ export function OngoingSignals({ signals }: { signals: SignalRow[] }) {
                     className="thc-glass rounded-xl border border-primary/20 bg-primary/5 p-3"
                   >
                     <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
-                      Update on {signal.strike} {signal.optionType}
+                      Update on {instrumentPrefix(signal)}{signal.strike} {signal.optionType}
                     </p>
                     <p className="mt-1 text-sm text-foreground">{signal.adminNote}</p>
                   </div>

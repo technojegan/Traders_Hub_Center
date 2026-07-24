@@ -12,6 +12,7 @@ export default async function ManageSignalsPage() {
     id: s.id,
     strike: s.strike,
     optionType: s.optionType,
+    instrument: s.instrument,
     entryPrice: s.entryPrice,
     stopLoss: s.stopLoss,
     targets: s.targets,

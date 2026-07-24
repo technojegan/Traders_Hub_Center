@@ -13,10 +13,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { createSignals, type SignalInput } from "@/app/admin/(protected)/signals/new/actions";
+import { INSTRUMENTS, INSTRUMENT_LABEL, type InstrumentLiteral } from "@/lib/instruments";
 
 const EMPTY = {
   strike: "",
   optionType: "CE" as "CE" | "PE",
+  instrument: "NIFTY" as InstrumentLiteral,
   entryPrice: "",
   stopLoss: "",
   targets: "",
@@ -60,6 +62,7 @@ export function ManualSignalForm() {
     const input: SignalInput = {
       strike,
       optionType: form.optionType,
+      instrument: form.instrument,
       entryPrice,
       stopLoss,
       targets,
@@ -95,6 +98,24 @@ export function ManualSignalForm() {
             <SelectContent>
               <SelectItem value="CE">CE</SelectItem>
               <SelectItem value="PE">PE</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <Label>Instrument</Label>
+          <Select
+            value={form.instrument}
+            onValueChange={(v) => set("instrument", v as InstrumentLiteral)}
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {INSTRUMENTS.map((i) => (
+                <SelectItem key={i} value={i}>
+                  {INSTRUMENT_LABEL[i]}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>

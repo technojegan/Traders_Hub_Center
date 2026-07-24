@@ -16,6 +16,7 @@ function toEditableDraft(index: number, raw: string): EditableDraft {
     key: `${Date.now()}-${index}`,
     strike: parsed.strike != null ? String(parsed.strike) : "",
     optionType: parsed.optionType ?? "CE",
+    instrument: parsed.instrument,
     entryPrice: parsed.entryPrice != null ? String(parsed.entryPrice) : "",
     stopLoss: parsed.stopLoss != null ? String(parsed.stopLoss) : "",
     targets: parsed.targets.join(","),
@@ -51,6 +52,7 @@ function draftToInput(draft: EditableDraft): SignalInput | null {
   return {
     strike,
     optionType: draft.optionType,
+    instrument: draft.instrument,
     entryPrice,
     stopLoss,
     targets,
