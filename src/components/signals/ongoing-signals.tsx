@@ -51,7 +51,10 @@ export function OngoingSignals({ signals }: { signals: SignalRow[] }) {
           <h2 className="font-heading text-sm font-semibold">
             {signals.length} Ongoing Trade{signals.length === 1 ? "" : "s"}
           </h2>
-          <Button size="sm" variant="outline" className="ml-1">
+          <Button
+            size="sm"
+            className="thc-btn-gradient thc-btn-3d ml-1 font-semibold transition-transform duration-150"
+          >
             Place Order
           </Button>
         </div>
