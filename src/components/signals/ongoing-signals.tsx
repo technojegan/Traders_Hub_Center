@@ -89,7 +89,7 @@ export function OngoingSignals({
           ))}
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-4 lg:grid-cols-[2fr_1fr_2fr]">
         <div className="rounded-xl border border-white/5 bg-black/10 p-3 lg:flex lg:h-full lg:items-stretch">
           {isEmpty ? (
             <div className="flex h-[140px] w-full flex-col items-center justify-center gap-1 text-center lg:h-full">
@@ -105,7 +105,7 @@ export function OngoingSignals({
           )}
         </div>
 
-        <div className="grid grid-cols-3 gap-3">
+        <div className="flex flex-col gap-3">
           <div className="thc-glass rounded-xl border border-white/5 p-3">
             <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
               Avg Potential Gain
@@ -138,6 +138,32 @@ export function OngoingSignals({
             </p>
             <p className="mt-1 font-heading text-2xl font-bold thc-gold-text">{signals.length}</p>
           </div>
+        </div>
+
+        <div className="rounded-xl border border-white/5 bg-black/10 p-3 lg:h-full lg:overflow-y-auto">
+          {signals.some((signal) => signal.adminNote) ? (
+            <div className="gap-3 [column-fill:auto] lg:columns-2" style={{ columnGap: "12px" }}>
+              {signals
+                .filter((signal) => signal.adminNote)
+                .map((signal) => (
+                  <div
+                    key={signal.id}
+                    className="thc-glass mb-3 break-inside-avoid-column rounded-xl border border-primary/20 bg-primary/5 p-3"
+                  >
+                    <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                      Update on {instrumentPrefix(signal)}{signal.strike} {signal.optionType}
+                    </p>
+                    <p className="mt-1 text-sm text-foreground">{signal.adminNote}</p>
+                  </div>
+                ))}
+            </div>
+          ) : (
+            <div className="flex h-[140px] w-full flex-col items-center justify-center gap-1 text-center lg:h-full">
+              <p className="text-xs text-muted-foreground">
+                No admin updates on open trades yet.
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
@@ -201,24 +227,6 @@ export function OngoingSignals({
                 )}
               </TableBody>
             </Table>
-          </div>
-        )}
-
-        {signals.some((signal) => signal.adminNote) && (
-          <div className="grid gap-2 sm:grid-cols-2">
-            {signals
-              .filter((signal) => signal.adminNote)
-              .map((signal) => (
-                <div
-                  key={signal.id}
-                  className="thc-glass rounded-xl border border-primary/20 bg-primary/5 p-3"
-                >
-                  <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
-                    Update on {instrumentPrefix(signal)}{signal.strike} {signal.optionType}
-                  </p>
-                  <p className="mt-1 text-sm text-foreground">{signal.adminNote}</p>
-                </div>
-              ))}
           </div>
         )}
       </div>

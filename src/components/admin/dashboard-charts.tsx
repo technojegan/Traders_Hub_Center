@@ -342,58 +342,88 @@ export function WinRateDonutChart({
   );
 }
 
-export function NiftyVsSensexDonutChart({
-  niftyPercent,
-  sensexPercent,
+const INSTRUMENT_DONUT_COLORS = [
+  "var(--thc-gold-start)", // Nifty
+  "var(--thc-ce)", // Sensex
+  "var(--thc-pe)", // Bank Nifty
+  "#8b5cf6", // Midcap Nifty
+];
+
+function pctSigned(n: number) {
+  return `${n >= 0 ? "+" : ""}${n.toFixed(1)}%`;
+}
+
+function InstrumentDonutLabel(props: any) {
+  const { cx, cy, midAngle, outerRadius, capturePercent } = props;
+  const RADIAN = Math.PI / 180;
+  const radius = outerRadius + 18;
+  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+  return (
+    <text
+      x={x}
+      y={y}
+      fill="var(--muted-foreground)"
+      fontSize={11}
+      textAnchor={x > cx ? "start" : "end"}
+      dominantBaseline="central"
+    >
+      {pctSigned(capturePercent)}
+    </text>
+  );
+}
+
+export function InstrumentCaptureDonutChart({
+  data,
 }: {
-  niftyPercent: number;
-  sensexPercent: number;
+  data: { label: string; capturePercent: number }[];
 }) {
-  const pct = (n: number) => `${n >= 0 ? "+" : ""}${n.toFixed(1)}%`;
-  const combined = niftyPercent + sensexPercent;
-  const data = [
-    { name: "Nifty", value: Math.abs(niftyPercent) },
-    { name: "Sensex", value: Math.abs(sensexPercent) },
-  ];
-  const fills = ["url(#niftyDonutFill)", "url(#sensexDonutFill)"];
+  const visible = data.filter((d) => d.capturePercent !== 0);
+  const total = data.reduce((sum, d) => sum + d.capturePercent, 0);
+
+  if (visible.length === 0) {
+    return (
+      <div className="flex h-[280px] w-full flex-col items-center justify-center gap-1 text-center">
+        <p className="text-xs text-muted-foreground">
+          No closed trades yet — this fills in once a signal closes.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="relative" style={{ width: "100%", height: 280 }}>
       <ResponsiveContainer width="100%" height={280}>
         <PieChart>
-          <defs>
-            <linearGradient id="niftyDonutFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="var(--thc-gold-start)" stopOpacity={1} />
-              <stop offset="100%" stopColor="var(--thc-gold-start)" stopOpacity={0.55} />
-            </linearGradient>
-            <linearGradient id="sensexDonutFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="var(--thc-ce)" stopOpacity={1} />
-              <stop offset="100%" stopColor="var(--thc-ce)" stopOpacity={0.55} />
-            </linearGradient>
-          </defs>
           <Pie
-            data={data}
-            dataKey="value"
-            nameKey="name"
+            data={visible}
+            dataKey={(d: { capturePercent: number }) => Math.abs(d.capturePercent)}
+            nameKey="label"
             innerRadius={64}
             outerRadius={92}
             paddingAngle={3}
             startAngle={90}
             endAngle={-270}
             isAnimationActive={false}
+            label={InstrumentDonutLabel}
+            labelLine={false}
           >
-            {data.map((entry, index) => (
-              <Cell key={entry.name} fill={fills[index % fills.length]} />
+            {visible.map((entry, index) => (
+              <Cell
+                key={entry.label}
+                fill={INSTRUMENT_DONUT_COLORS[index % INSTRUMENT_DONUT_COLORS.length]}
+              />
             ))}
           </Pie>
           <Tooltip
             contentStyle={chartTooltipStyle}
             labelStyle={chartTooltipLabelStyle}
             itemStyle={chartTooltipItemStyle}
+            formatter={(_value, _name, entry: any) => pctSigned(entry.payload.capturePercent)}
           />
           <Legend
-            formatter={(value) =>
-              legendText(`${value} (${value === "Nifty" ? pct(niftyPercent) : pct(sensexPercent)})`)
+            formatter={(value, entry: any) =>
+              legendText(`${value} (${pctSigned(entry.payload.capturePercent)})`)
             }
           />
         </PieChart>
@@ -403,14 +433,12 @@ export function NiftyVsSensexDonutChart({
           <p
             className={cn(
               "font-heading text-2xl font-bold",
-              combined >= 0 ? "text-[var(--thc-win)]" : "text-[var(--thc-loss)]",
+              total >= 0 ? "text-[var(--thc-win)]" : "text-[var(--thc-loss)]",
             )}
           >
-            {pct(combined)}
+            {pctSigned(total)}
           </p>
-          <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
-            Nifty + Sensex
-          </p>
+          <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Total</p>
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import type { OptionType, Signal, SignalStatus } from "@prisma/client";
-import { INSTRUMENT_LABEL } from "@/lib/instruments";
+import { INSTRUMENTS, INSTRUMENT_LABEL, type InstrumentLiteral } from "@/lib/instruments";
 
 export function calcPnlPercent(entryPrice: number, sellPrice: number): number {
   return ((sellPrice - entryPrice) / entryPrice) * 100;
@@ -56,8 +56,7 @@ export interface DashboardMetrics {
   lossCount: number;
   totalGainPercent: number;
   totalLossPercent: number;
-  niftyCapturePercent: number;
-  sensexCapturePercent: number;
+  instrumentCapture: { instrument: InstrumentLiteral; label: string; capturePercent: number }[];
 }
 
 function winRateOf(signals: SignalForMetrics[]): number {
@@ -72,12 +71,13 @@ export function computeDashboardMetrics(signals: SignalForMetrics[]): DashboardM
   const ce = signals.filter((s) => s.optionType === ("CE" as OptionType));
   const pe = signals.filter((s) => s.optionType === ("PE" as OptionType));
 
-  const niftyCapturePercent = closed
-    .filter((s) => s.instrument === "NIFTY")
-    .reduce((sum, s) => sum + (s.pnlPercent ?? 0), 0);
-  const sensexCapturePercent = closed
-    .filter((s) => s.instrument === "SENSEX")
-    .reduce((sum, s) => sum + (s.pnlPercent ?? 0), 0);
+  const instrumentCapture = INSTRUMENTS.map((instrument) => ({
+    instrument,
+    label: INSTRUMENT_LABEL[instrument],
+    capturePercent: closed
+      .filter((s) => s.instrument === instrument)
+      .reduce((sum, s) => sum + (s.pnlPercent ?? 0), 0),
+  }));
 
   const totalCapturePercent = closed.reduce((sum, s) => sum + (s.pnlPercent ?? 0), 0);
   const avgPercentPerTrade = closed.length > 0 ? totalCapturePercent / closed.length : 0;
@@ -137,8 +137,7 @@ export function computeDashboardMetrics(signals: SignalForMetrics[]): DashboardM
     peCount: pe.length,
     ceWinRate: winRateOf(ce),
     peWinRate: winRateOf(pe),
-    niftyCapturePercent,
-    sensexCapturePercent,
+    instrumentCapture,
     cumulativeSeries,
     winLossByDay,
     winCount,

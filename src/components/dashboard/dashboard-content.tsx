@@ -5,7 +5,7 @@ import { RecentSignalsList, type RecentSignalItem } from "@/components/admin/rec
 import {
   BestWorstBarChart,
   CumulativeLineChart,
-  NiftyVsSensexDonutChart,
+  InstrumentCaptureDonutChart,
   WinLossBarChart,
   WinRateDonutChart,
 } from "@/components/admin/dashboard-charts";
@@ -55,12 +55,9 @@ export function DashboardContent({
           </div>
           <div className="thc-glass rounded-xl border border-white/5 p-4">
             <p className="mb-2 text-xs uppercase tracking-wide text-muted-foreground">
-              Total % Won — Nifty vs Sensex
+              Total % Won
             </p>
-            <NiftyVsSensexDonutChart
-              niftyPercent={metrics.niftyCapturePercent}
-              sensexPercent={metrics.sensexCapturePercent}
-            />
+            <InstrumentCaptureDonutChart data={metrics.instrumentCapture} />
           </div>
         </div>
       </div>
