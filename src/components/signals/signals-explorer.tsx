@@ -32,7 +32,7 @@ export interface SignalRow {
   sellPrice: number | null;
   pnlPercent: number | null;
   status: "OPEN" | "TARGET_HIT" | "SL_HIT" | "CLOSED_MANUAL";
-  signalTime: string | Date;
+  signalTime: string;
   adminNote: string | null;
 }
 

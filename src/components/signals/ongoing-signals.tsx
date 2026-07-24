@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { OngoingRiskRewardChart } from "@/components/admin/dashboard-charts";
+import { ManageSignalsTable } from "@/components/admin/manage-signals-table";
 import type { SignalRow } from "@/components/signals/signals-explorer";
 import { INSTRUMENT_LABEL } from "@/lib/instruments";
 
@@ -33,7 +34,13 @@ function toRiskReward(signal: SignalRow) {
   };
 }
 
-export function OngoingSignals({ signals }: { signals: SignalRow[] }) {
+export function OngoingSignals({
+  signals,
+  editable = false,
+}: {
+  signals: SignalRow[];
+  editable?: boolean;
+}) {
   const isEmpty = signals.length === 0;
   const chartData = signals.map(toRiskReward);
   const avgGain = chartData.length
@@ -136,62 +143,67 @@ export function OngoingSignals({ signals }: { signals: SignalRow[] }) {
             </div>
           </div>
 
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow className="border-b-white/10 hover:bg-transparent">
-                  <TableHead>Instrument</TableHead>
-                  <TableHead>Strike</TableHead>
-                  <TableHead>Entry</TableHead>
-                  <TableHead>SL</TableHead>
-                  <TableHead>Target(s)</TableHead>
-                  <TableHead>Since</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {isEmpty ? (
-                  <TableRow className="hover:bg-transparent">
-                    <TableCell
-                      colSpan={6}
-                      className="py-6 text-center text-xs text-muted-foreground"
-                    >
-                      No ongoing trades at the moment.
-                    </TableCell>
+          {editable ? (
+            <ManageSignalsTable signals={signals} />
+          ) : (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-b-white/10 hover:bg-transparent">
+                    <TableHead>Instrument</TableHead>
+                    <TableHead>Strike</TableHead>
+                    <TableHead>Entry</TableHead>
+                    <TableHead>SL</TableHead>
+                    <TableHead>Target(s)</TableHead>
+                    <TableHead>Since</TableHead>
                   </TableRow>
-                ) : (
-                  signals.map((signal) => (
-                    <TableRow key={signal.id} className="border-b-white/5">
-                      <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
-                        {signal.instrument ? INSTRUMENT_LABEL[signal.instrument] : "—"}
-                      </TableCell>
-                      <TableCell className="whitespace-nowrap font-medium">
-                        <div className="flex items-center gap-1.5">
-                          <span className="font-heading font-bold">{signal.strike}</span>
-                          <Badge
-                            variant="outline"
-                            className={cn(
-                              "px-1.5 py-0 text-[10px] font-bold",
-                              signal.optionType === "CE"
-                                ? "border-[var(--thc-ce)]/50 text-[var(--thc-ce)]"
-                                : "border-[var(--thc-pe)]/50 text-[var(--thc-pe)]",
-                            )}
-                          >
-                            {signal.optionType}
-                          </Badge>
-                        </div>
-                      </TableCell>
-                      <TableCell className="font-bold">{signal.entryPrice}</TableCell>
-                      <TableCell>{signal.stopLoss}</TableCell>
-                      <TableCell>{signal.targets.join(", ")}</TableCell>
-                      <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
-                        {formatSignalDate(signal.signalTime)} {formatSignalTime(signal.signalTime)}
+                </TableHeader>
+                <TableBody>
+                  {isEmpty ? (
+                    <TableRow className="hover:bg-transparent">
+                      <TableCell
+                        colSpan={6}
+                        className="py-6 text-center text-xs text-muted-foreground"
+                      >
+                        No ongoing trades at the moment.
                       </TableCell>
                     </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
+                  ) : (
+                    signals.map((signal) => (
+                      <TableRow key={signal.id} className="border-b-white/5">
+                        <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
+                          {signal.instrument ? INSTRUMENT_LABEL[signal.instrument] : "—"}
+                        </TableCell>
+                        <TableCell className="whitespace-nowrap font-medium">
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-heading font-bold">{signal.strike}</span>
+                            <Badge
+                              variant="outline"
+                              className={cn(
+                                "px-1.5 py-0 text-[10px] font-bold",
+                                signal.optionType === "CE"
+                                  ? "border-[var(--thc-ce)]/50 text-[var(--thc-ce)]"
+                                  : "border-[var(--thc-pe)]/50 text-[var(--thc-pe)]",
+                              )}
+                            >
+                              {signal.optionType}
+                            </Badge>
+                          </div>
+                        </TableCell>
+                        <TableCell className="font-bold">{signal.entryPrice}</TableCell>
+                        <TableCell>{signal.stopLoss}</TableCell>
+                        <TableCell>{signal.targets.join(", ")}</TableCell>
+                        <TableCell className="whitespace-nowrap text-xs text-muted-foreground">
+                          {formatSignalDate(signal.signalTime)}{" "}
+                          {formatSignalTime(signal.signalTime)}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          )}
 
           {signals.some((signal) => signal.adminNote) && (
             <div className="flex flex-col gap-2">
