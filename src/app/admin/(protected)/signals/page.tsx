@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { ManageSignalsTable, type ManageSignalRow } from "@/components/admin/manage-signals-table";
+import { OngoingSignals } from "@/components/signals/ongoing-signals";
 import { RefreshButton } from "@/components/site/refresh-button";
 
 export const dynamic = "force-dynamic";
@@ -21,7 +22,7 @@ export default async function ManageSignalsPage() {
     adminNote: s.adminNote,
   }));
 
-  const openCount = rows.filter((r) => r.status === "OPEN").length;
+  const ongoing = rows.filter((r) => r.status === "OPEN");
 
   return (
     <div className="flex flex-col gap-6">
@@ -29,12 +30,13 @@ export default async function ManageSignalsPage() {
         <div>
           <h1 className="font-heading text-2xl font-bold sm:text-3xl">Manage Signals</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {openCount} open trade{openCount === 1 ? "" : "s"} — closing one sends a Telegram
-            update to the group.
+            {ongoing.length} open trade{ongoing.length === 1 ? "" : "s"} — closing one sends a
+            Telegram update to the group.
           </p>
         </div>
         <RefreshButton />
       </div>
+      <OngoingSignals signals={ongoing} />
       <ManageSignalsTable signals={rows} />
     </div>
   );

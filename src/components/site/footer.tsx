@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Logo } from "@/components/site/logo";
-import { InstagramIcon, WhatsAppIcon } from "@/components/site/icons";
+import { FacebookIcon, InstagramIcon, WhatsAppIcon } from "@/components/site/icons";
 import { clientConfig } from "@/lib/client-config";
 
 export function Footer() {
@@ -28,6 +28,17 @@ export function Footer() {
             >
               <WhatsAppIcon className="h-5 w-5" />
             </a>
+            {clientConfig.facebookUrl && (
+              <a
+                href={clientConfig.facebookUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`${clientConfig.siteName} on Facebook`}
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary"
+              >
+                <FacebookIcon className="h-5 w-5" />
+              </a>
+            )}
           </div>
         </div>
 

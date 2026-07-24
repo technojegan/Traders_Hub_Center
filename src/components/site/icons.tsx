@@ -15,6 +15,14 @@ export function TelegramIcon({ className }: { className?: string }) {
   );
 }
 
+export function FacebookIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+      <path d="M13.5 21v-7.4h2.5l.4-2.9h-2.9V8.8c0-.84.23-1.4 1.44-1.4h1.54V4.8C16.24 4.71 15.24 4.6 14.06 4.6c-2.4 0-4.05 1.46-4.05 4.16v2.12H7.5v2.9h2.51V21h3.49z" />
+    </svg>
+  );
+}
+
 export function InstagramIcon({ className }: { className?: string }) {
   return (
     <svg

@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { WhatsAppIcon, InstagramIcon, TelegramIcon } from "@/components/site/icons";
+import { WhatsAppIcon, InstagramIcon, TelegramIcon, FacebookIcon } from "@/components/site/icons";
 import { clientConfig } from "@/lib/client-config";
 
 export function Hero() {
@@ -103,6 +103,19 @@ export function Hero() {
                 Telegram
               </a>
             </Button>
+            {clientConfig.facebookUrl && (
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="thc-glow h-14 gap-2.5 px-8 text-base"
+              >
+                <a href={clientConfig.facebookUrl} target="_blank" rel="noopener noreferrer">
+                  <FacebookIcon className="h-5 w-5" />
+                  Facebook
+                </a>
+              </Button>
+            )}
           </div>
         </div>
       </motion.div>

@@ -52,6 +52,11 @@ export interface ClientConfig {
   instagramUrl: string;
   whatsappUrl: string;
   telegramUrl: string;
+  // Empty string means "not shown" — only render a Facebook link/icon when set.
+  facebookUrl: string;
+  // Overrides the default "{batchNumber}th Batch" pricing headline when a
+  // client doesn't use THC's batch model.
+  pricingHeadline?: string;
   dhanOfferEnabled: boolean;
   batchInfo: BatchInfo;
   paymentInfo: PaymentInfo;
@@ -75,6 +80,7 @@ const CLIENTS: Record<ClientId, ClientConfig> = {
     instagramUrl: "https://www.instagram.com/traders_hub_center_/",
     whatsappUrl: "https://chat.whatsapp.com/IuWT73Az2LN9i3cfG4pLnY",
     telegramUrl: "https://t.me/traders_hub_center",
+    facebookUrl: "",
     dhanOfferEnabled: true,
     batchInfo: {
       batchNumber: 13,
@@ -191,23 +197,25 @@ const CLIENTS: Record<ClientId, ClientConfig> = {
     siteNameShort: "StockOps",
     siteDescription:
       "StockOps publishes intraday options-buying trade signals to premium subscribers, backed by transparent performance analytics.",
-    logoSrc: "/stockops-logo.jpg",
+    logoSrc: "/stockops-icon.jpg",
     logoAlt: "StockOps",
-    faviconSrc: "/stockops-logo.jpg",
+    faviconSrc: "/stockops-icon.jpg",
     goldStart: "#3b82f6",
     goldEnd: "#60a5fa",
-    instagramUrl: "#",
+    instagramUrl: "https://www.instagram.com/stoc_kops/",
     whatsappUrl: "#",
-    telegramUrl: "#",
+    telegramUrl: "https://t.me/stockopstradingcommunity",
+    facebookUrl: "https://www.facebook.com/profile.php?id=61565474030137",
+    pricingHeadline: "Premium Community",
     dhanOfferEnabled: false,
     batchInfo: {
       batchNumber: 1,
-      priceInr: 0,
+      priceInr: 3999,
       existingMemberPriceInr: 0,
       startDate: "2026-01-01",
       endDate: "2026-01-31",
-      zoomTimings: ["TODO: set live Zoom timings"],
-      whatsappTimings: "TODO: set WhatsApp signal hours",
+      zoomTimings: ["9:00 AM – 11:30 AM", "2:00 PM – 3:30 PM"],
+      whatsappTimings: "9:15 AM – 3:30 PM",
       benefits: ["TODO: list StockOps membership benefits"],
       refundPolicy: "TODO: set refund policy.",
     },

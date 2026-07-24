@@ -73,6 +73,7 @@ function DhanOfferCard() {
 
 export function Pricing() {
   const { batchInfo } = clientConfig;
+  const headline = clientConfig.pricingHeadline ?? `${batchInfo.batchNumber}th Batch`;
   const dateRange = `${new Date(batchInfo.startDate).toLocaleDateString("en-IN", {
     day: "numeric",
     month: "short",
@@ -83,7 +84,7 @@ export function Pricing() {
       <div className="mx-auto max-w-5xl">
         <div className="text-center">
           <h2 className="font-heading text-2xl font-bold sm:text-3xl">
-            Join the <span className="thc-gold-text">{batchInfo.batchNumber}th Batch</span>
+            Join the <span className="thc-gold-text">{headline}</span>
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
             Every call, live Zoom session, and WhatsApp signal — one flat price.
