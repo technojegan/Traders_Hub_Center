@@ -89,7 +89,7 @@ export function OngoingSignals({
           ))}
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-[2fr_1fr_2fr]">
+      <div className="grid gap-4 lg:grid-cols-[2fr_minmax(120px,0.7fr)_2fr]">
         <div className="rounded-xl border border-white/5 bg-black/10 p-3 lg:flex lg:h-full lg:items-stretch">
           {isEmpty ? (
             <div className="flex h-[140px] w-full flex-col items-center justify-center gap-1 text-center lg:h-full">
@@ -105,8 +105,8 @@ export function OngoingSignals({
           )}
         </div>
 
-        <div className="flex flex-col gap-3">
-          <div className="thc-glass rounded-xl border border-white/5 p-3">
+        <div className="flex flex-col gap-3 lg:h-full">
+          <div className="thc-glass flex flex-1 flex-col items-center justify-center rounded-xl border border-white/5 p-3 text-center">
             <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
               Avg Potential Gain
             </p>
@@ -119,7 +119,7 @@ export function OngoingSignals({
               {isEmpty ? "—" : `+${avgGain.toFixed(1)}%`}
             </p>
           </div>
-          <div className="thc-glass rounded-xl border border-white/5 p-3">
+          <div className="thc-glass flex flex-1 flex-col items-center justify-center rounded-xl border border-white/5 p-3 text-center">
             <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
               Avg Potential Risk
             </p>
@@ -132,7 +132,7 @@ export function OngoingSignals({
               {isEmpty ? "—" : `${avgLoss.toFixed(1)}%`}
             </p>
           </div>
-          <div className="thc-glass rounded-xl border border-white/5 p-3">
+          <div className="thc-glass flex flex-1 flex-col items-center justify-center rounded-xl border border-white/5 p-3 text-center">
             <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
               Open Positions
             </p>
@@ -140,9 +140,12 @@ export function OngoingSignals({
           </div>
         </div>
 
-        <div className="rounded-xl border border-white/5 bg-black/10 p-3 lg:h-full lg:overflow-y-auto">
+        <div className="rounded-xl border border-white/5 bg-black/10 p-3 lg:flex lg:h-full lg:flex-col">
           {signals.some((signal) => signal.adminNote) ? (
-            <div className="gap-3 [column-fill:auto] lg:columns-2" style={{ columnGap: "12px" }}>
+            <div
+              className="h-full gap-3 overflow-y-auto [column-fill:auto] lg:columns-2"
+              style={{ columnGap: "12px" }}
+            >
               {signals
                 .filter((signal) => signal.adminNote)
                 .map((signal) => (

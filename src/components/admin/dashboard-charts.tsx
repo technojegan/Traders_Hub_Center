@@ -342,11 +342,13 @@ export function WinRateDonutChart({
   );
 }
 
+// Shades of blue, light to dark, so instruments read as one family rather
+// than unrelated hues — not tied to win/loss or CE/PE semantics.
 const INSTRUMENT_DONUT_COLORS = [
-  "var(--thc-gold-start)", // Nifty
-  "var(--thc-ce)", // Sensex
-  "var(--thc-pe)", // Bank Nifty
-  "#8b5cf6", // Midcap Nifty
+  "#93c5fd", // Nifty
+  "#3b82f6", // Sensex
+  "#1d4ed8", // Bank Nifty
+  "#1e3a8a", // Midcap Nifty
 ];
 
 function pctSigned(n: number) {
