@@ -1,5 +1,6 @@
 import { cn, formatSignalDate, formatSignalTime } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -50,6 +51,9 @@ export function OngoingSignals({ signals }: { signals: SignalRow[] }) {
           <h2 className="font-heading text-sm font-semibold">
             {signals.length} Ongoing Trade{signals.length === 1 ? "" : "s"}
           </h2>
+          <Button size="sm" variant="outline" className="ml-1">
+            Place Order
+          </Button>
         </div>
         {!isEmpty &&
           signals.map((signal) => (
