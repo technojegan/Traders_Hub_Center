@@ -37,7 +37,16 @@ export default async function ManageSignalsPage() {
         <RefreshButton />
       </div>
       <OngoingSignals signals={ongoing} />
-      <ManageSignalsTable signals={rows} />
+      {ongoing.length > 0 && (
+        <div className="flex flex-col gap-3">
+          <h2 className="font-heading text-lg font-bold">Ongoing Trades</h2>
+          <ManageSignalsTable signals={ongoing} />
+        </div>
+      )}
+      <div className="flex flex-col gap-3">
+        <h2 className="font-heading text-lg font-bold">All Signals</h2>
+        <ManageSignalsTable signals={rows} />
+      </div>
     </div>
   );
 }
