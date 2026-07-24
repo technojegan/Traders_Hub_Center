@@ -30,7 +30,7 @@ export function deriveStatus(input: {
 
 export type SignalForMetrics = Pick<
   Signal,
-  "id" | "optionType" | "pnlPercent" | "status" | "signalTime"
+  "id" | "optionType" | "instrument" | "pnlPercent" | "status" | "signalTime"
 >;
 
 export interface DashboardMetrics {
@@ -56,6 +56,8 @@ export interface DashboardMetrics {
   lossCount: number;
   totalGainPercent: number;
   totalLossPercent: number;
+  niftyCapturePercent: number;
+  sensexCapturePercent: number;
 }
 
 function winRateOf(signals: SignalForMetrics[]): number {
@@ -69,6 +71,13 @@ export function computeDashboardMetrics(signals: SignalForMetrics[]): DashboardM
   const closed = signals.filter((s) => s.pnlPercent != null);
   const ce = signals.filter((s) => s.optionType === ("CE" as OptionType));
   const pe = signals.filter((s) => s.optionType === ("PE" as OptionType));
+
+  const niftyCapturePercent = closed
+    .filter((s) => s.instrument === "NIFTY")
+    .reduce((sum, s) => sum + (s.pnlPercent ?? 0), 0);
+  const sensexCapturePercent = closed
+    .filter((s) => s.instrument === "SENSEX")
+    .reduce((sum, s) => sum + (s.pnlPercent ?? 0), 0);
 
   const totalCapturePercent = closed.reduce((sum, s) => sum + (s.pnlPercent ?? 0), 0);
   const avgPercentPerTrade = closed.length > 0 ? totalCapturePercent / closed.length : 0;
@@ -128,6 +137,8 @@ export function computeDashboardMetrics(signals: SignalForMetrics[]): DashboardM
     peCount: pe.length,
     ceWinRate: winRateOf(ce),
     peWinRate: winRateOf(pe),
+    niftyCapturePercent,
+    sensexCapturePercent,
     cumulativeSeries,
     winLossByDay,
     winCount,

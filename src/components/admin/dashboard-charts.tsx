@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { cn } from "@/lib/utils";
 import {
   Area,
   AreaChart,
@@ -335,6 +336,81 @@ export function WinRateDonutChart({
             {winRate.toFixed(1)}%
           </p>
           <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Win Rate</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function NiftyVsSensexDonutChart({
+  niftyPercent,
+  sensexPercent,
+}: {
+  niftyPercent: number;
+  sensexPercent: number;
+}) {
+  const pct = (n: number) => `${n >= 0 ? "+" : ""}${n.toFixed(1)}%`;
+  const combined = niftyPercent + sensexPercent;
+  const data = [
+    { name: "Nifty", value: Math.abs(niftyPercent) },
+    { name: "Sensex", value: Math.abs(sensexPercent) },
+  ];
+  const fills = ["url(#niftyDonutFill)", "url(#sensexDonutFill)"];
+
+  return (
+    <div className="relative" style={{ width: "100%", height: 280 }}>
+      <ResponsiveContainer width="100%" height={280}>
+        <PieChart>
+          <defs>
+            <linearGradient id="niftyDonutFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="var(--thc-gold-start)" stopOpacity={1} />
+              <stop offset="100%" stopColor="var(--thc-gold-start)" stopOpacity={0.55} />
+            </linearGradient>
+            <linearGradient id="sensexDonutFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="var(--thc-ce)" stopOpacity={1} />
+              <stop offset="100%" stopColor="var(--thc-ce)" stopOpacity={0.55} />
+            </linearGradient>
+          </defs>
+          <Pie
+            data={data}
+            dataKey="value"
+            nameKey="name"
+            innerRadius={64}
+            outerRadius={92}
+            paddingAngle={3}
+            startAngle={90}
+            endAngle={-270}
+            isAnimationActive={false}
+          >
+            {data.map((entry, index) => (
+              <Cell key={entry.name} fill={fills[index % fills.length]} />
+            ))}
+          </Pie>
+          <Tooltip
+            contentStyle={chartTooltipStyle}
+            labelStyle={chartTooltipLabelStyle}
+            itemStyle={chartTooltipItemStyle}
+          />
+          <Legend
+            formatter={(value) =>
+              legendText(`${value} (${value === "Nifty" ? pct(niftyPercent) : pct(sensexPercent)})`)
+            }
+          />
+        </PieChart>
+      </ResponsiveContainer>
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center pb-8">
+        <div className="text-center">
+          <p
+            className={cn(
+              "font-heading text-2xl font-bold",
+              combined >= 0 ? "text-[var(--thc-win)]" : "text-[var(--thc-loss)]",
+            )}
+          >
+            {pct(combined)}
+          </p>
+          <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
+            Nifty + Sensex
+          </p>
         </div>
       </div>
     </div>

@@ -5,6 +5,7 @@ import { RecentSignalsList, type RecentSignalItem } from "@/components/admin/rec
 import {
   BestWorstBarChart,
   CumulativeLineChart,
+  NiftyVsSensexDonutChart,
   WinLossBarChart,
   WinRateDonutChart,
 } from "@/components/admin/dashboard-charts";
@@ -29,27 +30,38 @@ export function DashboardContent({
           <SectionNumber n={1} />
           <h2 className="font-heading text-sm font-semibold">Cumulative %</h2>
         </div>
-        <div className="grid gap-6 sm:grid-cols-[minmax(160px,220px)_1fr] sm:items-center">
-          <div className="thc-glow relative overflow-hidden rounded-xl border border-white/5 bg-black/20 p-5 text-center sm:text-left">
-            <span
-              className="absolute inset-x-0 top-0 h-[3px]"
-              style={{ backgroundImage: "var(--thc-gold-gradient)" }}
-            />
-            <p className="text-xs uppercase tracking-wide text-muted-foreground">
-              Total % Won this Batch
-            </p>
-            <p
-              className={cn(
-                "mt-2 font-heading text-4xl font-bold leading-none sm:text-5xl",
-                metrics.totalCapturePercent >= 0
-                  ? "text-[var(--thc-win)]"
-                  : "text-[var(--thc-loss)]",
-              )}
-            >
-              {pct(metrics.totalCapturePercent)}
-            </p>
+        <div className="grid gap-6 lg:grid-cols-3 lg:items-stretch">
+          <div className="grid gap-6 sm:grid-cols-[minmax(160px,220px)_1fr] sm:items-center lg:col-span-2">
+            <div className="thc-glow relative overflow-hidden rounded-xl border border-white/5 bg-black/20 p-5 text-center sm:text-left">
+              <span
+                className="absolute inset-x-0 top-0 h-[3px]"
+                style={{ backgroundImage: "var(--thc-gold-gradient)" }}
+              />
+              <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                Total % Won this Batch
+              </p>
+              <p
+                className={cn(
+                  "mt-2 font-heading text-4xl font-bold leading-none sm:text-5xl",
+                  metrics.totalCapturePercent >= 0
+                    ? "text-[var(--thc-win)]"
+                    : "text-[var(--thc-loss)]",
+                )}
+              >
+                {pct(metrics.totalCapturePercent)}
+              </p>
+            </div>
+            <CumulativeLineChart data={metrics.cumulativeSeries} />
           </div>
-          <CumulativeLineChart data={metrics.cumulativeSeries} />
+          <div className="thc-glass rounded-xl border border-white/5 p-4">
+            <p className="mb-2 text-xs uppercase tracking-wide text-muted-foreground">
+              Total % Won — Nifty vs Sensex
+            </p>
+            <NiftyVsSensexDonutChart
+              niftyPercent={metrics.niftyCapturePercent}
+              sensexPercent={metrics.sensexCapturePercent}
+            />
+          </div>
         </div>
       </div>
 
