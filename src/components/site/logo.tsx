@@ -15,9 +15,16 @@ export function Logo({ className }: { className?: string }) {
         className="h-12 w-12 rounded-full shadow-[0_2px_16px_-4px_var(--thc-gold-start)] transition-transform group-hover:scale-105 sm:h-14 sm:w-14"
         priority
       />
-      <span className="font-heading text-lg font-bold tracking-tight sm:text-xl">
-        <span className="thc-gold-text">{firstWord}</span>{" "}
-        {rest.length > 0 && <span className="text-foreground">{rest.join(" ")}</span>}
+      <span className="flex flex-col leading-tight">
+        <span className="font-heading text-lg font-bold tracking-tight sm:text-xl">
+          <span className="thc-gold-text">{firstWord}</span>{" "}
+          {rest.length > 0 && <span className="text-foreground">{rest.join(" ")}</span>}
+        </span>
+        {clientConfig.tagline && (
+          <span className="text-[9px] font-medium uppercase tracking-wide text-muted-foreground sm:text-[10px]">
+            {clientConfig.tagline}
+          </span>
+        )}
       </span>
     </Link>
   );

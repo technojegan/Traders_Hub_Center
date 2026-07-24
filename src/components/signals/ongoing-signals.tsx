@@ -1,6 +1,6 @@
 import { cn, formatSignalDate, formatSignalTime } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { PlaceOrderButton } from "@/components/signals/place-order-button";
 import {
   Table,
   TableBody,
@@ -63,12 +63,7 @@ export function OngoingSignals({
           <h2 className="font-heading text-sm font-semibold">
             {signals.length} Ongoing Trade{signals.length === 1 ? "" : "s"}
           </h2>
-          <Button
-            size="sm"
-            className="thc-btn-gradient thc-btn-3d ml-1 font-semibold transition-transform duration-150"
-          >
-            Place Order
-          </Button>
+          <PlaceOrderButton />
         </div>
         {!isEmpty &&
           signals.map((signal) => (

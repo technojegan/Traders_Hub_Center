@@ -36,11 +36,11 @@ export function Testimonials() {
           maskImage: "linear-gradient(90deg, transparent, black 8%, black 92%, transparent)",
         }}
       >
-        <div className="thc-marquee-track flex w-max gap-4 px-4">
+        <div className="thc-marquee-track flex w-max">
           {items.map((t, i) => (
             <div
               key={`${t.name}-${i}`}
-              className="thc-glass thc-glow flex w-80 shrink-0 flex-col rounded-2xl border border-white/5 p-5 text-left"
+              className="thc-glass thc-glow mr-4 flex w-80 shrink-0 flex-col rounded-2xl border border-white/5 p-5 text-left"
             >
               <div className="flex items-center justify-between">
                 <span className="font-heading text-2xl leading-none text-primary">&ldquo;</span>

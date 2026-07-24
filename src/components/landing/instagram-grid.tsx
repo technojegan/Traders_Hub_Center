@@ -34,7 +34,7 @@ export function InstagramGrid() {
         }}
       >
         <div
-          className="thc-marquee-track flex w-max gap-4 px-4"
+          className="thc-marquee-track flex w-max"
           style={{ ["--thc-marquee-duration" as string]: "56s" }}
         >
           {items.map((item, i) => (
@@ -43,7 +43,7 @@ export function InstagramGrid() {
               href={item.videoUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="thc-glow group w-40 shrink-0 overflow-hidden rounded-xl border border-white/5 sm:w-48"
+              className="thc-glow group mr-4 w-40 shrink-0 overflow-hidden rounded-xl border border-white/5 sm:w-48"
             >
               <div className="relative aspect-[4/5] w-full bg-card">
                 <Image

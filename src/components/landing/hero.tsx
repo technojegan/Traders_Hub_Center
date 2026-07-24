@@ -39,11 +39,6 @@ export function Hero() {
           Trade with <span className="thc-gold-text">accuracy</span> and{" "}
           <span className="thc-gold-text">consistency</span>
         </h1>
-        {clientConfig.tagline && (
-          <p className="mt-3 text-sm font-semibold uppercase tracking-[0.2em] thc-gold-text">
-            {clientConfig.tagline}
-          </p>
-        )}
         <div className="mx-auto mt-6 max-w-3xl">
           <h2 className="font-heading text-2xl font-bold sm:text-3xl">
             Precision, <span className="thc-gold-text">not luck</span>
