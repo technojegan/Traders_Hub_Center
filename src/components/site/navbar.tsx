@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Logo } from "@/components/site/logo";
 import { Button } from "@/components/ui/button";
+import { clientConfig } from "@/lib/client-config";
 
 const links = [
   { href: "/", label: "Home" },
@@ -27,7 +28,7 @@ export function Navbar() {
         </nav>
         <div className="flex items-center gap-3">
           <Link
-            href="/admin/login"
+            href={clientConfig.requireAdminAuth ? "/admin/login" : "/admin/dashboard"}
             className="hidden text-xs text-muted-foreground/70 transition-colors hover:text-primary sm:inline"
           >
             Admin
