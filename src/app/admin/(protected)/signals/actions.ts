@@ -61,6 +61,7 @@ export async function updateSignal(id: string, input: SignalUpdateInput) {
       pnlPercent,
       status,
       closedTime: input.sellPrice != null ? (signal.closedTime ?? new Date()) : null,
+      silentUpdateAt: new Date(),
     },
   });
 

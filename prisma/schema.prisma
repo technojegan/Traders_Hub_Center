@@ -52,6 +52,10 @@ model Signal {
   closedTime    DateTime?
   rawMessage    String
   adminNote     String?
+  // Set by the Manage Signals edit form so the realtime listener can tell
+  // "admin corrected a field" apart from a genuine new/closed signal and
+  // skip the sound alert for it (still refreshes page content either way).
+  silentUpdateAt DateTime?
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
 

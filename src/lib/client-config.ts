@@ -52,6 +52,9 @@ export interface ClientConfig {
   faviconSrc: string;
   goldStart: string;
   goldEnd: string;
+  // 4 shades (light to dark) differentiating instrument slices in the
+  // Total % Won donut chart — same hue family, not tied to win/loss colors.
+  instrumentDonutColors: [string, string, string, string];
   instagramUrl: string;
   whatsappUrl: string;
   telegramUrl: string;
@@ -80,6 +83,7 @@ const CLIENTS: Record<ClientId, ClientConfig> = {
     faviconSrc: "/thc-favicon.jpg",
     goldStart: "#d4af37",
     goldEnd: "#f0c949",
+    instrumentDonutColors: ["#f5d576", "#d4af37", "#a8842a", "#7a5f1c"],
     instagramUrl: "https://www.instagram.com/traders_hub_center_/",
     whatsappUrl: "https://chat.whatsapp.com/IuWT73Az2LN9i3cfG4pLnY",
     telegramUrl: "https://t.me/traders_hub_center",
@@ -206,6 +210,7 @@ const CLIENTS: Record<ClientId, ClientConfig> = {
     faviconSrc: "/stockops-icon.jpg",
     goldStart: "#3b82f6",
     goldEnd: "#60a5fa",
+    instrumentDonutColors: ["#93c5fd", "#3b82f6", "#1d4ed8", "#1e3a8a"],
     instagramUrl: "https://www.instagram.com/stoc_kops/",
     whatsappUrl: "#",
     telegramUrl: "https://t.me/stockopstradingcommunity",

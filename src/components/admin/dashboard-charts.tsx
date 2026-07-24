@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import { clientConfig } from "@/lib/client-config";
 import {
   Area,
   AreaChart,
@@ -342,15 +343,6 @@ export function WinRateDonutChart({
   );
 }
 
-// Shades of blue, light to dark, so instruments read as one family rather
-// than unrelated hues — not tied to win/loss or CE/PE semantics.
-const INSTRUMENT_DONUT_COLORS = [
-  "#93c5fd", // Nifty
-  "#3b82f6", // Sensex
-  "#1d4ed8", // Bank Nifty
-  "#1e3a8a", // Midcap Nifty
-];
-
 function pctSigned(n: number) {
   return `${n >= 0 ? "+" : ""}${n.toFixed(1)}%`;
 }
@@ -413,7 +405,11 @@ export function InstrumentCaptureDonutChart({
             {visible.map((entry, index) => (
               <Cell
                 key={entry.label}
-                fill={INSTRUMENT_DONUT_COLORS[index % INSTRUMENT_DONUT_COLORS.length]}
+                fill={
+                  clientConfig.instrumentDonutColors[
+                    index % clientConfig.instrumentDonutColors.length
+                  ]
+                }
               />
             ))}
           </Pie>

@@ -118,6 +118,18 @@ export function SoundAlertProvider({ children }: { children: ReactNode }) {
         (payload) => {
           router.refresh();
 
+          // A plain edit from the Manage Signals table sets silentUpdateAt
+          // right before this fires — skip the sound (but still refresh)
+          // so correcting a field doesn't buzz every subscriber's device.
+          const silentUpdateAt = (payload.new as { silentUpdateAt?: string } | null)
+            ?.silentUpdateAt;
+          const isSilentEdit =
+            payload.eventType === "UPDATE" &&
+            !!silentUpdateAt &&
+            Date.now() - new Date(silentUpdateAt).getTime() < 10_000;
+
+          if (isSilentEdit) return;
+
           if (enabledRef.current && audioCtxRef.current) {
             if (payload.eventType === "INSERT") {
               playNewSignalTone(audioCtxRef.current);
