@@ -43,6 +43,9 @@ export interface ClientConfig {
   requireAdminAuth: boolean;
   siteName: string;
   siteNameShort: string;
+  // Short caption shown under the hero title on the home page. Omit for a
+  // client that doesn't have one.
+  tagline?: string;
   siteDescription: string;
   logoSrc: string;
   logoAlt: string;
@@ -195,6 +198,7 @@ const CLIENTS: Record<ClientId, ClientConfig> = {
     requireAdminAuth: false,
     siteName: "StockOps",
     siteNameShort: "StockOps",
+    tagline: "Patience · Practice · Profit",
     siteDescription:
       "StockOps publishes intraday options-buying trade signals to premium subscribers, backed by transparent performance analytics.",
     logoSrc: "/stockops-icon.jpg",
