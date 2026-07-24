@@ -46,6 +46,7 @@ export interface ClientConfig {
   siteDescription: string;
   logoSrc: string;
   logoAlt: string;
+  faviconSrc: string;
   goldStart: string;
   goldEnd: string;
   instagramUrl: string;
@@ -68,6 +69,7 @@ const CLIENTS: Record<ClientId, ClientConfig> = {
       "Traders Hub Center (THC) publishes intraday options-buying trade signals to premium subscribers, backed by transparent performance analytics.",
     logoSrc: "/thc-logo.jpg",
     logoAlt: "Traders Hub Center",
+    faviconSrc: "/thc-favicon.jpg",
     goldStart: "#d4af37",
     goldEnd: "#f0c949",
     instagramUrl: "https://www.instagram.com/traders_hub_center_/",
@@ -191,6 +193,7 @@ const CLIENTS: Record<ClientId, ClientConfig> = {
       "StockOps publishes intraday options-buying trade signals to premium subscribers, backed by transparent performance analytics.",
     logoSrc: "/stockops-logo.jpg",
     logoAlt: "StockOps",
+    faviconSrc: "/stockops-logo.jpg",
     goldStart: "#3b82f6",
     goldEnd: "#60a5fa",
     instagramUrl: "#",
