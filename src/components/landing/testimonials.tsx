@@ -1,4 +1,5 @@
 import { clientConfig } from "@/lib/client-config";
+import { repeatForMarquee } from "@/lib/marquee";
 
 const AVATAR_COLORS = [
   "var(--thc-gold-start)",
@@ -17,7 +18,7 @@ function initials(name: string) {
 }
 
 export function Testimonials() {
-  const items = [...clientConfig.testimonials, ...clientConfig.testimonials];
+  const items = repeatForMarquee(clientConfig.testimonials);
 
   return (
     <section className="py-16">

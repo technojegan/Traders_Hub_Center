@@ -1,19 +1,10 @@
 import Image from "next/image";
 import { clientConfig } from "@/lib/client-config";
+import { repeatForMarquee } from "@/lib/marquee";
 
 export function InstagramGrid() {
-  // Duplicated 4x (not 2x): with only 5 thumbnails, one copy is narrower than
-  // most desktop viewports, so a 2x loop ran out of content and visibly
-  // paused/jumped right before resetting. 4 copies keeps the -50% keyframe
-  // (still exactly "one half of the track") wide enough to always fill the
-  // viewport during the whole animation cycle.
   const { instagramThumbnails } = clientConfig;
-  const items = [
-    ...instagramThumbnails,
-    ...instagramThumbnails,
-    ...instagramThumbnails,
-    ...instagramThumbnails,
-  ];
+  const items = repeatForMarquee(instagramThumbnails);
 
   return (
     <section className="py-16">

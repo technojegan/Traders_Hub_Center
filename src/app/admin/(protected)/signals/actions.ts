@@ -106,21 +106,20 @@ export async function updateAdminNote(id: string, adminNote: string | null) {
   return { success: true };
 }
 
-export async function getLatestAdminUpdate() {
-  const u = await prisma.adminUpdate.findFirst({
+export async function getRecentAdminUpdates(limit = 50) {
+  const updates = await prisma.adminUpdate.findMany({
     orderBy: { createdAt: "desc" },
+    take: limit,
   });
 
-  if (!u) return null;
-
-  return {
+  return updates.map((u) => ({
     id: u.id,
     strike: u.strike,
     optionType: u.optionType,
     instrument: u.instrument,
     message: u.message,
     createdAt: u.createdAt.toISOString(),
-  };
+  }));
 }
 
 export async function deleteSignal(id: string) {

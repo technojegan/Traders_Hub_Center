@@ -2,11 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Bell } from "lucide-react";
-import { getLatestAdminUpdate } from "@/app/admin/(protected)/signals/actions";
+import { getRecentAdminUpdates } from "@/app/admin/(protected)/signals/actions";
 import { INSTRUMENT_LABEL, type InstrumentLiteral } from "@/lib/instruments";
 
-const LAST_SEEN_KEY = "thc-notifications-last-seen-id";
-const CLEARED_ID_KEY = "thc-notifications-cleared-id";
+const LAST_SEEN_KEY = "thc-notifications-last-seen";
+const CLEARED_AT_KEY = "thc-notifications-cleared-at";
 
 interface UpdateItem {
   id: string;
@@ -17,23 +17,49 @@ interface UpdateItem {
   createdAt: string;
 }
 
+function dayLabel(iso: string): string {
+  const date = new Date(iso);
+  const today = new Date();
+  const yesterday = new Date();
+  yesterday.setDate(today.getDate() - 1);
+  const sameDay = (a: Date, b: Date) => a.toDateString() === b.toDateString();
+  if (sameDay(date, today)) return "Today";
+  if (sameDay(date, yesterday)) return "Yesterday";
+  return date.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+}
+
+function groupByDay(items: UpdateItem[]): { label: string; items: UpdateItem[] }[] {
+  const groups: { label: string; items: UpdateItem[] }[] = [];
+  for (const item of items) {
+    const label = dayLabel(item.createdAt);
+    const last = groups[groups.length - 1];
+    if (last && last.label === label) {
+      last.items.push(item);
+    } else {
+      groups.push({ label, items: [item] });
+    }
+  }
+  return groups;
+}
+
 export function NotificationBell() {
   const [open, setOpen] = useState(false);
-  const [latest, setLatest] = useState<UpdateItem | null>(null);
-  const [isUnread, setIsUnread] = useState(false);
-  const [clearedId, setClearedId] = useState<string | null>(null);
+  const [updates, setUpdates] = useState<UpdateItem[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [clearedAt, setClearedAt] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   async function load() {
-    const data = await getLatestAdminUpdate();
-    setLatest(data);
+    const data = await getRecentAdminUpdates();
+    setUpdates(data);
 
-    const lastSeenId = localStorage.getItem(LAST_SEEN_KEY);
-    setIsUnread(!!data && data.id !== lastSeenId);
+    const lastSeen = localStorage.getItem(LAST_SEEN_KEY);
+    const lastSeenTime = lastSeen ? new Date(lastSeen).getTime() : 0;
+    setUnreadCount(data.filter((u) => new Date(u.createdAt).getTime() > lastSeenTime).length);
   }
 
   useEffect(() => {
-    setClearedId(localStorage.getItem(CLEARED_ID_KEY));
+    setClearedAt(localStorage.getItem(CLEARED_AT_KEY));
     load();
   }, []);
 
@@ -47,24 +73,25 @@ export function NotificationBell() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [open]);
 
-  async function handleToggle() {
+  function handleToggle() {
     const next = !open;
     setOpen(next);
     if (next) {
-      const data = await getLatestAdminUpdate();
-      setLatest(data);
-      if (data) localStorage.setItem(LAST_SEEN_KEY, data.id);
-      setIsUnread(false);
+      load();
+      localStorage.setItem(LAST_SEEN_KEY, new Date().toISOString());
+      setUnreadCount(0);
     }
   }
 
   function handleClear() {
-    if (!latest) return;
-    localStorage.setItem(CLEARED_ID_KEY, latest.id);
-    setClearedId(latest.id);
+    const now = new Date().toISOString();
+    localStorage.setItem(CLEARED_AT_KEY, now);
+    setClearedAt(now);
   }
 
-  const visible = latest && latest.id !== clearedId ? latest : null;
+  const clearedAtTime = clearedAt ? new Date(clearedAt).getTime() : 0;
+  const visibleUpdates = updates.filter((u) => new Date(u.createdAt).getTime() > clearedAtTime);
+  const groups = groupByDay(visibleUpdates);
 
   return (
     <div ref={containerRef} className="relative">
@@ -75,16 +102,18 @@ export function NotificationBell() {
         className="relative flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary"
       >
         <Bell className="h-4 w-4" />
-        {isUnread && (
-          <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-[var(--thc-loss)]" />
+        {unreadCount > 0 && (
+          <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--thc-loss)] px-1 text-[9px] font-bold text-white">
+            {unreadCount > 9 ? "9+" : unreadCount}
+          </span>
         )}
       </button>
 
       {open && (
-        <div className="thc-glass absolute right-0 top-11 z-50 w-72 rounded-xl border border-white/10 p-3 shadow-xl sm:w-80">
+        <div className="thc-glass absolute right-0 top-11 z-50 max-h-[70vh] w-80 overflow-y-auto rounded-xl border border-white/10 p-3 shadow-xl sm:w-96">
           <div className="mb-2 flex items-center justify-between">
-            <p className="font-heading text-sm font-semibold">Latest Update</p>
-            {visible && (
+            <p className="font-heading text-sm font-semibold">Updates from Admin</p>
+            {visibleUpdates.length > 0 && (
               <button
                 type="button"
                 onClick={handleClear}
@@ -94,28 +123,40 @@ export function NotificationBell() {
               </button>
             )}
           </div>
-          {visible == null ? (
-            <p className="py-4 text-center text-xs text-muted-foreground">
+          {groups.length === 0 ? (
+            <p className="py-6 text-center text-xs text-muted-foreground">
               No updates yet — they&apos;ll show up here as trades are updated.
             </p>
           ) : (
-            <div className="rounded-lg border border-white/5 bg-black/20 p-2.5">
-              <div className="flex items-baseline justify-between gap-2">
-                <span className="font-heading text-xs font-bold thc-gold-text">
-                  {visible.instrument ? `${INSTRUMENT_LABEL[visible.instrument]} ` : ""}
-                  {visible.strike} {visible.optionType}
-                </span>
-                <span className="shrink-0 text-[10px] text-muted-foreground">
-                  {new Date(visible.createdAt).toLocaleTimeString("en-IN", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit",
-                  })}
-                </span>
-              </div>
-              <p className="mt-1 whitespace-normal break-words text-xs text-foreground/90">
-                {visible.message}
-              </p>
+            <div className="flex flex-col gap-3">
+              {groups.map((group) => (
+                <div key={group.label} className="flex flex-col gap-1">
+                  <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                    {group.label}
+                  </p>
+                  {group.items.map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex items-center gap-2 border-b border-white/5 py-1.5 text-xs last:border-b-0"
+                    >
+                      <span className="min-w-0 flex-1 truncate text-foreground/90">
+                        <span className="font-heading font-bold thc-gold-text">
+                          {item.instrument ? `${INSTRUMENT_LABEL[item.instrument]} ` : ""}
+                          {item.strike} {item.optionType}:
+                        </span>{" "}
+                        {item.message}
+                      </span>
+                      <span className="shrink-0 text-[10px] text-muted-foreground">
+                        {new Date(item.createdAt).toLocaleTimeString("en-IN", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          second: "2-digit",
+                        })}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              ))}
             </div>
           )}
         </div>
