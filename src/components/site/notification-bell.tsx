@@ -5,7 +5,8 @@ import { Bell } from "lucide-react";
 import { getRecentAdminUpdates } from "@/app/admin/(protected)/signals/actions";
 import { INSTRUMENT_LABEL, type InstrumentLiteral } from "@/lib/instruments";
 
-const STORAGE_KEY = "thc-notifications-last-seen";
+const LAST_SEEN_KEY = "thc-notifications-last-seen";
+const CLEARED_AT_KEY = "thc-notifications-cleared-at";
 
 interface UpdateItem {
   id: string;
@@ -45,18 +46,20 @@ export function NotificationBell() {
   const [open, setOpen] = useState(false);
   const [updates, setUpdates] = useState<UpdateItem[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [clearedAt, setClearedAt] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   async function load() {
     const data = await getRecentAdminUpdates();
     setUpdates(data);
 
-    const lastSeen = localStorage.getItem(STORAGE_KEY);
+    const lastSeen = localStorage.getItem(LAST_SEEN_KEY);
     const lastSeenTime = lastSeen ? new Date(lastSeen).getTime() : 0;
     setUnreadCount(data.filter((u) => new Date(u.createdAt).getTime() > lastSeenTime).length);
   }
 
   useEffect(() => {
+    setClearedAt(localStorage.getItem(CLEARED_AT_KEY));
     load();
   }, []);
 
@@ -75,12 +78,20 @@ export function NotificationBell() {
     setOpen(next);
     if (next) {
       load();
-      localStorage.setItem(STORAGE_KEY, new Date().toISOString());
+      localStorage.setItem(LAST_SEEN_KEY, new Date().toISOString());
       setUnreadCount(0);
     }
   }
 
-  const groups = groupByDay(updates);
+  function handleClear() {
+    const now = new Date().toISOString();
+    localStorage.setItem(CLEARED_AT_KEY, now);
+    setClearedAt(now);
+  }
+
+  const clearedAtTime = clearedAt ? new Date(clearedAt).getTime() : 0;
+  const visibleUpdates = updates.filter((u) => new Date(u.createdAt).getTime() > clearedAtTime);
+  const groups = groupByDay(visibleUpdates);
 
   return (
     <div ref={containerRef} className="relative">
@@ -100,7 +111,18 @@ export function NotificationBell() {
 
       {open && (
         <div className="thc-glass absolute right-0 top-11 z-50 max-h-[70vh] w-80 overflow-y-auto rounded-xl border border-white/10 p-3 shadow-xl sm:w-96">
-          <p className="mb-2 font-heading text-sm font-semibold">Updates from Admin</p>
+          <div className="mb-2 flex items-center justify-between">
+            <p className="font-heading text-sm font-semibold">Updates from Admin</p>
+            {visibleUpdates.length > 0 && (
+              <button
+                type="button"
+                onClick={handleClear}
+                className="text-[10px] font-medium text-muted-foreground transition-colors hover:text-primary"
+              >
+                Clear
+              </button>
+            )}
+          </div>
           {groups.length === 0 ? (
             <p className="py-6 text-center text-xs text-muted-foreground">
               No updates yet — they&apos;ll show up here as trades are updated.
@@ -115,15 +137,15 @@ export function NotificationBell() {
                   {group.items.map((item) => (
                     <div
                       key={item.id}
-                      className="flex items-baseline justify-between gap-2 border-b border-white/5 py-1.5 text-xs last:border-b-0"
+                      className="flex items-center gap-2 border-b border-white/5 py-1.5 text-xs last:border-b-0"
                     >
-                      <p className="min-w-0 text-foreground/90">
+                      <span className="min-w-0 flex-1 truncate text-foreground/90">
                         <span className="font-heading font-bold thc-gold-text">
                           {item.instrument ? `${INSTRUMENT_LABEL[item.instrument]} ` : ""}
                           {item.strike} {item.optionType}:
                         </span>{" "}
                         {item.message}
-                      </p>
+                      </span>
                       <span className="shrink-0 text-[10px] text-muted-foreground">
                         {new Date(item.createdAt).toLocaleTimeString("en-IN", {
                           hour: "2-digit",

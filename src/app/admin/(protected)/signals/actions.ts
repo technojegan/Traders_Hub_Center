@@ -107,8 +107,6 @@ export async function updateAdminNote(id: string, adminNote: string | null) {
 }
 
 export async function getRecentAdminUpdates(limit = 50) {
-  // Full chronological log, like a chat — every update shown individually
-  // with its own timestamp, not collapsed to one per signal.
   const updates = await prisma.adminUpdate.findMany({
     orderBy: { createdAt: "desc" },
     take: limit,
