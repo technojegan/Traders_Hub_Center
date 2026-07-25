@@ -2,7 +2,7 @@
 // Vercel project's env vars. Same repo/branch, different deployment picks a
 // different entry below. See CLAUDE.md/AGENTS.md history for the multi-client
 // deployment model this supports.
-export type ClientId = "thc" | "stockops";
+export type ClientId = "thc" | "stockops" | "goodwill";
 
 export interface BatchInfo {
   batchNumber: number;
@@ -256,6 +256,76 @@ const CLIENTS: Record<ClientId, ClientConfig> = {
         thumbnailUrl: "/instagram/placeholder-2.svg",
         videoUrl: "#",
         label: "Placeholder — add a real StockOps reel",
+      },
+    ],
+  },
+
+  // Brand-new client — everything below is a placeholder pending real
+  // Goodwill input (pricing, payment, social links, testimonials). Colors are
+  // sampled from the actual Goodwill logo (royal blue + gold); swap the rest
+  // for real details before this deployment goes live. Never reuse another
+  // client's payment/social identifiers here.
+  goodwill: {
+    id: "goodwill",
+    // Temporary — admin area is open with no login until Supabase is set up
+    // for this client. Flip back to true once auth is configured.
+    requireAdminAuth: false,
+    siteName: "Goodwill",
+    siteNameShort: "Goodwill",
+    tagline: "Equity · Commodity · Currency",
+    siteDescription:
+      "Goodwill publishes intraday options-buying trade signals to premium subscribers, backed by transparent performance analytics.",
+    logoSrc: "/goodwill-logo.webp",
+    logoAlt: "Goodwill",
+    faviconSrc: "/goodwill-logo.webp",
+    goldStart: "#1f4e96",
+    goldEnd: "#f2c230",
+    instrumentDonutColors: ["#8fb2e0", "#4a7bc4", "#1f4e96", "#123563"],
+    instagramUrl: "#",
+    whatsappUrl: "#",
+    telegramUrl: "#",
+    facebookUrl: "",
+    pricingHeadline: "Premium Membership",
+    dhanOfferEnabled: false,
+    batchInfo: {
+      batchNumber: 1,
+      priceInr: 4999,
+      existingMemberPriceInr: 0,
+      startDate: "2026-01-01",
+      endDate: "2026-01-31",
+      zoomTimings: ["9:00 AM – 11:30 AM", "2:00 PM – 3:30 PM"],
+      whatsappTimings: "9:15 AM – 3:30 PM",
+      benefits: ["TODO: list Goodwill membership benefits"],
+      refundPolicy: "TODO: set refund policy.",
+    },
+    paymentInfo: {
+      upiIds: [{ vpa: "TODO@upi", name: "TODO: Goodwill payee name" }],
+      managers: [{ name: "TODO: Goodwill manager", phone: "+91 00000 00000" }],
+    },
+    testimonials: [
+      {
+        name: "Sample Trader",
+        role: "Premium Member",
+        date: "01 Jan 2026",
+        quote: "Placeholder testimonial — replace with a real Goodwill subscriber quote.",
+      },
+      {
+        name: "Sample Member",
+        role: "Premium Member",
+        date: "01 Jan 2026",
+        quote: "Placeholder testimonial — replace with a real Goodwill subscriber quote.",
+      },
+    ],
+    instagramThumbnails: [
+      {
+        thumbnailUrl: "/instagram/placeholder-1.svg",
+        videoUrl: "#",
+        label: "Placeholder — add a real Goodwill reel",
+      },
+      {
+        thumbnailUrl: "/instagram/placeholder-2.svg",
+        videoUrl: "#",
+        label: "Placeholder — add a real Goodwill reel",
       },
     ],
   },
